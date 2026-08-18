@@ -1,5 +1,6 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { isValidElement, type ReactElement } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -44,14 +45,30 @@ function Button({
   className,
   variant = 'default',
   size = 'default',
+  asChild = false,
+  render,
+  children,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants> & { asChild?: boolean }) {
+  // Support the `asChild` convention by mapping a single child element onto
+  // Base UI's `render` prop, so `<Button asChild><Link/></Button>` renders a
+  // single styled element instead of nesting interactive elements.
+  const resolvedRender =
+    render ??
+    (asChild && isValidElement(children)
+      ? (children as ReactElement)
+      : undefined)
+
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      render={resolvedRender}
       {...props}
-    />
+    >
+      {resolvedRender ? undefined : children}
+    </ButtonPrimitive>
   )
 }
 

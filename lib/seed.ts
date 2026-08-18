@@ -17,7 +17,7 @@ export const DEMO_WEEK = 1
 
 export const households: Household[] = [
   { id: 'h-venessa', name: "Venessa's Homeschool", momName: 'Venessa', momInitial: 'V' },
-  { id: 'h-lola', name: "Lola's Homeschool", momName: 'Lola', momInitial: 'L' },
+  { id: 'h-lola', name: "Damilola's Homeschool", momName: 'Damilola', momInitial: 'D' },
 ]
 
 export const children: Child[] = [
@@ -275,7 +275,7 @@ export const lessons: Lesson[] = [
     interactive: 'phonics',
     printable: true,
   },
-  // Amelia (Pre-K, Lola) — shares the same Pre-K lessons
+  // Amelia (Pre-K, Damilola) — shares the same Pre-K lessons
   {
     id: 'l-amelia-math-w1',
     title: 'Count Objects 1\u20135',
@@ -338,7 +338,7 @@ export const assignments: Assignment[] = [
   // Seraiah — 3 of 3 (small load) — mark 2 more done
   { id: 'a11', lessonId: 'l-seraiah-math-w1', childId: 'c-seraiah', status: 'done', completedAt: '' },
   { id: 'a12', lessonId: 'l-seraiah-lit-w1', childId: 'c-seraiah', status: 'done', completedAt: '' },
-  // Amelia — Lola's household
+  // Amelia — Damilola's household
   { id: 'a13', lessonId: 'l-amelia-math-w1', childId: 'c-amelia', status: 'done', completedAt: '' },
   { id: 'a14', lessonId: 'l-amelia-lit-w1', childId: 'c-amelia', status: 'todo' },
 ]
@@ -375,10 +375,10 @@ export const skills: Skill[] = [
 export const resources: Resource[] = [
   { id: 'r1', title: 'Short A Word Family Cards', type: 'Flash Cards', subject: 'literacy', skill: 'Short A', gradeBand: '1st', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Venessa' },
   { id: 'r2', title: 'Number Bonds to 10 Practice', type: 'Math Practice', subject: 'math', skill: 'Number Bonds', gradeBand: '1st', weekNumber: 1, minutes: 15, owner: 'h-venessa', contributor: 'Venessa' },
-  { id: 'r3', title: 'Letter A Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k', weekNumber: 1, minutes: 8, owner: 'shared', contributor: 'Lola' },
+  { id: 'r3', title: 'Letter A Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k', weekNumber: 1, minutes: 8, owner: 'shared', contributor: 'Damilola' },
   { id: 'r4', title: 'Creation Days Coloring Book', type: 'Coloring', subject: 'bible', skill: 'Creation', gradeBand: 'pre-k', weekNumber: 1, minutes: 12, owner: 'shared', contributor: 'Venessa' },
-  { id: 'r5', title: 'Living vs Nonliving Cut & Paste', type: 'Cut & Paste', subject: 'science', skill: 'Classification', gradeBand: 'k', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Lola' },
-  { id: 'r6', title: 'Count & Color 1\u20135', type: 'Worksheet', subject: 'math', skill: 'Counting', gradeBand: 'pre-k', weekNumber: 1, minutes: 8, owner: 'shared', contributor: 'Lola' },
+  { id: 'r5', title: 'Living vs Nonliving Cut & Paste', type: 'Cut & Paste', subject: 'science', skill: 'Classification', gradeBand: 'k', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Damilola' },
+  { id: 'r6', title: 'Count & Color 1\u20135', type: 'Worksheet', subject: 'math', skill: 'Counting', gradeBand: 'pre-k', weekNumber: 1, minutes: 8, owner: 'shared', contributor: 'Damilola' },
   { id: 'r7', title: 'Genesis 1 Read-Aloud Mini Book', type: 'Mini Book', subject: 'bible', skill: 'Creation', gradeBand: 'k', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Venessa' },
   { id: 'r8', title: 'Short A Decodable Passage', type: 'Reading Passage', subject: 'literacy', skill: 'Decodable Reading', gradeBand: '1st', weekNumber: 1, minutes: 12, owner: 'h-venessa', contributor: 'Venessa' },
 ]

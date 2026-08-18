@@ -106,10 +106,10 @@ function HelpMeTeach({ item }: { item: AssignedLesson }) {
   const { lesson } = item
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="text-primary">
-          <Lightbulb className="size-4" /> Help me teach this
-        </Button>
+      <DialogTrigger
+        render={<Button size="sm" variant="ghost" className="text-primary" />}
+      >
+        <Lightbulb className="size-4" /> Help me teach this
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
@@ -193,10 +193,12 @@ function MyChildIsStuck({ title }: { title: string }) {
         if (!o) setRevealed(1)
       }}
     >
-      <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="text-muted-foreground">
-          <LifeBuoy className="size-4" /> Stuck?
-        </Button>
+      <DialogTrigger
+        render={
+          <Button size="sm" variant="ghost" className="text-muted-foreground" />
+        }
+      >
+        <LifeBuoy className="size-4" /> Stuck?
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
