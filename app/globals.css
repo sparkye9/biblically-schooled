@@ -55,6 +55,14 @@
   --color-child-olori: var(--child-olori);
   --color-child-seraiah: var(--child-seraiah);
   --color-child-amelia: var(--child-amelia);
+  --color-child-blue: var(--child-blue);
+  --color-child-pink: var(--child-pink);
+  --color-child-purple: var(--child-purple);
+  --color-child-violet: var(--child-violet);
+  --color-child-teal: var(--child-teal);
+  --color-child-coral: var(--child-coral);
+  --color-child-sage: var(--child-sage);
+  --color-child-gold: var(--child-gold);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -114,11 +122,21 @@
   --optional: oklch(0.6 0.03 60);          /* soft brown */
   --optional-foreground: oklch(0.4 0.03 60);
 
-  /* Child accents */
-  --child-alijah: oklch(0.6 0.08 240);     /* muted blue */
-  --child-olori: oklch(0.68 0.09 15);      /* dusty rose */
-  --child-seraiah: oklch(0.62 0.08 150);   /* sage */
-  --child-amelia: oklch(0.74 0.11 80);     /* soft warm gold */
+  /* Child accents (assigned) */
+  --child-alijah: oklch(0.6 0.11 240);     /* blue */
+  --child-olori: oklch(0.72 0.16 350);     /* pink */
+  --child-seraiah: oklch(0.53 0.16 300);   /* purple */
+  --child-amelia: oklch(0.64 0.15 330);    /* orchid purple */
+
+  /* Child accent palette (available for new children) */
+  --child-blue: oklch(0.6 0.11 240);
+  --child-pink: oklch(0.72 0.16 350);
+  --child-purple: oklch(0.53 0.16 300);
+  --child-violet: oklch(0.64 0.15 330);
+  --child-teal: oklch(0.62 0.09 195);
+  --child-coral: oklch(0.68 0.14 30);
+  --child-sage: oklch(0.62 0.08 150);
+  --child-gold: oklch(0.74 0.11 80);
 
   --sidebar: oklch(0.955 0.016 78);
   --sidebar-foreground: oklch(0.34 0.03 55);

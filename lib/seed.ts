@@ -3,12 +3,15 @@ import type {
   Child,
   CoverageRequest,
   CurriculumWeek,
+  GradeBand,
   Household,
   Lesson,
   ParentNote,
   ReadAloudBook,
   Resource,
+  ResourceType,
   Skill,
+  Subject,
   SupplyItem,
 } from './types'
 
@@ -123,7 +126,7 @@ export const weeks: CurriculumWeek[] = [
 
 // ---- Lessons (seeded for Week 1) --------------------------------------------
 
-export const lessons: Lesson[] = [
+const week1Lessons: Lesson[] = [
   // Shared family Bible — assigned to everyone
   {
     id: 'l-bible-w1',
@@ -321,7 +324,7 @@ export const lessons: Lesson[] = [
   },
 ]
 
-export const assignments: Assignment[] = [
+const week1Assignments: Assignment[] = [
   // Bible — everyone. Some already done.
   { id: 'a1', lessonId: 'l-bible-w1', childId: 'c-alijah', status: 'done', completedAt: '' },
   { id: 'a2', lessonId: 'l-bible-w1', childId: 'c-olori', status: 'done', completedAt: '' },
@@ -372,7 +375,7 @@ export const skills: Skill[] = [
   { id: 's21', childId: 'c-amelia', track: 'math', name: 'Sorting', status: 'learning' },
 ]
 
-export const resources: Resource[] = [
+const week1Resources: Resource[] = [
   { id: 'r1', title: 'Short A Word Family Cards', type: 'Flash Cards', subject: 'literacy', skill: 'Short A', gradeBand: '1st', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Venessa' },
   { id: 'r2', title: 'Number Bonds to 10 Practice', type: 'Math Practice', subject: 'math', skill: 'Number Bonds', gradeBand: '1st', weekNumber: 1, minutes: 15, owner: 'h-venessa', contributor: 'Venessa' },
   { id: 'r3', title: 'Letter A Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k', weekNumber: 1, minutes: 8, owner: 'shared', contributor: 'Damilola' },
@@ -381,6 +384,500 @@ export const resources: Resource[] = [
   { id: 'r6', title: 'Count & Color 1\u20135', type: 'Worksheet', subject: 'math', skill: 'Counting', gradeBand: 'pre-k', weekNumber: 1, minutes: 8, owner: 'shared', contributor: 'Damilola' },
   { id: 'r7', title: 'Genesis 1 Read-Aloud Mini Book', type: 'Mini Book', subject: 'bible', skill: 'Creation', gradeBand: 'k', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Venessa' },
   { id: 'r8', title: 'Short A Decodable Passage', type: 'Reading Passage', subject: 'literacy', skill: 'Decodable Reading', gradeBand: '1st', weekNumber: 1, minutes: 12, owner: 'h-venessa', contributor: 'Venessa' },
+]
+
+// ---- Weeks 2\u20135: data-driven curriculum ------------------------------------
+
+interface WeekPlan {
+  week: number
+  letter: string
+  letterSound: string
+  bibleTitle: string
+  bibleRef: string
+  verseRef: string
+  bibleTeach: string[]
+  bibleAsk: string[]
+  bibleWatch: string
+  alijah: {
+    mathTitle: string
+    mathSkill: string
+    mathNeed: string[]
+    mathTeach: string[]
+    mathAsk: string[]
+    mathWatch: string
+    litTitle: string
+    litInteractive: Lesson['interactive']
+    sciTitle: string
+  }
+  olori: {
+    litTitle: string
+    litNeed: string[]
+    litTeach: string[]
+    litAsk: string[]
+    litWatch: string
+    mathTitle: string
+    sciTitle: string
+  }
+  prekMathTitle: string
+  prekLitTitle: string
+  resources: {
+    title: string
+    type: ResourceType
+    subject: Subject
+    skill: string
+    gradeBand: GradeBand
+    minutes: number
+    owner: string
+    contributor: string
+  }[]
+}
+
+const weekPlans: WeekPlan[] = [
+  {
+    week: 2,
+    letter: 'N',
+    letterSound: '/n/ like Noah',
+    bibleTitle: 'Family Bible: Noah & God\u2019s Rainbow Promise',
+    bibleRef: 'Genesis 6\u20139',
+    verseRef: 'Genesis 9:13',
+    bibleTeach: [
+      'Read Genesis 6:9\u201322 and 9:8\u201316 together.',
+      'Talk about how Noah obeyed God even when it was hard.',
+      'Practice the memory verse: Genesis 9:13 \u2014 the rainbow is God\u2019s promise.',
+    ],
+    bibleAsk: ['Why did God send the rainbow?', 'How did Noah show he trusted God?'],
+    bibleWatch: 'Keep the flood gentle for little ones \u2014 focus on rescue and promise.',
+    alijah: {
+      mathTitle: 'Counting Animal Pairs (2s)',
+      mathSkill: 'Skip Counting by 2',
+      mathNeed: ['Pairs of small animal toys or counters'],
+      mathTeach: [
+        'Line up animals two by two, like they walked into the ark.',
+        'Count by 2s: 2, 4, 6, 8\u2026',
+        'Ask how many animals in 5 pairs.',
+      ],
+      mathAsk: ['What comes after 6 when we count by 2s?', 'How many feet do 2 animals have?'],
+      mathWatch: 'Slipping back to counting by 1s \u2014 point to each pair.',
+      litTitle: 'Short E: Decodable Reading',
+      litInteractive: 'phonics',
+      sciTitle: 'Sink or Float Investigation',
+    },
+    olori: {
+      litTitle: 'Letter Sound /n/ \u2014 Multisensory',
+      litNeed: ['Sand or salt tray (optional)'],
+      litTeach: [
+        'Say "/n/ like Noah." Repeat it 3 times together.',
+        'Show the letter N and 3 picture cards.',
+        'Trace N in the air, then on the table.',
+      ],
+      litAsk: ['What sound does N make?', 'Can you find something that starts with /n/?'],
+      litWatch: 'Confusing the letter name with the /n/ sound.',
+      mathTitle: 'Counting 0\u201310 with Animal Pairs',
+      sciTitle: 'Weather Watch: Clouds & Rain',
+    },
+    prekMathTitle: 'Count the Animals 1\u20136',
+    prekLitTitle: 'Letter N Exposure & Trace',
+    resources: [
+      { title: 'Noah\u2019s Ark Count by 2s', type: 'Math Practice', subject: 'math', skill: 'Skip Counting', gradeBand: '1st', minutes: 12, owner: 'h-venessa', contributor: 'Venessa' },
+      { title: 'Rainbow Color Words Tracing', type: 'Tracing', subject: 'literacy', skill: 'Color Words', gradeBand: 'k', minutes: 8, owner: 'shared', contributor: 'Venessa' },
+      { title: 'Letter N Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k', minutes: 8, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Sink or Float Recording Sheet', type: 'Science', subject: 'science', skill: 'Prediction', gradeBand: 'k', minutes: 10, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Two-by-Two Animal Match', type: 'Cut & Paste', subject: 'math', skill: 'Counting', gradeBand: 'pre-k', minutes: 8, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Noah Obeyed God Mini Book', type: 'Mini Book', subject: 'bible', skill: 'Obedience', gradeBand: 'k', minutes: 10, owner: 'shared', contributor: 'Venessa' },
+    ],
+  },
+  {
+    week: 3,
+    letter: 'J',
+    letterSound: '/j/ like Joseph',
+    bibleTitle: 'Family Bible: Joseph\u2019s Colorful Coat',
+    bibleRef: 'Genesis 37, 39\u201345',
+    verseRef: 'Genesis 50:20',
+    bibleTeach: [
+      'Read the story of Joseph and his brothers (Genesis 37).',
+      'Talk about how God was with Joseph even in hard times.',
+      'Practice the memory verse: Genesis 50:20.',
+    ],
+    bibleAsk: ['How did God turn a hard thing into good?', 'When is it hard to be kind to family?'],
+    bibleWatch: 'Big story \u2014 keep to the coat, the pit, and the happy ending.',
+    alijah: {
+      mathTitle: 'Growing Patterns & Skip Counting',
+      mathSkill: 'Patterns',
+      mathNeed: ['Colored counters or beads'],
+      mathTeach: [
+        'Make an AB pattern with two colors.',
+        'Extend it, then try an ABC pattern.',
+        'Ask what comes next and why.',
+      ],
+      mathAsk: ['What is the pattern rule?', 'Can you make your own ABC pattern?'],
+      mathWatch: 'Copying instead of predicting the next item.',
+      litTitle: 'Digraph SH: Decodable Reading',
+      litInteractive: 'phonics',
+      sciTitle: 'Color Mixing Lab',
+    },
+    olori: {
+      litTitle: 'Letter Sound /j/ \u2014 Multisensory',
+      litNeed: ['Picture cards for J words'],
+      litTeach: [
+        'Say "/j/ like Joseph." Repeat it 3 times.',
+        'Show the letter J and find J pictures.',
+        'Trace J in the air, then on paper.',
+      ],
+      litAsk: ['What sound does J make?', 'Can you name a J word?'],
+      litWatch: 'Mixing up /j/ and /g/ sounds.',
+      mathTitle: 'AB & ABC Patterns',
+      sciTitle: 'Texture Investigation',
+    },
+    prekMathTitle: 'Sort by Color',
+    prekLitTitle: 'Letter J Exposure & Trace',
+    resources: [
+      { title: 'Joseph\u2019s Coat Pattern Strips', type: 'Math Practice', subject: 'math', skill: 'Patterns', gradeBand: '1st', minutes: 10, owner: 'shared', contributor: 'Venessa' },
+      { title: 'Digraph SH Word Cards', type: 'Flash Cards', subject: 'literacy', skill: 'Digraph SH', gradeBand: '1st', minutes: 10, owner: 'h-venessa', contributor: 'Venessa' },
+      { title: 'Color Mixing Recording Sheet', type: 'Science', subject: 'science', skill: 'Color Mixing', gradeBand: 'k', minutes: 10, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Letter J Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k', minutes: 8, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Color Sorting Mats', type: 'Cut & Paste', subject: 'math', skill: 'Sorting', gradeBand: 'pre-k', minutes: 8, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Joseph Forgives Coloring Pages', type: 'Coloring', subject: 'bible', skill: 'Forgiveness', gradeBand: 'pre-k', minutes: 10, owner: 'shared', contributor: 'Venessa' },
+    ],
+  },
+  {
+    week: 4,
+    letter: 'M',
+    letterSound: '/m/ like Moses',
+    bibleTitle: 'Family Bible: Moses & the Red Sea',
+    bibleRef: 'Exodus 2\u201314',
+    verseRef: 'Exodus 14:14',
+    bibleTeach: [
+      'Read how God led His people out of Egypt (Exodus 14).',
+      'Talk about being brave because God is with us.',
+      'Practice the memory verse: Exodus 14:14.',
+    ],
+    bibleAsk: ['How did God make a way through the sea?', 'When do you need to be brave?'],
+    bibleWatch: 'Keep the plagues brief \u2014 focus on rescue and courage.',
+    alijah: {
+      mathTitle: 'Addition Word Problems within 10',
+      mathSkill: 'Addition',
+      mathNeed: ['Counters', 'Paper for drawing'],
+      mathTeach: [
+        'Tell a story: 6 people crossed, then 3 more.',
+        'Draw and write the number sentence 6 + 3 = 9.',
+        'Try one more story problem together.',
+      ],
+      mathAsk: ['What is the number sentence?', 'How did you know to add?'],
+      mathWatch: 'Adding without understanding the story \u2014 draw it first.',
+      litTitle: 'Long A: Decodable Reading',
+      litInteractive: 'phonics',
+      sciTitle: 'Light & Shadows',
+    },
+    olori: {
+      litTitle: 'Letter Sound /m/ \u2014 Multisensory',
+      litNeed: ['Sand or salt tray (optional)'],
+      litTeach: [
+        'Say "/m/ like Moses." Repeat it 3 times.',
+        'Show the letter M and find M pictures.',
+        'Trace M in the air, then on the table.',
+      ],
+      litAsk: ['What sound does M make?', 'Can you find something that starts with /m/?'],
+      litWatch: 'Reversing M and W \u2014 point to the mountains in M.',
+      mathTitle: 'Teen Numbers 11\u201315',
+      sciTitle: 'Sound & Vibration',
+    },
+    prekMathTitle: 'Count Objects 1\u20138',
+    prekLitTitle: 'Letter M Exposure & Trace',
+    resources: [
+      { title: 'Red Sea Addition Stories', type: 'Math Practice', subject: 'math', skill: 'Addition', gradeBand: '1st', minutes: 12, owner: 'h-venessa', contributor: 'Venessa' },
+      { title: 'Long A Decodable Passage', type: 'Reading Passage', subject: 'literacy', skill: 'Long A', gradeBand: '1st', minutes: 12, owner: 'h-venessa', contributor: 'Venessa' },
+      { title: 'Light & Shadow Recording Sheet', type: 'Science', subject: 'science', skill: 'Light', gradeBand: 'k', minutes: 10, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Letter M Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k', minutes: 8, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Teen Numbers 11\u201315 Mats', type: 'Worksheet', subject: 'math', skill: 'Teen Numbers', gradeBand: 'k', minutes: 10, owner: 'shared', contributor: 'Venessa' },
+      { title: 'Moses Was Brave Mini Book', type: 'Mini Book', subject: 'bible', skill: 'Courage', gradeBand: 'pre-k', minutes: 10, owner: 'shared', contributor: 'Venessa' },
+    ],
+  },
+  {
+    week: 5,
+    letter: 'D',
+    letterSound: '/d/ like David',
+    bibleTitle: 'Family Bible: David & Goliath',
+    bibleRef: '1 Samuel 17',
+    verseRef: '1 Samuel 17:47',
+    bibleTeach: [
+      'Read how young David trusted God against Goliath (1 Samuel 17).',
+      'Talk about how God makes us brave when we trust Him.',
+      'Practice the memory verse: 1 Samuel 17:47.',
+    ],
+    bibleAsk: ['Why wasn\u2019t David afraid?', 'What big thing can you trust God with?'],
+    bibleWatch: 'Focus on David\u2019s trust, not the battle.',
+    alijah: {
+      mathTitle: 'Measuring Length',
+      mathSkill: 'Measurement',
+      mathNeed: ['Ruler or measuring cubes', 'A few small objects'],
+      mathTeach: [
+        'Measure 3 objects with cubes, then a ruler.',
+        'Record how many units long each one is.',
+        'Compare which is longest and shortest.',
+      ],
+      mathAsk: ['Which object is longest?', 'How many cubes long is it?'],
+      mathWatch: 'Leaving gaps between units when measuring.',
+      litTitle: 'Digraph TH: Decodable Reading',
+      litInteractive: 'phonics',
+      sciTitle: 'Plant Growth: Start a Seed',
+    },
+    olori: {
+      litTitle: 'Letter Sound /d/ \u2014 Multisensory',
+      litNeed: ['Picture cards for D words'],
+      litTeach: [
+        'Say "/d/ like David." Repeat it 3 times.',
+        'Show the letter D and find D pictures.',
+        'Trace D in the air, then on paper.',
+      ],
+      litAsk: ['What sound does D make?', 'Can you name a D word?'],
+      litWatch: 'Reversing b and d \u2014 practice d starts with a line down.',
+      mathTitle: 'Compare Big & Small',
+      sciTitle: 'Plant Growth: Start a Seed',
+    },
+    prekMathTitle: 'Measure with Cubes',
+    prekLitTitle: 'Letter D Exposure & Trace',
+    resources: [
+      { title: 'Measure Like David Cards', type: 'Math Practice', subject: 'math', skill: 'Measurement', gradeBand: '1st', minutes: 12, owner: 'shared', contributor: 'Venessa' },
+      { title: 'Digraph TH Word Cards', type: 'Flash Cards', subject: 'literacy', skill: 'Digraph TH', gradeBand: '1st', minutes: 10, owner: 'h-venessa', contributor: 'Venessa' },
+      { title: 'Plant Growth Journal', type: 'Science', subject: 'science', skill: 'Life Cycles', gradeBand: 'k', minutes: 10, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Letter D Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k', minutes: 8, owner: 'shared', contributor: 'Damilola' },
+      { title: 'Big & Small Sorting Cards', type: 'Cut & Paste', subject: 'math', skill: 'Comparing', gradeBand: 'pre-k', minutes: 8, owner: 'shared', contributor: 'Damilola' },
+      { title: 'David Trusted God Coloring Pages', type: 'Coloring', subject: 'bible', skill: 'Trust', gradeBand: 'pre-k', minutes: 10, owner: 'shared', contributor: 'Venessa' },
+    ],
+  },
+]
+
+function buildWeek(plan: WeekPlan): {
+  lessons: Lesson[]
+  assignments: Assignment[]
+  resources: Resource[]
+} {
+  const w = plan.week
+  const lessons: Lesson[] = [
+    {
+      id: `l-bible-w${w}`,
+      title: plan.bibleTitle,
+      subject: 'bible',
+      activityType: 'mom-time',
+      weekNumber: w,
+      day: 'monday',
+      gradeBand: 'pre-k',
+      minutes: 7,
+      essential: true,
+      owner: 'shared',
+      youNeed: ['A Bible', 'Optional: crayons for coloring page'],
+      teach: plan.bibleTeach,
+      ask: plan.bibleAsk,
+      watchFor: plan.bibleWatch,
+      interactive: 'memory-verse',
+      printable: true,
+    },
+    // Alijah (1st)
+    {
+      id: `l-alijah-math-w${w}`,
+      title: plan.alijah.mathTitle,
+      subject: 'math',
+      activityType: 'mom-time',
+      weekNumber: w,
+      day: 'tuesday',
+      gradeBand: '1st',
+      minutes: 10,
+      essential: true,
+      owner: 'h-venessa',
+      youNeed: plan.alijah.mathNeed,
+      teach: plan.alijah.mathTeach,
+      ask: plan.alijah.mathAsk,
+      watchFor: plan.alijah.mathWatch,
+      interactive: 'math-manipulatives',
+      printable: true,
+    },
+    {
+      id: `l-alijah-lit-w${w}`,
+      title: plan.alijah.litTitle,
+      subject: 'literacy',
+      activityType: 'independent',
+      weekNumber: w,
+      day: 'tuesday',
+      gradeBand: '1st',
+      minutes: 10,
+      essential: true,
+      owner: 'h-venessa',
+      interactive: plan.alijah.litInteractive,
+      printable: true,
+    },
+    {
+      id: `l-alijah-sci-w${w}`,
+      title: plan.alijah.sciTitle,
+      subject: 'science',
+      activityType: 'hands-on',
+      weekNumber: w,
+      day: 'thursday',
+      gradeBand: '1st',
+      minutes: 12,
+      essential: false,
+      owner: 'shared',
+      printable: true,
+    },
+    // Olori-Joy (K)
+    {
+      id: `l-olori-lit-w${w}`,
+      title: plan.olori.litTitle,
+      subject: 'literacy',
+      activityType: 'mom-time',
+      weekNumber: w,
+      day: 'tuesday',
+      gradeBand: 'k',
+      minutes: 6,
+      essential: true,
+      owner: 'h-venessa',
+      youNeed: plan.olori.litNeed,
+      teach: plan.olori.litTeach,
+      ask: plan.olori.litAsk,
+      watchFor: plan.olori.litWatch,
+      interactive: 'phonics',
+      printable: true,
+    },
+    {
+      id: `l-olori-math-w${w}`,
+      title: plan.olori.mathTitle,
+      subject: 'math',
+      activityType: 'independent',
+      weekNumber: w,
+      day: 'tuesday',
+      gradeBand: 'k',
+      minutes: 8,
+      essential: true,
+      owner: 'h-venessa',
+      interactive: 'math-manipulatives',
+      printable: true,
+    },
+    {
+      id: `l-olori-sci-w${w}`,
+      title: plan.olori.sciTitle,
+      subject: 'science',
+      activityType: 'optional',
+      weekNumber: w,
+      day: 'thursday',
+      gradeBand: 'k',
+      minutes: 10,
+      essential: false,
+      owner: 'shared',
+    },
+    // Seraiah (Pre-K, Venessa)
+    {
+      id: `l-seraiah-math-w${w}`,
+      title: plan.prekMathTitle,
+      subject: 'math',
+      activityType: 'hands-on',
+      weekNumber: w,
+      day: 'tuesday',
+      gradeBand: 'pre-k',
+      minutes: 6,
+      essential: true,
+      owner: 'shared',
+      interactive: 'math-manipulatives',
+      printable: true,
+    },
+    {
+      id: `l-seraiah-lit-w${w}`,
+      title: plan.prekLitTitle,
+      subject: 'literacy',
+      activityType: 'hands-on',
+      weekNumber: w,
+      day: 'monday',
+      gradeBand: 'pre-k',
+      minutes: 5,
+      essential: true,
+      owner: 'shared',
+      interactive: 'phonics',
+      printable: true,
+    },
+    // Amelia (Pre-K, Damilola)
+    {
+      id: `l-amelia-math-w${w}`,
+      title: plan.prekMathTitle,
+      subject: 'math',
+      activityType: 'hands-on',
+      weekNumber: w,
+      day: 'tuesday',
+      gradeBand: 'pre-k',
+      minutes: 6,
+      essential: true,
+      owner: 'shared',
+      interactive: 'math-manipulatives',
+      printable: true,
+    },
+    {
+      id: `l-amelia-lit-w${w}`,
+      title: plan.prekLitTitle,
+      subject: 'literacy',
+      activityType: 'hands-on',
+      weekNumber: w,
+      day: 'monday',
+      gradeBand: 'pre-k',
+      minutes: 5,
+      essential: true,
+      owner: 'shared',
+      interactive: 'phonics',
+      printable: true,
+    },
+  ]
+
+  const assign = (lessonId: string, childId: string): Assignment => ({
+    id: `a-${lessonId}-${childId}`,
+    lessonId,
+    childId,
+    status: 'todo',
+  })
+
+  const assignments: Assignment[] = [
+    assign(`l-bible-w${w}`, 'c-alijah'),
+    assign(`l-bible-w${w}`, 'c-olori'),
+    assign(`l-bible-w${w}`, 'c-seraiah'),
+    assign(`l-bible-w${w}`, 'c-amelia'),
+    assign(`l-alijah-math-w${w}`, 'c-alijah'),
+    assign(`l-alijah-lit-w${w}`, 'c-alijah'),
+    assign(`l-alijah-sci-w${w}`, 'c-alijah'),
+    assign(`l-olori-lit-w${w}`, 'c-olori'),
+    assign(`l-olori-math-w${w}`, 'c-olori'),
+    assign(`l-olori-sci-w${w}`, 'c-olori'),
+    assign(`l-seraiah-math-w${w}`, 'c-seraiah'),
+    assign(`l-seraiah-lit-w${w}`, 'c-seraiah'),
+    assign(`l-amelia-math-w${w}`, 'c-amelia'),
+    assign(`l-amelia-lit-w${w}`, 'c-amelia'),
+  ]
+
+  const resources: Resource[] = plan.resources.map((r, i) => ({
+    id: `r-w${w}-${i + 1}`,
+    title: r.title,
+    type: r.type,
+    subject: r.subject,
+    skill: r.skill,
+    gradeBand: r.gradeBand,
+    weekNumber: w,
+    minutes: r.minutes,
+    owner: r.owner,
+    contributor: r.contributor,
+  }))
+
+  return { lessons, assignments, resources }
+}
+
+const generated = weekPlans.map(buildWeek)
+
+export const lessons: Lesson[] = [
+  ...week1Lessons,
+  ...generated.flatMap((g) => g.lessons),
+]
+
+export const assignments: Assignment[] = [
+  ...week1Assignments,
+  ...generated.flatMap((g) => g.assignments),
+]
+
+export const resources: Resource[] = [
+  ...week1Resources,
+  ...generated.flatMap((g) => g.resources),
 ]
 
 export const readAloud: ReadAloudBook[] = [

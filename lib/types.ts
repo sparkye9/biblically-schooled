@@ -30,6 +30,14 @@ export type ChildColor =
   | 'child-olori'
   | 'child-seraiah'
   | 'child-amelia'
+  | 'child-blue'
+  | 'child-pink'
+  | 'child-purple'
+  | 'child-violet'
+  | 'child-teal'
+  | 'child-coral'
+  | 'child-sage'
+  | 'child-gold'
 
 export interface Household {
   id: string
@@ -127,6 +135,9 @@ export interface Resource {
   owner: string
   contributor: string
   saved?: boolean
+  /** uploaded file details, when a sheet was attached */
+  fileName?: string
+  fileDataUrl?: string
 }
 
 export interface ReadAloudBook {

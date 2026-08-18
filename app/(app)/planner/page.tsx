@@ -6,6 +6,14 @@ import { assignedLessonsFor, childrenInView } from '@/lib/selectors'
 import { dayLabels, dayRhythm, subjectMeta } from '@/lib/ui'
 import { accentBg } from '@/lib/ui'
 import { PageHeader, ChildAvatar } from '@/components/primitives'
+import { ManageWeekDialog } from '@/components/manage-week-dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Card } from '@/components/ui/card'
 import { CalendarCheck, Star } from 'lucide-react'
 import type { DayName } from '@/lib/types'
@@ -23,7 +31,26 @@ export default function PlannerPage() {
         eyebrow={`Week ${store.currentWeek}`}
         title="Weekly Planner"
         description="The whole week at a glance — each day's rhythm and what every child is working on. Plan ahead and see where the light and heavy days fall."
-      />
+      >
+        <Select
+          value={String(store.currentWeek)}
+          onValueChange={(v) => store.setWeek(Number(v))}
+        >
+          <SelectTrigger className="w-40">
+            <SelectValue>{(v) => `Week ${v}`}</SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {[...store.weeks]
+              .sort((a, b) => a.number - b.number)
+              .map((w) => (
+                <SelectItem key={w.id} value={String(w.number)}>
+                  Week {w.number}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+        <ManageWeekDialog />
+      </PageHeader>
 
       {week && (
         <Card className="mb-6 flex flex-col gap-3 border-primary/20 bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between">

@@ -25,7 +25,7 @@ import type {
   SupplyItem,
 } from './types'
 
-const STORAGE_KEY = 'biblically-schooled-v1'
+const STORAGE_KEY = 'biblically-schooled-v2'
 
 interface State {
   households: Household[]
@@ -65,6 +65,7 @@ const initialState: State = {
 
 interface StoreContext extends State {
   setView: (view: string) => void
+  setWeek: (week: number) => void
   setActiveMom: (householdId: string) => void
   toggleAssignment: (assignmentId: string) => void
   setChildMode: (childId: string, on: boolean) => void
@@ -79,6 +80,10 @@ interface StoreContext extends State {
     color: ChildColor
   }) => void
   addResource: (input: Omit<Resource, 'id'>) => void
+  updateWeek: (weekId: string, patch: Partial<CurriculumWeek>) => void
+  addLesson: (input: Omit<Lesson, 'id'>, childIds: string[]) => void
+  updateLesson: (lessonId: string, patch: Partial<Lesson>) => void
+  deleteLesson: (lessonId: string) => void
   toggleResourceSaved: (resourceId: string) => void
   toggleSupply: (supplyId: string) => void
   addReadAloud: (title: string, householdId: string) => void
@@ -129,6 +134,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return {
       ...state,
       setView: (view) => patch({ currentView: view }),
+      setWeek: (week) => patch({ currentWeek: week }),
       setActiveMom: (householdId) =>
         setState((s) => ({
           ...s,
@@ -204,6 +210,41 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setState((s) => ({
           ...s,
           resources: [{ ...input, id: uid('r') }, ...s.resources],
+        })),
+      updateWeek: (weekId, patch) =>
+        setState((s) => ({
+          ...s,
+          weeks: s.weeks.map((w) =>
+            w.id === weekId ? { ...w, ...patch } : w,
+          ),
+        })),
+      addLesson: (input, childIds) =>
+        setState((s) => {
+          const id = uid('l')
+          const newAssignments: Assignment[] = childIds.map((childId) => ({
+            id: uid('a'),
+            lessonId: id,
+            childId,
+            status: 'todo',
+          }))
+          return {
+            ...s,
+            lessons: [...s.lessons, { ...input, id }],
+            assignments: [...s.assignments, ...newAssignments],
+          }
+        }),
+      updateLesson: (lessonId, patch) =>
+        setState((s) => ({
+          ...s,
+          lessons: s.lessons.map((l) =>
+            l.id === lessonId ? { ...l, ...patch } : l,
+          ),
+        })),
+      deleteLesson: (lessonId) =>
+        setState((s) => ({
+          ...s,
+          lessons: s.lessons.filter((l) => l.id !== lessonId),
+          assignments: s.assignments.filter((a) => a.lessonId !== lessonId),
         })),
       toggleResourceSaved: (resourceId) =>
         setState((s) => ({

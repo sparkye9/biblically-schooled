@@ -29,10 +29,14 @@ import {
 } from 'lucide-react'
 
 const CHILD_COLORS: { value: ChildColor; label: string }[] = [
-  { value: 'child-alijah', label: 'Blue' },
-  { value: 'child-olori', label: 'Rose' },
-  { value: 'child-seraiah', label: 'Sage' },
-  { value: 'child-amelia', label: 'Gold' },
+  { value: 'child-blue', label: 'Blue' },
+  { value: 'child-pink', label: 'Pink' },
+  { value: 'child-purple', label: 'Purple' },
+  { value: 'child-violet', label: 'Orchid' },
+  { value: 'child-teal', label: 'Teal' },
+  { value: 'child-coral', label: 'Coral' },
+  { value: 'child-sage', label: 'Sage' },
+  { value: 'child-gold', label: 'Gold' },
 ]
 
 const GRADE_BANDS: { value: Child['gradeBand']; grade: string; label: string }[] = [
@@ -231,7 +235,7 @@ function AddChild() {
     store.currentView === 'shared' ? store.households[0]?.id : store.currentView,
   )
   const [gradeBand, setGradeBand] = useState<Child['gradeBand']>('pre-k')
-  const [color, setColor] = useState<ChildColor>('child-amelia')
+  const [color, setColor] = useState<ChildColor>('child-teal')
 
   return (
     <Card className="p-5">
@@ -303,7 +307,7 @@ function AddChild() {
         </div>
         <div className="space-y-1.5">
           <Label>Color</Label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {CHILD_COLORS.map((c) => (
               <button
                 key={c.value}

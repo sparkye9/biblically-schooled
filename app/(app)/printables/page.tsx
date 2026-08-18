@@ -16,7 +16,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { Bookmark, BookmarkCheck, Plus, Printer, Search } from 'lucide-react'
+import {
+  Bookmark,
+  BookmarkCheck,
+  FileText,
+  Paperclip,
+  Plus,
+  Printer,
+  Search,
+} from 'lucide-react'
 import type { GradeBand, Resource, ResourceType, Subject } from '@/lib/types'
 
 const GRADE_LABELS: Record<GradeBand | 'all', string> = {
@@ -168,6 +176,18 @@ function ResourceCard({
         <p className="font-bold leading-snug text-foreground">{resource.title}</p>
         <p className="text-xs text-muted-foreground">{resource.skill}</p>
       </div>
+      {resource.fileDataUrl && (
+        <a
+          href={resource.fileDataUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          download={resource.fileName}
+          className="inline-flex items-center gap-1.5 self-start rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
+        >
+          <FileText className="size-3.5" />
+          {resource.fileName ?? 'Open sheet'}
+        </a>
+      )}
       <div className="mt-auto flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
         <span className="font-semibold">
           {GRADE_LABELS[resource.gradeBand]} · {resource.minutes} min
@@ -185,8 +205,28 @@ function ContributeForm() {
   const [subject, setSubject] = useState<Subject>('literacy')
   const [gradeBand, setGradeBand] = useState<GradeBand>('pre-k')
   const [skill, setSkill] = useState('')
+  const [fileName, setFileName] = useState<string | undefined>()
+  const [fileDataUrl, setFileDataUrl] = useState<string | undefined>()
 
   const active = store.households.find((h) => h.id === store.activeMomHouseholdId)
+
+  function handleFile(file: File | undefined) {
+    if (!file) {
+      setFileName(undefined)
+      setFileDataUrl(undefined)
+      return
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Please choose a file under 4 MB.')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      setFileName(file.name)
+      setFileDataUrl(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
 
   return (
     <Card className="mt-8 p-5">
@@ -218,9 +258,13 @@ function ContributeForm() {
             owner: 'shared',
             contributor: active?.momName ?? 'You',
             saved: true,
+            fileName,
+            fileDataUrl,
           })
           setTitle('')
           setSkill('')
+          setFileName(undefined)
+          setFileDataUrl(undefined)
         }}
         className="grid gap-3 sm:grid-cols-2"
       >
@@ -289,6 +333,37 @@ function ContributeForm() {
               ))}
             </SelectContent>
           </Select>
+        </div>
+        <div className="space-y-1.5 sm:col-span-2">
+          <Label htmlFor="res-file">Upload sheet (optional)</Label>
+          <label
+            htmlFor="res-file"
+            className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted/50"
+          >
+            <Paperclip className="size-4 shrink-0" />
+            <span className="min-w-0 flex-1 truncate">
+              {fileName ?? 'Attach a PDF or image (max 4 MB)'}
+            </span>
+            {fileName && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleFile(undefined)
+                }}
+                className="shrink-0 font-semibold text-destructive"
+              >
+                Remove
+              </button>
+            )}
+          </label>
+          <input
+            id="res-file"
+            type="file"
+            accept="application/pdf,image/*"
+            className="sr-only"
+            onChange={(e) => handleFile(e.target.files?.[0])}
+          />
         </div>
         <div className="flex items-end sm:col-span-2">
           <Button type="submit" className="w-full gap-1.5" disabled={!title.trim()}>
