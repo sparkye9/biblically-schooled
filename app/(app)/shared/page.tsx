@@ -1,21 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { useStore } from '@/lib/store'
 import { accentBg } from '@/lib/ui'
 import { PageHeader, ChildAvatar, StatChip } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import {
-  Check,
-  HeartHandshake,
-  Share2,
-  Sparkles,
-  Users2,
-  Home,
-} from 'lucide-react'
+import { Share2, Sparkles, Users2, Home } from 'lucide-react'
 
 export default function SharedPlanningPage() {
   const store = useStore()
@@ -25,132 +15,23 @@ export default function SharedPlanningPage() {
   return (
     <div>
       <PageHeader
-        eyebrow="Co-op"
+        eyebrow="Together"
         title="Shared Planning"
-        description="Plan together across every family. See who's teaching, cover for each other on hard days, and share the resources you've made."
+        description="You each run your own homeschool, but you can pool the lessons and printables you've made. See both families at a glance and share what's working."
       />
 
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatChip label="Families" value={String(store.households.length)} />
         <StatChip label="Children" value={String(totalChildren)} />
         <StatChip label="Shared resources" value={String(sharedResources.length)} />
-        <StatChip
-          label="Week"
-          value={`#${store.currentWeek}`}
-        />
+        <StatChip label="Week" value={`#${store.currentWeek}`} />
       </div>
 
       <div className="space-y-8">
-        <CoverageSection />
         <FamiliesSection />
         <SharedResourcesSection />
       </div>
     </div>
-  )
-}
-
-function CoverageSection() {
-  const store = useStore()
-  const [reason, setReason] = useState('')
-  const active = store.households.find((h) => h.id === store.activeMomHouseholdId)
-  const open = store.coverageRequests.filter((c) => !c.resolved)
-
-  return (
-    <section>
-      <h2 className="mb-3 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
-        <HeartHandshake className="size-5 text-primary" /> Coverage & care
-      </h2>
-
-      <Card className="mb-4 p-5">
-        <p className="text-sm text-muted-foreground">
-          Rough morning? Let the co-op know you&apos;re out and someone can pick up
-          your children&apos;s essentials.
-        </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            store.requestCoverage(store.activeMomHouseholdId, reason.trim())
-            setReason('')
-          }}
-          className="mt-3 flex flex-col gap-2 sm:flex-row"
-        >
-          <Input
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            placeholder={`Reason (e.g. ${active?.momName ?? 'I'} am home sick)`}
-            className="flex-1"
-          />
-          <Button type="submit" className="gap-1.5">
-            <HeartHandshake className="size-4" /> Request coverage
-          </Button>
-        </form>
-      </Card>
-
-      {open.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border bg-muted/40 px-4 py-6 text-center text-sm text-muted-foreground">
-          No open coverage requests — everyone&apos;s good today.
-        </p>
-      ) : (
-        <ul className="space-y-3">
-          {open.map((req) => {
-            const from = store.households.find((h) => h.id === req.fromHouseholdId)
-            const isMine = req.fromHouseholdId === store.activeMomHouseholdId
-            const helping = req.helpers.includes(store.activeMomHouseholdId)
-            return (
-              <li key={req.id}>
-                <Card className="flex flex-col gap-3 border-accent bg-accent/30 p-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-start gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-foreground">
-                      <HeartHandshake className="size-5" />
-                    </span>
-                    <div>
-                      <p className="text-sm font-bold text-foreground">
-                        {from?.momName ?? 'A mom'} needs coverage
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {req.reason || 'Out today — could use a hand with school.'}
-                      </p>
-                      {req.helpers.length > 0 && (
-                        <p className="mt-1 text-xs font-semibold text-foreground">
-                          {req.helpers
-                            .map(
-                              (h) =>
-                                store.households.find((x) => x.id === h)?.momName,
-                            )
-                            .filter(Boolean)
-                            .join(', ')}{' '}
-                          offered to help
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 gap-2 pl-12 sm:pl-0">
-                    {isMine ? (
-                      <Button size="sm" onClick={() => store.resolveCoverage(req.id)}>
-                        <Check className="size-4" /> I&apos;m back
-                      </Button>
-                    ) : helping ? (
-                      <Button size="sm" variant="secondary" disabled>
-                        <Check className="size-4" /> You&apos;re helping
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          store.offerHelp(req.id, store.activeMomHouseholdId)
-                        }
-                      >
-                        <HeartHandshake className="size-4" /> I can help
-                      </Button>
-                    )}
-                  </div>
-                </Card>
-              </li>
-            )
-          })}
-        </ul>
-      )}
-    </section>
   )
 }
 
@@ -160,7 +41,7 @@ function FamiliesSection() {
   return (
     <section>
       <h2 className="mb-3 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
-        <Users2 className="size-5 text-primary" /> Families in the co-op
+        <Users2 className="size-5 text-primary" /> Both homeschools
       </h2>
       <div className="grid gap-4 md:grid-cols-2">
         {store.households.map((h) => {
@@ -222,7 +103,7 @@ function SharedResourcesSection() {
   return (
     <section>
       <h2 className="mb-3 flex items-center gap-2 font-serif text-xl font-semibold text-foreground">
-        <Share2 className="size-5 text-primary" /> Shared by the co-op
+        <Share2 className="size-5 text-primary" /> Shared between you
       </h2>
       {shared.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border bg-muted/40 px-4 py-6 text-center text-sm text-muted-foreground">

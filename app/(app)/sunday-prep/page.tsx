@@ -52,7 +52,7 @@ const STEPS: Step[] = [
     title: 'Glance at the week\u2019s rhythm',
     minutes: 2,
     Icon: CalendarCheck,
-    body: 'See the Monday-introduce, Friday-review flow and note your co-op day so nothing sneaks up.',
+    body: 'See the Monday-introduce, Friday-review flow and note your lighter day so nothing sneaks up.',
     href: '/planner',
     hrefLabel: 'Open Weekly Planner',
   },

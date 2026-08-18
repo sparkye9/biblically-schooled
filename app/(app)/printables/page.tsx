@@ -72,7 +72,7 @@ export default function PrintablesPage() {
       <PageHeader
         eyebrow="Ready to Print"
         title="Printables"
-        description="Worksheets, tracing pages, mini books, and flash cards contributed by your co-op. Save the ones you want, then send them to the Print Center."
+        description="Worksheets, tracing pages, mini books, and flash cards shared between your homeschools. Save the ones you want, then send them to the Print Center."
       >
         <Button
           variant={savedOnly ? 'default' : 'outline'}
@@ -199,7 +199,7 @@ function ContributeForm() {
             Contribute a printable
           </h2>
           <p className="text-xs text-muted-foreground">
-            Add one to the shared basket for the whole co-op.
+            Share one so both homeschools can use it.
           </p>
         </div>
       </div>

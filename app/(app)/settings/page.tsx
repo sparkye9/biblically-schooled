@@ -49,7 +49,7 @@ export default function SettingsPage() {
       <PageHeader
         eyebrow="Account"
         title="Settings & Profiles"
-        description="Manage the moms and children in your co-op, switch who you're planning for, and keep everyone's rhythm running smoothly."
+        description="Manage the moms and children across your homeschools, switch who you're planning for, and keep everyone's rhythm running smoothly."
       />
 
       <div className="space-y-8">
@@ -147,7 +147,7 @@ function HouseholdProfiles() {
                   <div className="flex items-center gap-2 text-sm">
                     <HeartHandshake className="size-4 text-primary" />
                     <span className="font-medium text-foreground">Away today</span>
-                    <span className="text-muted-foreground">— ask for coverage</span>
+                    <span className="text-muted-foreground">— pause this week&apos;s plan</span>
                   </div>
                   <Switch
                     checked={!!h.away}

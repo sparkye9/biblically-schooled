@@ -32,7 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { CoverageBanner } from '@/components/coverage-banner'
 
 const nav = [
   { href: '/', label: 'Home', Icon: Home },
@@ -91,7 +90,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main column */}
       <div className="lg:pl-64">
         <TopBar />
-        <CoverageBanner />
         <main className="mx-auto w-full max-w-6xl px-4 pb-28 pt-4 sm:px-6 lg:pb-12 lg:pt-6">
           {children}
         </main>

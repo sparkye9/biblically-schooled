@@ -91,7 +91,7 @@ export const dayLabels: Record<string, string> = {
 export const dayRhythm: Record<string, string> = {
   monday: 'Introduce',
   tuesday: 'Practice + Explore',
-  wednesday: 'Co-op Day',
+  wednesday: 'Field Trip Day',
   thursday: 'Deepen',
   friday: 'Review + Show What You Know',
 }
