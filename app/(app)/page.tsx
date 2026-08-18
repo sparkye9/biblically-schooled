@@ -107,7 +107,7 @@ export default function HomePage() {
             return (
               <Link
                 key={child.id}
-                href={`/children/${child.id}`}
+                href={`/kid/${child.id}`}
                 className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-4 transition-shadow hover:shadow-md"
               >
                 <ProgressRing value={done} total={total} color={child.color} />

@@ -127,6 +127,11 @@ export interface Resource {
   owner: string
   contributor: string
   saved?: boolean
+  /** optional local file upload backing */
+  fileKey?: string
+  fileName?: string
+  fileType?: string
+  fileSize?: number
 }
 
 export interface ReadAloudBook {

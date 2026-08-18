@@ -66,18 +66,25 @@ const initialState: State = {
 interface StoreContext extends State {
   setView: (view: string) => void
   setActiveMom: (householdId: string) => void
+  setCurrentWeek: (week: number) => void
+  setCurrentDay: (day: string) => void
   toggleAssignment: (assignmentId: string) => void
   setChildMode: (childId: string, on: boolean) => void
   setLowDistraction: (childId: string, on: boolean) => void
   setSkillStatus: (skillId: string, status: SkillStatus) => void
-  addHousehold: (name: string, momName: string) => void
+  addHousehold: (name: string, momName: string) => string
   addChild: (input: {
     name: string
     grade: string
     gradeBand: Child['gradeBand']
     householdId: string
     color: ChildColor
-  }) => void
+  }) => string
+  addWeek: (week: Omit<CurriculumWeek, 'id' | 'number'>) => number
+  updateWeek: (id: string, patch: Partial<CurriculumWeek>) => void
+  addLesson: (lesson: Omit<Lesson, 'id'>) => string
+  updateLesson: (id: string, patch: Partial<Lesson>) => void
+  setLessonAssignments: (lessonId: string, childIds: string[]) => void
   addResource: (input: Omit<Resource, 'id'>) => void
   toggleResourceSaved: (resourceId: string) => void
   toggleSupply: (supplyId: string) => void
@@ -135,6 +142,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           activeMomHouseholdId: householdId,
           currentView: householdId,
         })),
+      setCurrentWeek: (week) => patch({ currentWeek: week }),
+      setCurrentDay: (day) => patch({ currentDay: day }),
       toggleAssignment: (assignmentId) =>
         setState((s) => ({
           ...s,
@@ -170,26 +179,30 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             sk.id === skillId ? { ...sk, status } : sk,
           ),
         })),
-      addHousehold: (name, momName) =>
+      addHousehold: (name, momName) => {
+        const id = uid('h')
         setState((s) => ({
           ...s,
           households: [
             ...s.households,
             {
-              id: uid('h'),
+              id,
               name: name || `${momName}'s Homeschool`,
               momName,
               momInitial: momName.charAt(0).toUpperCase() || 'M',
             },
           ],
-        })),
-      addChild: (input) =>
+        }))
+        return id
+      },
+      addChild: (input) => {
+        const id = uid('c')
         setState((s) => ({
           ...s,
           children: [
             ...s.children,
             {
-              id: uid('c'),
+              id,
               name: input.name,
               grade: input.grade,
               gradeBand: input.gradeBand,
@@ -198,6 +211,48 @@ export function StoreProvider({ children }: { children: ReactNode }) {
               childMode: false,
               lowDistraction: false,
             },
+          ],
+        }))
+        return id
+      },
+      addWeek: (week) => {
+        const nextNumber = Math.max(0, ...state.weeks.map((w) => w.number)) + 1
+        const id = uid('w')
+        setState((s) => ({
+          ...s,
+          weeks: [...s.weeks, { ...week, id, number: nextNumber }],
+        }))
+        return nextNumber
+      },
+      updateWeek: (id, patch) =>
+        setState((s) => ({
+          ...s,
+          weeks: s.weeks.map((w) => (w.id === id ? { ...w, ...patch } : w)),
+        })),
+      addLesson: (lesson) => {
+        const id = uid('l')
+        setState((s) => ({
+          ...s,
+          lessons: [...s.lessons, { ...lesson, id }],
+        }))
+        return id
+      },
+      updateLesson: (id, patch) =>
+        setState((s) => ({
+          ...s,
+          lessons: s.lessons.map((l) => (l.id === id ? { ...l, ...patch } : l)),
+        })),
+      setLessonAssignments: (lessonId, childIds) =>
+        setState((s) => ({
+          ...s,
+          assignments: [
+            ...s.assignments.filter((a) => a.lessonId !== lessonId),
+            ...childIds.map((childId) => ({
+              id: uid('a'),
+              lessonId,
+              childId,
+              status: 'todo' as const,
+            })),
           ],
         })),
       addResource: (input) =>
