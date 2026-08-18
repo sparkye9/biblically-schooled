@@ -116,17 +116,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           )
         })}
         <DropdownMenu open={moreOpen} onOpenChange={setMoreOpen}>
-          <DropdownMenuTrigger asChild>
-            <button className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold text-muted-foreground">
-              <MoreHorizontal className="size-5" />
-              More
-            </button>
+          <DropdownMenuTrigger className="flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold text-muted-foreground">
+            <MoreHorizontal className="size-5" />
+            More
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" side="top" className="mb-2 w-52">
             {nav
               .filter((n) => !mobileNav.some((m) => m.href === n.href))
               .map(({ href, label, Icon }) => (
-                <DropdownMenuItem key={href} asChild>
+                <DropdownMenuItem key={href}>
                   <Link href={href} className="flex items-center gap-2">
                     <Icon className="size-4" />
                     {label}
@@ -187,8 +185,7 @@ export function HouseholdSwitcher() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-left shadow-sm transition-colors hover:bg-accent">
+      <DropdownMenuTrigger className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-left shadow-sm transition-colors hover:bg-accent">
           <span className="flex size-7 items-center justify-center rounded-full bg-primary/15 text-primary">
             {currentView === 'shared' ? (
               <Users2 className="size-4" />
@@ -205,7 +202,6 @@ export function HouseholdSwitcher() {
             <span className="text-sm font-bold">{current.label}</span>
           </span>
           <ChevronDown className="size-4 text-muted-foreground" />
-        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel>Switch view</DropdownMenuLabel>

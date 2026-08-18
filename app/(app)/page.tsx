@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import {
   Play,
   Printer,
@@ -14,7 +15,7 @@ import {
 import { useStore } from '@/lib/store'
 import { assignedLessonsFor, childrenInView, countDone } from '@/lib/selectors'
 import { ChildAvatar, ProgressRing } from '@/components/primitives'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { dayLabels, dayRhythm } from '@/lib/ui'
 
 export default function HomePage() {
@@ -37,8 +38,12 @@ export default function HomePage() {
       ? 'friends'
       : households.find((h) => h.id === currentView)?.momName ?? 'there'
 
-  const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+  const [greeting, setGreeting] = useState('Good morning')
+
+  useEffect(() => {
+    const hour = new Date().getHours()
+    setGreeting(hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening')
+  }, [])
 
   return (
     <div className="space-y-8">
@@ -64,11 +69,12 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:items-end">
-              <Button asChild size="lg" className="h-12 rounded-2xl px-8 text-base">
-                <Link href="/start-school">
-                  <Play className="size-5" /> Start School
-                </Link>
-              </Button>
+              <Link
+                href="/start-school"
+                className={buttonVariants({ size: 'lg', className: 'h-12 rounded-2xl px-8 text-base' })}
+              >
+                <Play className="size-5" /> Start School
+              </Link>
               <p className="text-xs text-muted-foreground">
                 Guided, one step at a time
               </p>
