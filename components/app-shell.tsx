@@ -37,16 +37,16 @@ import { CoverageBanner } from '@/components/coverage-banner'
 const nav = [
   { href: '/', label: 'Home', Icon: Home },
   { href: '/today', label: 'Today', Icon: CalendarDays },
-  { href: '/week', label: 'Week', Icon: CalendarRange },
+  { href: '/bible', label: 'Bible & Theme', Icon: BookOpen },
   { href: '/children', label: 'Children', Icon: Users },
+  { href: '/progress', label: 'Progress', Icon: TrendingUp },
+  { href: '/planner', label: 'Weekly Planner', Icon: LayoutGrid },
   { href: '/shared', label: 'Shared Planning', Icon: Users2 },
   { href: '/printables', label: 'Printables', Icon: FolderOpen },
   { href: '/print-center', label: 'Print Center', Icon: Printer },
-  { href: '/progress', label: 'Progress', Icon: TrendingUp },
-  { href: '/planner', label: 'Planner', Icon: LayoutGrid },
-  { href: '/library', label: 'Library', Icon: Library },
+  { href: '/library', label: 'Read-Aloud Library', Icon: Library },
   { href: '/supplies', label: 'Supplies', Icon: Package },
-  { href: '/prep', label: 'Prep My Week', Icon: BookOpen },
+  { href: '/sunday-prep', label: 'Sunday Prep', Icon: CalendarRange },
   { href: '/settings', label: 'Settings', Icon: Settings },
 ]
 
