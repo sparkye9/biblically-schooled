@@ -394,6 +394,61 @@ export const weeks: CurriculumWeek[] = [
     art: ['He Is Risen! craft', 'He Is Risen! coloring page'],
     science: ['Sink or Float? A Real Investigation'],
   },
+  {
+    id: 'w31',
+    number: 31,
+    theme: 'The Great Commission: Go and Tell',
+    bibleRef: 'Matthew 28',
+    bigIdea: 'And remember: I am with you always, to the very end.',
+    memoryVerse: 'Go therefore and make disciples of all the nations.',
+    memoryVerseRef: 'Matthew 28:19',
+    art: ['The Great Commission: Go and Tell craft', 'The Great Commission: Go and Tell coloring page'],
+    science: ['Healthy Me: Sleep, Water, Move'],
+  },
+  {
+    id: 'w32',
+    number: 32,
+    theme: 'Pentecost: The Church Begins',
+    bibleRef: 'Acts 2',
+    bigIdea: 'Peter preached, and three thousand people believed! The church was born - and it is still growing today.',
+    memoryVerse: 'You shall be witnesses to Me.',
+    memoryVerseRef: 'Acts 1:8',
+    art: ['Pentecost: The Church Begins craft', 'Pentecost: The Church Begins coloring page'],
+    science: ['My Science Choice'],
+  },
+  {
+    id: 'w33',
+    number: 33,
+    theme: 'Growing Good Fruit',
+    bibleRef: 'Galatians 5',
+    bigIdea: 'This week\'s big project: show what YOU have grown this year.',
+    memoryVerse: 'The fruit of the Spirit is love, joy, peace.',
+    memoryVerseRef: 'Galatians 5:22',
+    art: ['Growing Good Fruit craft', 'Growing Good Fruit coloring page'],
+    science: ['Final Project: Observe & Record'],
+  },
+  {
+    id: 'w34',
+    number: 34,
+    theme: 'God Makes All Things New',
+    bibleRef: 'Revelation 21',
+    bigIdea: 'Every good story we studied points to this happy ending.',
+    memoryVerse: 'Behold, I make all things new.',
+    memoryVerseRef: 'Revelation 21:5',
+    art: ['God Makes All Things New craft', 'God Makes All Things New coloring page'],
+    science: ['Science Favorites: Enrichment Day'],
+  },
+  {
+    id: 'w35',
+    number: 35,
+    theme: 'Celebration: Give Thanks!',
+    bibleRef: 'Psalm 107',
+    bigIdea: 'Today we celebrate, present our projects, and praise Him.',
+    memoryVerse: 'Give thanks to the LORD, for He is good!',
+    memoryVerseRef: 'Psalm 107:1',
+    art: ['Celebration: Give Thanks! craft', 'Celebration: Give Thanks! coloring page'],
+    science: ['My Year in Science'],
+  },
 ]
 
 // ---------------------------------------------------------------------------
@@ -934,6 +989,91 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
       science: { title: 'Sink or Float? A Real Investigation', minutes: 12, essential: false, printable: true },
     },
   },
+  31: {
+    prek: {
+      math: { title: 'Set the Table: One Each', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter Review A-G', minutes: 5, essential: true, printable: true },
+      science: { title: 'Healthy Me: Sleep, Water, Move', minutes: 12, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Picnic Helper: Count It Out', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'CVC Family: -at, -ag', minutes: 7, essential: true, printable: true },
+      science: { title: 'Healthy Me: Sleep, Water, Move', minutes: 12, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Applied Project: Plan a Picnic', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Ending -ing', minutes: 10, essential: true, printable: true },
+      science: { title: 'Healthy Me: Sleep, Water, Move', minutes: 12, essential: false, printable: true },
+    },
+  },
+  32: {
+    prek: {
+      math: { title: 'Count 1-10 Review', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter Review H-N', minutes: 5, essential: true, printable: true },
+      science: { title: 'My Science Choice', minutes: 12, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Big Year Review', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'CVC Family: -it, -ig', minutes: 7, essential: true, printable: true },
+      science: { title: 'My Science Choice', minutes: 12, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Big Year Review 1', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Ending -ed', minutes: 10, essential: true, printable: true },
+      science: { title: 'My Science Choice', minutes: 12, essential: false, printable: true },
+    },
+  },
+  33: {
+    prek: {
+      math: { title: 'Project: Count & Color Graph', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter Review O-U', minutes: 5, essential: true, printable: true },
+      science: { title: 'Final Project: Observe & Record', minutes: 12, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Project: Count & Graph', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'CVC Family: -og, -op', minutes: 7, essential: true, printable: true },
+      science: { title: 'Final Project: Observe & Record', minutes: 12, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Project Math: Measure & Graph', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Syllables: Clap It Out', minutes: 10, essential: true, printable: true },
+      science: { title: 'Final Project: Observe & Record', minutes: 12, essential: false, printable: true },
+    },
+  },
+  34: {
+    prek: {
+      math: { title: 'Show What You Know', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter Review V-Z', minutes: 5, essential: true, printable: true },
+      science: { title: 'Science Favorites: Enrichment Day', minutes: 12, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Show What You Know', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'CVC Family: -ug, -ed', minutes: 7, essential: true, printable: true },
+      science: { title: 'Science Favorites: Enrichment Day', minutes: 12, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Final Assessment', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Reading Assessment & Tiny Story', minutes: 10, essential: true, printable: true },
+      science: { title: 'Science Favorites: Enrichment Day', minutes: 12, essential: false, printable: true },
+    },
+  },
+  35: {
+    prek: {
+      math: { title: 'Numbers & Stars Party', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'I Know My ABCs!', minutes: 5, essential: true, printable: true },
+      science: { title: 'My Year in Science', minutes: 12, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Numbers I Know: 1-20', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'I Can Read! Celebration', minutes: 7, essential: true, printable: true },
+      science: { title: 'My Year in Science', minutes: 12, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Celebration Math', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Celebration Words & My Letter', minutes: 10, essential: true, printable: true },
+      science: { title: 'My Year in Science', minutes: 12, essential: false, printable: true },
+    },
+  },
 }
 
 const BIBLE_TITLES: Record<number, string> = {
@@ -967,9 +1107,14 @@ const BIBLE_TITLES: Record<number, string> = {
   28: 'Family Bible: Jesus Calms the Storm',
   29: 'Family Bible: The Cross: God So Loved',
   30: 'Family Bible: He Is Risen!',
+  31: 'Family Bible: The Great Commission: Go and Tell',
+  32: 'Family Bible: Pentecost: The Church Begins',
+  33: 'Family Bible: Growing Good Fruit',
+  34: 'Family Bible: God Makes All Things New',
+  35: 'Family Bible: Celebration: Give Thanks!',
 }
 
-const BIBLE_MINUTES: Record<number, number> = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 7, 7: 7, 8: 7, 9: 7, 10: 7, 11: 7, 12: 7, 13: 7, 14: 7, 15: 7, 16: 7, 17: 7, 18: 7, 19: 7, 20: 7, 21: 7, 22: 7, 23: 7, 24: 7, 25: 7, 26: 7, 27: 7, 28: 7, 29: 7, 30: 7 }
+const BIBLE_MINUTES: Record<number, number> = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 7, 7: 7, 8: 7, 9: 7, 10: 7, 11: 7, 12: 7, 13: 7, 14: 7, 15: 7, 16: 7, 17: 7, 18: 7, 19: 7, 20: 7, 21: 7, 22: 7, 23: 7, 24: 7, 25: 7, 26: 7, 27: 7, 28: 7, 29: 7, 30: 7, 31: 7, 32: 7, 33: 7, 34: 7, 35: 7 }
 
 const SUBJECT_KEYS: Array<'math' | 'literacy' | 'science'> = [
   'math',
@@ -1121,7 +1266,7 @@ const PACKET_CHILD_FOLDER: Record<string, string> = {
   'c-amelia': 'Amelia',
 }
 
-const PACKET_WEEKS = Array.from({ length: 30 }, (_, i) => i + 1)
+const PACKET_WEEKS = Array.from({ length: 35 }, (_, i) => i + 1)
 
 function weekFolder(weekNumber: number) {
   return `week-${String(weekNumber).padStart(2, '0')}`
