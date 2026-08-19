@@ -25,7 +25,7 @@ import type {
   SupplyItem,
 } from './types'
 
-const STORAGE_KEY = 'biblically-schooled-v1'
+const STORAGE_KEY = 'biblically-schooled-v2'
 
 interface State {
   households: Household[]
