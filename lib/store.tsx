@@ -13,7 +13,6 @@ import type {
   Assignment,
   Child,
   ChildColor,
-  CoverageRequest,
   CurriculumWeek,
   Household,
   Lesson,
@@ -37,7 +36,6 @@ interface State {
   resources: Resource[]
   readAloud: ReadAloudBook[]
   supplies: SupplyItem[]
-  coverageRequests: CoverageRequest[]
   parentNotes: ParentNote[]
   currentView: string // 'shared' | householdId
   activeMomHouseholdId: string
@@ -55,7 +53,6 @@ const initialState: State = {
   resources: seed.resources,
   readAloud: seed.readAloud,
   supplies: seed.supplies,
-  coverageRequests: seed.coverageRequests,
   parentNotes: seed.parentNotes,
   currentView: 'h-venessa',
   activeMomHouseholdId: 'h-venessa',
@@ -84,6 +81,7 @@ interface StoreContext extends State {
   updateWeek: (id: string, patch: Partial<CurriculumWeek>) => void
   addLesson: (lesson: Omit<Lesson, 'id'>) => string
   updateLesson: (id: string, patch: Partial<Lesson>) => void
+  deleteLesson: (id: string) => void
   setLessonAssignments: (lessonId: string, childIds: string[]) => void
   addResource: (input: Omit<Resource, 'id'>) => void
   toggleResourceSaved: (resourceId: string) => void
@@ -91,10 +89,6 @@ interface StoreContext extends State {
   toggleSupply: (supplyId: string) => void
   addReadAloud: (title: string, householdId: string) => void
   saveNote: (note: Omit<ParentNote, 'id'>) => void
-  toggleAway: (householdId: string) => void
-  requestCoverage: (householdId: string, reason: string) => void
-  offerHelp: (requestId: string, helperHouseholdId: string) => void
-  resolveCoverage: (requestId: string) => void
   assignLesson: (lessonId: string, childId: string) => void
   reset: () => void
 }
@@ -123,7 +117,6 @@ function mergeState(seed: State, saved: Partial<State>): State {
     'resources',
     'readAloud',
     'supplies',
-    'coverageRequests',
     'parentNotes',
   ]
 
@@ -280,6 +273,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ...s,
           lessons: s.lessons.map((l) => (l.id === id ? { ...l, ...patch } : l)),
         })),
+      deleteLesson: (id) =>
+        setState((s) => ({
+          ...s,
+          lessons: s.lessons.filter((l) => l.id !== id),
+          assignments: s.assignments.filter((a) => a.lessonId !== id),
+        })),
       setLessonAssignments: (lessonId, childIds) =>
         setState((s) => ({
           ...s,
@@ -335,53 +334,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ...s,
           parentNotes: [{ ...note, id: uid('n') }, ...s.parentNotes],
         })),
-      toggleAway: (householdId) =>
-        setState((s) => ({
-          ...s,
-          households: s.households.map((h) =>
-            h.id === householdId ? { ...h, away: !h.away } : h,
-          ),
-        })),
-      requestCoverage: (householdId, reason) =>
-        setState((s) => ({
-          ...s,
-          coverageRequests: [
-            {
-              id: uid('cov'),
-              fromHouseholdId: householdId,
-              reason,
-              createdAt: new Date().toISOString(),
-              helpers: [],
-              resolved: false,
-            },
-            ...s.coverageRequests,
-          ],
-          households: s.households.map((h) =>
-            h.id === householdId ? { ...h, away: true } : h,
-          ),
-        })),
-      offerHelp: (requestId, helperHouseholdId) =>
-        setState((s) => ({
-          ...s,
-          coverageRequests: s.coverageRequests.map((c) =>
-            c.id === requestId && !c.helpers.includes(helperHouseholdId)
-              ? { ...c, helpers: [...c.helpers, helperHouseholdId] }
-              : c,
-          ),
-        })),
-      resolveCoverage: (requestId) =>
-        setState((s) => {
-          const req = s.coverageRequests.find((c) => c.id === requestId)
-          return {
-            ...s,
-            coverageRequests: s.coverageRequests.map((c) =>
-              c.id === requestId ? { ...c, resolved: true } : c,
-            ),
-            households: s.households.map((h) =>
-              req && h.id === req.fromHouseholdId ? { ...h, away: false } : h,
-            ),
-          }
-        }),
       assignLesson: (lessonId, childId) =>
         setState((s) => {
           const exists = s.assignments.some(

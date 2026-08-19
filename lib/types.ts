@@ -36,8 +36,6 @@ export interface Household {
   name: string
   momName: string
   momInitial: string
-  /** simulated: is this mom marked as away/sick so others can cover */
-  away?: boolean
 }
 
 export interface Child {
@@ -153,15 +151,6 @@ export interface SupplyItem {
   section: 'print' | 'household' | 'craft' | 'science' | 'optional'
   have: boolean
   substitute?: string
-}
-
-export interface CoverageRequest {
-  id: string
-  fromHouseholdId: string
-  reason: string
-  createdAt: string
-  helpers: string[] // householdIds offering help
-  resolved: boolean
 }
 
 export interface ParentNote {

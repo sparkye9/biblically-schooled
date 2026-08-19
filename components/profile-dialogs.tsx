@@ -82,7 +82,7 @@ export function AddProfileDialog({
                 id="profile-mom-name"
                 value={momName}
                 onChange={(event) => setMomName(event.target.value)}
-                placeholder="e.g. Lola"
+                placeholder="e.g. Damilola"
                 autoFocus
                 required
               />

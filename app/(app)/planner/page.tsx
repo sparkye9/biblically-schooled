@@ -7,6 +7,7 @@ import {
   Clock,
   Edit3,
   Plus,
+  Trash2,
   Users,
 } from 'lucide-react'
 import { useStore } from '@/lib/store'
@@ -176,16 +177,32 @@ export default function PlannerPage() {
                           <SubjectPill subject={lesson.subject} />
                           <ActivityBadge type={lesson.activityType} />
                         </div>
-                        <LessonEditor
-                          lesson={lesson}
-                          weekNumber={week.number}
-                          onSaved={() => setMessage(`“${lesson.title}” updated.`)}
-                          trigger={
-                            <Button size="icon-sm" variant="ghost" aria-label={`Edit ${lesson.title}`}>
-                              <Edit3 className="size-4" />
-                            </Button>
-                          }
-                        />
+                        <div className="flex shrink-0 items-center gap-1">
+                          <LessonEditor
+                            lesson={lesson}
+                            weekNumber={week.number}
+                            onSaved={() => setMessage(`“${lesson.title}” updated.`)}
+                            trigger={
+                              <Button size="icon-sm" variant="ghost" aria-label={`Edit ${lesson.title}`}>
+                                <Edit3 className="size-4" />
+                              </Button>
+                            }
+                          />
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label={`Delete ${lesson.title}`}
+                            className="text-muted-foreground hover:text-destructive"
+                            onClick={() => {
+                              if (window.confirm(`Delete "${lesson.title}"? This can't be undone.`)) {
+                                store.deleteLesson(lesson.id)
+                                setMessage(`“${lesson.title}” deleted.`)
+                              }
+                            }}
+                          >
+                            <Trash2 className="size-4" />
+                          </Button>
+                        </div>
                       </div>
                       <h4 className="mt-3 font-bold">{lesson.title}</h4>
                       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">

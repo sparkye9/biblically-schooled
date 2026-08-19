@@ -1,7 +1,6 @@
 import type {
   Assignment,
   Child,
-  CoverageRequest,
   CurriculumWeek,
   Household,
   Lesson,
@@ -17,7 +16,7 @@ export const DEMO_WEEK = 1
 
 export const households: Household[] = [
   { id: 'h-venessa', name: "Venessa's Homeschool", momName: 'Venessa', momInitial: 'V' },
-  { id: 'h-lola', name: "Lola's Homeschool", momName: 'Lola', momInitial: 'L' },
+  { id: 'h-lola', name: "Damilola's Homeschool", momName: 'Damilola', momInitial: 'D' },
 ]
 
 export const children: Child[] = [
@@ -1340,7 +1339,5 @@ export const supplies: SupplyItem[] = [
   { id: 'sp5', label: 'Small objects for living/nonliving sort', section: 'science', have: false },
   { id: 'sp6', label: 'Sand or salt tray', section: 'optional', have: false, substitute: 'Shaving cream or a textured tracing card' },
 ]
-
-export const coverageRequests: CoverageRequest[] = []
 
 export const parentNotes: ParentNote[] = []
