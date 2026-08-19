@@ -243,7 +243,15 @@ export default function PrintablesPage() {
                 {resource.skill} · {gradeLabel(resource.gradeBand)} · {resource.minutes} min
               </p>
               <p className="mt-1 text-xs text-muted-foreground">Shared by {resource.contributor}</p>
-              {resource.fileKey && (
+              {resource.fileUrl && (
+                <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
+                  <a href={resource.fileUrl} target="_blank" rel="noreferrer">
+                    <Download className="size-4" />
+                    Download PDF
+                  </a>
+                </Button>
+              )}
+              {!resource.fileUrl && resource.fileKey && (
                 <Button
                   variant="outline"
                   size="sm"

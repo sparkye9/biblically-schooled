@@ -420,7 +420,84 @@ export const skills: Skill[] = [
   { id: 's21', childId: 'c-amelia', track: 'math', name: 'Sorting', status: 'learning' },
 ]
 
-export const resources: Resource[] = buildResources()
+// ---------------------------------------------------------------------------
+// Real printable packets — Weeks 1–5 worksheet PDFs shipped in /public/worksheets.
+// Each child gets a personalized Mon/Tue/Thu/Fri packet; Amelia's packets are
+// Seraiah's content relabeled with her name (same Pre-K plan, both girls).
+// ---------------------------------------------------------------------------
+
+const PACKET_DAY_FILE: Record<'monday' | 'tuesday' | 'thursday' | 'friday', string> = {
+  monday: 'Mon',
+  tuesday: 'Tue',
+  thursday: 'Thu',
+  friday: 'Fri',
+}
+
+const PACKET_CHILD_FOLDER: Record<string, string> = {
+  'c-alijah': 'Alijah',
+  'c-olori': 'Olori-Joy',
+  'c-seraiah': 'Seraiah',
+  'c-amelia': 'Amelia',
+}
+
+const PACKET_WEEKS = [1, 2, 3, 4, 5]
+
+function weekFolder(weekNumber: number) {
+  return `week-${String(weekNumber).padStart(2, '0')}`
+}
+
+function buildPacketResources(): Resource[] {
+  const out: Resource[] = []
+  let n = 0
+  const nextId = () => `r-packet-${++n}`
+
+  for (const weekNumber of PACKET_WEEKS) {
+    for (const child of children) {
+      const folder = PACKET_CHILD_FOLDER[child.id]
+      for (const day of HOME_DAYS) {
+        out.push({
+          id: nextId(),
+          title: `Week ${weekNumber} · ${dayTitle(day)} Packet — ${child.name}`,
+          type: 'Daily Packet',
+          subject: 'review',
+          skill: 'Bible, math & literacy practice',
+          gradeBand: child.gradeBand,
+          weekNumber,
+          minutes: 20,
+          owner: child.householdId,
+          contributor: child.name,
+          saved: false,
+          childId: child.id,
+          fileUrl: `/worksheets/${weekFolder(weekNumber)}/${folder}/${PACKET_DAY_FILE[day]}.pdf`,
+        })
+      }
+    }
+    out.push({
+      id: nextId(),
+      title: `Week ${weekNumber} Parent Checklist`,
+      type: 'Parent Checklist',
+      subject: 'review',
+      skill: 'Sunday prep & weekly rhythm',
+      gradeBand: 'pre-k',
+      weekNumber,
+      minutes: 10,
+      owner: 'h-venessa',
+      contributor: 'Venessa',
+      saved: false,
+      fileUrl: `/worksheets/${weekFolder(weekNumber)}/Parent_Checklist.pdf`,
+    })
+  }
+  return out
+}
+
+function dayTitle(day: 'monday' | 'tuesday' | 'thursday' | 'friday') {
+  if (day === 'monday') return 'Monday'
+  if (day === 'tuesday') return 'Tuesday'
+  if (day === 'thursday') return 'Thursday'
+  return 'Friday'
+}
+
+export const resources: Resource[] = [...buildResources(), ...buildPacketResources()]
 
 export const readAloud: ReadAloudBook[] = [
   { id: 'b1', title: 'The Berenstain Bears and the Spooky Old Tree', status: 'currently-reading', householdId: 'h-venessa' },

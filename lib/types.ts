@@ -113,6 +113,8 @@ export type ResourceType =
   | 'Science'
   | 'Art'
   | 'Bible'
+  | 'Daily Packet'
+  | 'Parent Checklist'
 
 export interface Resource {
   id: string
@@ -127,11 +129,15 @@ export interface Resource {
   owner: string
   contributor: string
   saved?: boolean
+  /** which child this packet was printed for, if it's personalized */
+  childId?: string
   /** optional local file upload backing */
   fileKey?: string
   fileName?: string
   fileType?: string
   fileSize?: number
+  /** optional static file shipped with the app, e.g. /worksheets/week-01/Amelia/Mon.pdf */
+  fileUrl?: string
 }
 
 export interface ReadAloudBook {
