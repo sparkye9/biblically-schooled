@@ -7,7 +7,8 @@ import { skillStatusMeta, accent, accentBg } from '@/lib/ui'
 import type { SkillStatus } from '@/lib/types'
 import { PageHeader, ChildAvatar } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
-import { Feather, Calculator, Check } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Feather, Calculator, Check, RotateCcw } from 'lucide-react'
 
 const STATUS_ORDER: SkillStatus[] = [
   'not-introduced',
@@ -65,6 +66,9 @@ export default function ProgressPage() {
           onAdvance={(id, cur) =>
             store.setSkillStatus(id, nextStatus(cur))
           }
+          onRewind={(id, cur) =>
+            store.setSkillStatus(id, prevStatus(cur))
+          }
         />
         <SkillTrack
           label="Math"
@@ -73,6 +77,9 @@ export default function ProgressPage() {
           color={child.color}
           onAdvance={(id, cur) =>
             store.setSkillStatus(id, nextStatus(cur))
+          }
+          onRewind={(id, cur) =>
+            store.setSkillStatus(id, prevStatus(cur))
           }
         />
       </div>
@@ -85,18 +92,25 @@ function nextStatus(cur: SkillStatus): SkillStatus {
   return STATUS_ORDER[Math.min(i + 1, STATUS_ORDER.length - 1)]
 }
 
+function prevStatus(cur: SkillStatus): SkillStatus {
+  const i = STATUS_ORDER.indexOf(cur)
+  return STATUS_ORDER[Math.max(i - 1, 0)]
+}
+
 function SkillTrack({
   label,
   Icon,
   skills,
   color,
   onAdvance,
+  onRewind,
 }: {
   label: string
   Icon: typeof Feather
   skills: { id: string; name: string; status: SkillStatus }[]
   color: string
   onAdvance: (id: string, cur: SkillStatus) => void
+  onRewind: (id: string, cur: SkillStatus) => void
 }) {
   return (
     <Card className="p-5">
@@ -114,41 +128,59 @@ function SkillTrack({
         {skills.map((s) => {
           const meta = skillStatusMeta[s.status]
           const mastered = s.status === 'mastered'
+          const atStart = s.status === 'not-introduced'
           return (
-            <button
+            <div
               key={s.id}
-              onClick={() => onAdvance(s.id, s.status)}
-              className="group w-full rounded-2xl border border-border p-3.5 text-left transition-colors hover:bg-muted/50"
+              className="group flex items-center gap-2 rounded-2xl border border-border p-3.5 transition-colors hover:bg-muted/50"
             >
-              <div className="mb-2 flex items-center justify-between">
-                <span className="flex items-center gap-2 font-medium text-foreground">
-                  {mastered && (
-                    <Check className="size-4" style={accent(color)} />
-                  )}
-                  {s.name}
-                </span>
-                <span
-                  className="rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide"
-                  style={accentBg(meta.token, 0.18)}
-                >
-                  {meta.label}
-                </span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${meta.pct}%`,
-                    backgroundColor: `var(--${color})`,
-                  }}
-                />
-              </div>
-              {!mastered && (
-                <p className="mt-1.5 text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                  Tap to move forward →
-                </p>
-              )}
-            </button>
+              <button
+                type="button"
+                onClick={() => onAdvance(s.id, s.status)}
+                className="min-w-0 flex-1 text-left"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-2 font-medium text-foreground">
+                    {mastered && (
+                      <Check className="size-4" style={accent(color)} />
+                    )}
+                    {s.name}
+                  </span>
+                  <span
+                    className="rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide"
+                    style={accentBg(meta.token, 0.18)}
+                  >
+                    {meta.label}
+                  </span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${meta.pct}%`,
+                      backgroundColor: `var(--${color})`,
+                    }}
+                  />
+                </div>
+                {!mastered && (
+                  <p className="mt-1.5 text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
+                    Tap to move forward →
+                  </p>
+                )}
+              </button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                disabled={atStart}
+                onClick={() => onRewind(s.id, s.status)}
+                aria-label={`Move ${s.name} back a step`}
+                title="Undo — move back a step"
+                className="shrink-0 text-muted-foreground disabled:opacity-30"
+              >
+                <RotateCcw className="size-4" />
+              </Button>
+            </div>
           )
         })}
       </div>

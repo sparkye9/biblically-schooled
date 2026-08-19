@@ -7,6 +7,7 @@ import {
   FileText,
   Heart,
   Loader2,
+  Trash2,
   Upload,
 } from 'lucide-react'
 import { useStore } from '@/lib/store'
@@ -57,9 +58,11 @@ export default function PrintablesPage() {
     store.households.find((household) => household.id === owner)?.momName ?? 'Family'
   const resources = store.resources.filter(
     (resource) =>
-      store.currentView === 'shared' ||
-      resource.owner === 'shared' ||
-      resource.owner === store.currentView,
+      // Hide placeholder entries with no actual file behind them.
+      (resource.fileUrl || resource.fileKey) &&
+      (store.currentView === 'shared' ||
+        resource.owner === 'shared' ||
+        resource.owner === store.currentView),
   )
 
   async function openWorksheet(resourceId: string, fileKey: string) {
@@ -224,14 +227,28 @@ export default function PrintablesPage() {
                 <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-primary">
                   <FileText className="size-4" />
                 </span>
-                <button
-                  type="button"
-                  onClick={() => store.toggleResourceSaved(resource.id)}
-                  aria-label={resource.saved ? `Remove ${resource.title} from saved` : `Save ${resource.title}`}
-                  className="rounded-full p-2 text-muted-foreground hover:bg-muted"
-                >
-                  <Heart className={`size-4 ${resource.saved ? 'fill-primary text-primary' : ''}`} />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => store.toggleResourceSaved(resource.id)}
+                    aria-label={resource.saved ? `Remove ${resource.title} from saved` : `Save ${resource.title}`}
+                    className="rounded-full p-2 text-muted-foreground hover:bg-muted"
+                  >
+                    <Heart className={`size-4 ${resource.saved ? 'fill-primary text-primary' : ''}`} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm(`Delete "${resource.title}"? This can't be undone.`)) {
+                        store.deleteResource(resource.id)
+                      }
+                    }}
+                    aria-label={`Delete ${resource.title}`}
+                    className="rounded-full p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
               </div>
               <h3 className="mt-3 font-bold">{resource.title}</h3>
               <div className="mt-2 flex flex-wrap gap-2">

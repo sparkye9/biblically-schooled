@@ -87,6 +87,7 @@ interface StoreContext extends State {
   setLessonAssignments: (lessonId: string, childIds: string[]) => void
   addResource: (input: Omit<Resource, 'id'>) => void
   toggleResourceSaved: (resourceId: string) => void
+  deleteResource: (resourceId: string) => void
   toggleSupply: (supplyId: string) => void
   addReadAloud: (title: string, householdId: string) => void
   saveNote: (note: Omit<ParentNote, 'id'>) => void
@@ -303,6 +304,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           resources: s.resources.map((r) =>
             r.id === resourceId ? { ...r, saved: !r.saved } : r,
           ),
+        })),
+      deleteResource: (resourceId) =>
+        setState((s) => ({
+          ...s,
+          resources: s.resources.filter((r) => r.id !== resourceId),
         })),
       toggleSupply: (supplyId) =>
         setState((s) => ({
