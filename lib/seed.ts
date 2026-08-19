@@ -78,8 +78,8 @@ export const weeks: CurriculumWeek[] = [
   {
     id: 'w2',
     number: 2,
-    theme: 'Noah: Weather, Water & God\u2019s Promise',
-    bibleRef: 'Genesis 6\u20139',
+    theme: "Noah: Weather, Water & God's Promise",
+    bibleRef: 'Genesis 6–9',
     bigIdea: 'God keeps His promises, and the rainbow reminds us.',
     memoryVerse: 'I have set my rainbow in the clouds.',
     memoryVerseRef: 'Genesis 9:13',
@@ -90,7 +90,7 @@ export const weeks: CurriculumWeek[] = [
     id: 'w3',
     number: 3,
     theme: 'Joseph: Colors, Patterns & Feelings',
-    bibleRef: 'Genesis 37, 39\u201345',
+    bibleRef: 'Genesis 37, 39–45',
     bigIdea: 'God can turn hard things into good things.',
     memoryVerse: 'You intended to harm me, but God intended it for good.',
     memoryVerseRef: 'Genesis 50:20',
@@ -101,7 +101,7 @@ export const weeks: CurriculumWeek[] = [
     id: 'w4',
     number: 4,
     theme: 'Moses: Light, Sound & Courage',
-    bibleRef: 'Exodus 2\u201314',
+    bibleRef: 'Exodus 2–14',
     bigIdea: 'God gives us courage to do hard things.',
     memoryVerse: 'The Lord will fight for you; you need only to be still.',
     memoryVerseRef: 'Exodus 14:14',
@@ -114,274 +114,313 @@ export const weeks: CurriculumWeek[] = [
     theme: 'David & Goliath: Strength, Measurement & Growth',
     bibleRef: '1 Samuel 17',
     bigIdea: 'God makes us brave when we trust Him.',
-    memoryVerse: 'The battle is the Lord\u2019s.',
+    memoryVerse: 'The battle is the Lord’s.',
     memoryVerseRef: '1 Samuel 17:47',
     art: ['Five-stone craft', 'Goliath measurement art'],
     science: ['Measurement', 'Plant growth'],
   },
 ]
 
-// ---- Lessons (seeded for Week 1) --------------------------------------------
+// ---------------------------------------------------------------------------
+// Curriculum builder — fills every week with lessons, assignments & worksheets
+// so every household and grade sees a full, usable term on first load.
+// ---------------------------------------------------------------------------
 
-export const lessons: Lesson[] = [
-  // Shared family Bible — assigned to everyone
-  {
-    id: 'l-bible-w1',
-    title: 'Family Bible: God Created Everything',
-    subject: 'bible',
-    activityType: 'mom-time',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: 'pre-k',
-    minutes: 7,
-    essential: true,
-    owner: 'shared',
-    youNeed: ['A Bible', 'Optional: crayons for coloring page'],
-    teach: [
-      'Read Genesis 1:1\u20135 together.',
-      'Point to things in the room and ask "Did God make this, or did people make this?"',
-      'Practice the memory verse: Genesis 1:31.',
-    ],
-    ask: ['What did God create?', 'What is your favorite thing God made?'],
-    watchFor: 'Little ones losing focus — keep it to 7 minutes and stay warm.',
-    interactive: 'memory-verse',
-    printable: true,
-  },
-  // Alijah (1st)
-  {
-    id: 'l-alijah-math-w1',
-    title: 'Number Bonds to 10',
-    subject: 'math',
-    activityType: 'mom-time',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: '1st',
-    minutes: 8,
-    essential: true,
-    owner: 'h-venessa',
-    youNeed: ['7 counters (or LEGO, beans, buttons)'],
-    teach: [
-      'Put 7 counters on the table.',
-      'Move 3 to one side and 4 to the other.',
-      'Say: "7 is made of 3 and 4."',
-    ],
-    ask: ['What two parts make 7?', 'Can you show me another way to make 7?'],
-    watchFor: 'Recounting everything instead of recognizing the parts.',
-    interactive: 'math-manipulatives',
-    printable: true,
-  },
-  {
-    id: 'l-alijah-lit-w1',
-    title: 'Short A: Decodable Reading',
-    subject: 'literacy',
-    activityType: 'independent',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: '1st',
-    minutes: 10,
-    essential: true,
-    owner: 'h-venessa',
-    interactive: 'phonics',
-    printable: true,
-  },
-  {
-    id: 'l-alijah-sci-w1',
-    title: 'Living vs Nonliving Sort',
-    subject: 'science',
-    activityType: 'hands-on',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: '1st',
-    minutes: 12,
-    essential: false,
-    owner: 'shared',
-    printable: true,
-  },
-  // Olori-Joy (K)
-  {
-    id: 'l-olori-lit-w1',
-    title: 'Letter Sound /\u0103/ — Multisensory',
-    subject: 'literacy',
-    activityType: 'mom-time',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: 'k',
-    minutes: 6,
-    essential: true,
-    owner: 'h-venessa',
-    youNeed: ['Sand or salt tray (optional)'],
-    teach: [
-      'Say "/\u0103/ like apple." Have her repeat it 3 times.',
-      'Show the letter A and 3 picture cards.',
-      'Trace A together in the air.',
-    ],
-    ask: ['What sound does A make?', 'Can you find something that starts with /\u0103/?'],
-    watchFor: 'Confusing letter name "ay" with the sound "/\u0103/".',
-    interactive: 'phonics',
-    printable: true,
-  },
-  {
-    id: 'l-olori-math-w1',
-    title: 'Counting 0\u201310 and +1',
-    subject: 'math',
-    activityType: 'independent',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: 'k',
-    minutes: 8,
-    essential: true,
-    owner: 'h-venessa',
-    interactive: 'math-manipulatives',
-    printable: true,
-  },
-  {
-    id: 'l-olori-sci-w1',
-    title: 'Five Senses Walk',
-    subject: 'science',
-    activityType: 'optional',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: 'k',
-    minutes: 10,
-    essential: false,
-    owner: 'shared',
-  },
-  // Seraiah (Pre-K, Venessa)
-  {
-    id: 'l-seraiah-math-w1',
-    title: 'Count Objects 1\u20135',
-    subject: 'math',
-    activityType: 'hands-on',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: 'pre-k',
-    minutes: 6,
-    essential: true,
-    owner: 'shared',
-    interactive: 'math-manipulatives',
-    printable: true,
-  },
-  {
-    id: 'l-seraiah-lit-w1',
-    title: 'Letter A Exposure & Trace',
-    subject: 'literacy',
-    activityType: 'hands-on',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: 'pre-k',
-    minutes: 5,
-    essential: true,
-    owner: 'shared',
-    interactive: 'phonics',
-    printable: true,
-  },
-  // Amelia (Pre-K, Lola) — shares the same Pre-K lessons
-  {
-    id: 'l-amelia-math-w1',
-    title: 'Count Objects 1\u20135',
-    subject: 'math',
-    activityType: 'hands-on',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: 'pre-k',
-    minutes: 6,
-    essential: true,
-    owner: 'shared',
-    interactive: 'math-manipulatives',
-    printable: true,
-  },
-  {
-    id: 'l-amelia-lit-w1',
-    title: 'Letter A Exposure & Trace',
-    subject: 'literacy',
-    activityType: 'hands-on',
-    weekNumber: 1,
-    day: 'tuesday',
-    gradeBand: 'pre-k',
-    minutes: 5,
-    essential: true,
-    owner: 'shared',
-    interactive: 'phonics',
-    printable: true,
-  },
-  // A shared Pre-K letter lesson used by Seraiah + Amelia (Monday)
-  {
-    id: 'l-shared-letterA',
-    title: 'Letter A Multisensory Practice',
-    subject: 'literacy',
-    activityType: 'mom-time',
-    weekNumber: 1,
-    day: 'monday',
-    gradeBand: 'pre-k',
-    minutes: 6,
-    essential: true,
-    owner: 'shared',
-    interactive: 'phonics',
-    printable: true,
-  },
+const HOME_DAYS: Array<'monday' | 'tuesday' | 'thursday' | 'friday'> = [
+  'monday',
+  'tuesday',
+  'thursday',
+  'friday',
 ]
 
-export const assignments: Assignment[] = [
-  // Bible — everyone. Some already done.
-  { id: 'a1', lessonId: 'l-bible-w1', childId: 'c-alijah', status: 'done', completedAt: '' },
-  { id: 'a2', lessonId: 'l-bible-w1', childId: 'c-olori', status: 'done', completedAt: '' },
-  { id: 'a3', lessonId: 'l-bible-w1', childId: 'c-seraiah', status: 'done', completedAt: '' },
-  { id: 'a4', lessonId: 'l-bible-w1', childId: 'c-amelia', status: 'done', completedAt: '' },
-  // Alijah — 2 of 4 done
-  { id: 'a5', lessonId: 'l-alijah-math-w1', childId: 'c-alijah', status: 'done', completedAt: '' },
-  { id: 'a6', lessonId: 'l-alijah-lit-w1', childId: 'c-alijah', status: 'todo' },
-  { id: 'a7', lessonId: 'l-alijah-sci-w1', childId: 'c-alijah', status: 'todo' },
-  // Olori-Joy — 1 of 4 done (bible only)
-  { id: 'a8', lessonId: 'l-olori-lit-w1', childId: 'c-olori', status: 'todo' },
-  { id: 'a9', lessonId: 'l-olori-math-w1', childId: 'c-olori', status: 'todo' },
-  { id: 'a10', lessonId: 'l-olori-sci-w1', childId: 'c-olori', status: 'todo' },
-  // Seraiah — 3 of 3 (small load) — mark 2 more done
-  { id: 'a11', lessonId: 'l-seraiah-math-w1', childId: 'c-seraiah', status: 'done', completedAt: '' },
-  { id: 'a12', lessonId: 'l-seraiah-lit-w1', childId: 'c-seraiah', status: 'done', completedAt: '' },
-  // Amelia — Lola's household
-  { id: 'a13', lessonId: 'l-amelia-math-w1', childId: 'c-amelia', status: 'done', completedAt: '' },
-  { id: 'a14', lessonId: 'l-amelia-lit-w1', childId: 'c-amelia', status: 'todo' },
+interface SubjectPlan {
+  title: string
+  minutes: number
+  essential: boolean
+  printable: boolean
+}
+
+interface GradePlans {
+  math: SubjectPlan
+  literacy: SubjectPlan
+  science: SubjectPlan
+}
+
+type GradeBandKey = 'prek' | 'k' | '1st'
+
+const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
+  1: {
+    prek: {
+      math: { title: 'Count Objects 1–5', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter A Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Five Senses Walk', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Counting 0–10 and +1', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Sound /ă/ — Multisensory', minutes: 6, essential: true, printable: true },
+      science: { title: 'Living vs Nonliving Sort', minutes: 10, essential: false, printable: true },
+    },
+    '1st': {
+      math: { title: 'Number Bonds to 10', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short A: Decodable Reading', minutes: 10, essential: true, printable: true },
+      science: { title: 'Living vs Nonliving Sort', minutes: 12, essential: false, printable: true },
+    },
+  },
+  2: {
+    prek: {
+      math: { title: 'Count & Match 1–5 with Water Drops', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter B and the Blue Rainbow', minutes: 5, essential: true, printable: true },
+      science: { title: 'Sink or Float', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Counting to 20 and Skip +1', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short A Word Families: -at, -an', minutes: 7, essential: true, printable: true },
+      science: { title: 'Weather Observation', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Addition within 10', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short E Decodable Reader', minutes: 10, essential: true, printable: true },
+      science: { title: 'Water Density: Sink or Float', minutes: 12, essential: false, printable: true },
+    },
+  },
+  3: {
+    prek: {
+      math: { title: 'Sort & Count by Color', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter C and Colors', minutes: 5, essential: true, printable: true },
+      science: { title: 'Color Mixing', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Patterns: AB and AAB', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short O and Color Words', minutes: 7, essential: true, printable: true },
+      science: { title: 'Texture Investigation', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Subtraction within 10', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short O Word Building', minutes: 10, essential: true, printable: true },
+      science: { title: 'Patterns in Nature', minutes: 12, essential: false, printable: true },
+    },
+  },
+  4: {
+    prek: {
+      math: { title: 'Shapes & Shadow Sizes', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter D and Sound', minutes: 5, essential: true, printable: true },
+      science: { title: 'Light and Shadows', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Number Order 1–20', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Sight Words: the, is, my, we', minutes: 7, essential: true, printable: true },
+      science: { title: 'Sound and Vibration', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Shadows and Measurement', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Silent E Introduction', minutes: 10, essential: true, printable: true },
+      science: { title: 'Light and Shadows Lab', minutes: 12, essential: false, printable: true },
+    },
+  },
+  5: {
+    prek: {
+      math: { title: 'Count the 5 Stones', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter Review A–D', minutes: 5, essential: true, printable: true },
+      science: { title: 'Plant Growth: Seed to Plant', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Counting to 20 and Shapes', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Compare & Sort: Big vs Small', minutes: 7, essential: true, printable: true },
+      science: { title: 'Measurement: Big vs Small', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Measurement: Length', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Sight & CVC Review', minutes: 10, essential: true, printable: true },
+      science: { title: 'Measuring Plants', minutes: 12, essential: false, printable: true },
+    },
+  },
+}
+
+const BIBLE_TITLES: Record<number, string> = {
+  1: 'Family Bible: God Created Everything',
+  2: 'Family Bible: Noah and the Rainbow Promise',
+  3: 'Family Bible: Joseph — Good Things from Hard',
+  4: 'Family Bible: Moses and Courage',
+  5: 'Family Bible: David and Goliath',
+}
+
+const BIBLE_MINUTES: Record<number, number> = { 1: 7, 2: 8, 3: 8, 4: 7, 5: 8 }
+
+const SUBJECT_KEYS: Array<'math' | 'literacy' | 'science'> = [
+  'math',
+  'literacy',
+  'science',
 ]
+
+const GRADE_KEY: Record<string, GradeBandKey> = {
+  'pre-k': 'prek',
+  k: 'k',
+  '1st': '1st',
+}
+
+function buildLessons(): Lesson[] {
+  const out: Lesson[] = []
+  let n = 0
+  const nextId = () => `l-seed-${++n}`
+
+  for (const week of weeks) {
+    // Shared family Bible lesson — every child, Monday.
+    out.push({
+      id: nextId(),
+      title: BIBLE_TITLES[week.number],
+      subject: 'bible',
+      activityType: 'mom-time',
+      weekNumber: week.number,
+      day: 'monday',
+      gradeBand: 'pre-k',
+      minutes: BIBLE_MINUTES[week.number],
+      essential: true,
+      owner: 'shared',
+      youNeed: ['A Bible', 'Crayons for a coloring page'],
+      teach: [
+        `Read ${week.bibleRef} together.`,
+        'Talk about this week’s big idea.',
+        `Practice the memory verse: ${week.memoryVerseRef}.`,
+      ],
+      ask: ['What did you learn about God this week?', 'How can we thank God today?'],
+      watchFor: 'Keep it short and warm for the little ones.',
+      interactive: 'memory-verse',
+      printable: true,
+    })
+
+    for (const child of children) {
+      const gradeKey = GRADE_KEY[child.gradeBand]
+      const plan = WEEK_PLANS[week.number][gradeKey]
+      for (const day of HOME_DAYS) {
+        for (const subject of SUBJECT_KEYS) {
+          const s = plan[subject]
+          const isScience = subject === 'science'
+          out.push({
+            id: nextId(),
+            title: s.title,
+            subject,
+            activityType: isScience ? 'hands-on' : 'mom-time',
+            weekNumber: week.number,
+            day,
+            gradeBand: child.gradeBand,
+            minutes: s.minutes,
+            essential: s.essential,
+            owner: 'shared',
+            youNeed: isScience
+              ? ['Objects from around the house']
+              : ['A few supplies from this week’s list'],
+            teach: [
+              `Introduce ${s.title} for Week ${week.number}.`,
+              'Model it once, then let your child try with help.',
+              'Wrap up by celebrating what they did.',
+            ],
+            ask: ['What was easy?', 'What did you notice?'],
+            watchFor: 'Stop while they’re still enjoying it.',
+            interactive: isScience ? 'math-manipulatives' : 'phonics',
+            printable: s.printable,
+          })
+        }
+      }
+    }
+  }
+  return out
+}
+
+function buildAssignments(lessons: Lesson[]): Assignment[] {
+  const out: Assignment[] = []
+  let n = 0
+  const nextId = () => `a-seed-${++n}`
+  for (const lesson of lessons) {
+    for (const child of children) {
+      const isBible = lesson.subject === 'bible'
+      if (!isBible && lesson.gradeBand !== child.gradeBand) continue
+      out.push({
+        id: nextId(),
+        lessonId: lesson.id,
+        childId: child.id,
+        status: lesson.weekNumber === 1 ? 'done' : 'todo',
+        completedAt: lesson.weekNumber === 1 ? '2026-07-17' : undefined,
+      })
+    }
+  }
+  return out
+}
+
+const WORKSHEET_POOL: Array<{
+  title: string
+  type: Resource['type']
+  subject: Resource['subject']
+  skill: string
+  gradeBand: Resource['gradeBand']
+}> = [
+  { title: 'Number Bonds to 10 Practice', type: 'Math Practice', subject: 'math', skill: 'Number Bonds', gradeBand: '1st' },
+  { title: 'Short A Word Family Cards', type: 'Flash Cards', subject: 'literacy', skill: 'Short A', gradeBand: '1st' },
+  { title: 'Letter A Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k' },
+  { title: 'Count & Color 1–5', type: 'Worksheet', subject: 'math', skill: 'Counting', gradeBand: 'pre-k' },
+  { title: 'Counting to 20 Chart', type: 'Math Practice', subject: 'math', skill: 'Counting', gradeBand: 'k' },
+  { title: 'Short A Decodable Passage', type: 'Reading Passage', subject: 'literacy', skill: 'Decodable Reading', gradeBand: '1st' },
+  { title: 'Creation Days Coloring Book', type: 'Coloring', subject: 'bible', skill: 'Creation', gradeBand: 'pre-k' },
+  { title: 'Genesis 1 Read-Aloud Mini Book', type: 'Mini Book', subject: 'bible', skill: 'Creation', gradeBand: 'k' },
+  { title: 'Living vs Nonliving Cut & Paste', type: 'Cut & Paste', subject: 'science', skill: 'Classification', gradeBand: 'k' },
+]
+
+const CONTRIBUTORS: Array<Resource['contributor']> = ['Venessa', 'Lola']
+
+function buildResources(): Resource[] {
+  const out: Resource[] = []
+  let n = 0
+  const nextId = () => `r-seed-${++n}`
+  for (const week of weeks) {
+    WORKSHEET_POOL.forEach((w, index) => {
+      out.push({
+        id: nextId(),
+        title: w.title,
+        type: w.type,
+        subject: w.subject,
+        skill: w.skill,
+        gradeBand: w.gradeBand,
+        weekNumber: week.number,
+        minutes: 10,
+        owner: index % 3 === 0 ? 'h-venessa' : 'shared',
+        contributor: CONTRIBUTORS[index % CONTRIBUTORS.length],
+        saved: index % 2 === 0,
+      })
+    })
+  }
+  return out
+}
+
+// ---- Built exports ---------------------------------------------------------
+
+export const lessons: Lesson[] = buildLessons()
+
+export const assignments: Assignment[] = buildAssignments(lessons)
 
 export const skills: Skill[] = [
-  // Alijah literacy
   { id: 's1', childId: 'c-alijah', track: 'literacy', name: 'CVC Blending', status: 'mastered' },
   { id: 's2', childId: 'c-alijah', track: 'literacy', name: 'Short A', status: 'mastered' },
   { id: 's3', childId: 'c-alijah', track: 'literacy', name: 'Short E', status: 'practicing' },
   { id: 's4', childId: 'c-alijah', track: 'literacy', name: 'Digraph SH', status: 'learning' },
   { id: 's5', childId: 'c-alijah', track: 'literacy', name: 'Fluency', status: 'practicing' },
-  // Alijah math
   { id: 's6', childId: 'c-alijah', track: 'math', name: 'Number Bonds', status: 'practicing' },
   { id: 's7', childId: 'c-alijah', track: 'math', name: 'Addition within 10', status: 'practicing' },
   { id: 's8', childId: 'c-alijah', track: 'math', name: 'Word Problems', status: 'learning' },
-  // Olori-Joy literacy
   { id: 's9', childId: 'c-olori', track: 'literacy', name: 'Phonemic Awareness', status: 'practicing' },
   { id: 's10', childId: 'c-olori', track: 'literacy', name: 'Letter Sounds', status: 'learning' },
   { id: 's11', childId: 'c-olori', track: 'literacy', name: 'Oral Blending', status: 'learning' },
   { id: 's12', childId: 'c-olori', track: 'math', name: 'Counting to 10', status: 'practicing' },
   { id: 's13', childId: 'c-olori', track: 'math', name: 'Number Sense', status: 'learning' },
-  // Seraiah
   { id: 's14', childId: 'c-seraiah', track: 'literacy', name: 'Letter Exposure', status: 'learning' },
   { id: 's15', childId: 'c-seraiah', track: 'literacy', name: 'Phonological Awareness', status: 'learning' },
-  { id: 's16', childId: 'c-seraiah', track: 'math', name: 'Counting 1\u20135', status: 'practicing' },
+  { id: 's16', childId: 'c-seraiah', track: 'math', name: 'Counting 1–5', status: 'practicing' },
   { id: 's17', childId: 'c-seraiah', track: 'math', name: 'Shapes', status: 'learning' },
-  // Amelia
   { id: 's18', childId: 'c-amelia', track: 'literacy', name: 'Letter Exposure', status: 'practicing' },
   { id: 's19', childId: 'c-amelia', track: 'literacy', name: 'Phonological Awareness', status: 'learning' },
-  { id: 's20', childId: 'c-amelia', track: 'math', name: 'Counting 1\u20135', status: 'learning' },
+  { id: 's20', childId: 'c-amelia', track: 'math', name: 'Counting 1–5', status: 'learning' },
   { id: 's21', childId: 'c-amelia', track: 'math', name: 'Sorting', status: 'learning' },
 ]
 
-export const resources: Resource[] = [
-  { id: 'r1', title: 'Short A Word Family Cards', type: 'Flash Cards', subject: 'literacy', skill: 'Short A', gradeBand: '1st', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Venessa' },
-  { id: 'r2', title: 'Number Bonds to 10 Practice', type: 'Math Practice', subject: 'math', skill: 'Number Bonds', gradeBand: '1st', weekNumber: 1, minutes: 15, owner: 'h-venessa', contributor: 'Venessa' },
-  { id: 'r3', title: 'Letter A Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k', weekNumber: 1, minutes: 8, owner: 'shared', contributor: 'Lola' },
-  { id: 'r4', title: 'Creation Days Coloring Book', type: 'Coloring', subject: 'bible', skill: 'Creation', gradeBand: 'pre-k', weekNumber: 1, minutes: 12, owner: 'shared', contributor: 'Venessa' },
-  { id: 'r5', title: 'Living vs Nonliving Cut & Paste', type: 'Cut & Paste', subject: 'science', skill: 'Classification', gradeBand: 'k', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Lola' },
-  { id: 'r6', title: 'Count & Color 1\u20135', type: 'Worksheet', subject: 'math', skill: 'Counting', gradeBand: 'pre-k', weekNumber: 1, minutes: 8, owner: 'shared', contributor: 'Lola' },
-  { id: 'r7', title: 'Genesis 1 Read-Aloud Mini Book', type: 'Mini Book', subject: 'bible', skill: 'Creation', gradeBand: 'k', weekNumber: 1, minutes: 10, owner: 'shared', contributor: 'Venessa' },
-  { id: 'r8', title: 'Short A Decodable Passage', type: 'Reading Passage', subject: 'literacy', skill: 'Decodable Reading', gradeBand: '1st', weekNumber: 1, minutes: 12, owner: 'h-venessa', contributor: 'Venessa' },
-]
+export const resources: Resource[] = buildResources()
 
 export const readAloud: ReadAloudBook[] = [
   { id: 'b1', title: 'The Berenstain Bears and the Spooky Old Tree', status: 'currently-reading', householdId: 'h-venessa' },
@@ -391,7 +430,7 @@ export const readAloud: ReadAloudBook[] = [
 ]
 
 export const supplies: SupplyItem[] = [
-  { id: 'sp1', label: "Print Monday & Tuesday packets", section: 'print', have: false },
+  { id: 'sp1', label: 'Print Monday & Tuesday packets', section: 'print', have: false },
   { id: 'sp2', label: '7 counters (or LEGO / beans)', section: 'household', have: true, substitute: 'LEGO, beans, buttons, or snacks' },
   { id: 'sp3', label: 'Construction paper', section: 'craft', have: true },
   { id: 'sp4', label: 'Glue & crayons', section: 'craft', have: true },
