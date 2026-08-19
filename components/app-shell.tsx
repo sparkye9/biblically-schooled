@@ -27,6 +27,7 @@ import { useStore } from '@/lib/store'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -204,28 +205,29 @@ export function HouseholdSwitcher() {
           <ChevronDown className="size-4 text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuLabel>Switch view</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {households.map((h) => (
-          <DropdownMenuItem
-            key={h.id}
-            onClick={() => setView(h.id)}
-            className="flex items-center justify-between"
-          >
-            <span className="flex items-center gap-2">
-              <span className="flex size-6 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
-                {h.momInitial}
-              </span>
-              {h.momName}
-              {h.away && (
-                <span className="rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-bold text-accent-foreground">
-                  Away
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Switch view</DropdownMenuLabel>
+          {households.map((h) => (
+            <DropdownMenuItem
+              key={h.id}
+              onClick={() => setView(h.id)}
+              className="flex items-center justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <span className="flex size-6 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+                  {h.momInitial}
                 </span>
-              )}
-            </span>
-            {currentView === h.id && <Check className="size-4 text-primary" />}
-          </DropdownMenuItem>
-        ))}
+                {h.momName}
+                {h.away && (
+                  <span className="rounded-full bg-accent px-1.5 py-0.5 text-[10px] font-bold text-accent-foreground">
+                    Away
+                  </span>
+                )}
+              </span>
+              {currentView === h.id && <Check className="size-4 text-primary" />}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => setView('shared')}

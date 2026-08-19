@@ -25,9 +25,9 @@ const gradeOptions: { value: GradeBand; label: string }[] = [
 
 const colors: { value: ChildColor; label: string }[] = [
   { value: 'child-alijah', label: 'Blue' },
-  { value: 'child-olori', label: 'Rose' },
-  { value: 'child-seraiah', label: 'Sage' },
-  { value: 'child-amelia', label: 'Gold' },
+  { value: 'child-olori', label: 'Pink' },
+  { value: 'child-seraiah', label: 'Purple' },
+  { value: 'child-amelia', label: 'Purple' },
 ]
 
 export function AddProfileDialog({
