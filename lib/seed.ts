@@ -69,55 +69,165 @@ export const weeks: CurriculumWeek[] = [
     number: 1,
     theme: 'God Created Me & My World',
     bibleRef: 'Genesis 1',
-    bigIdea: 'God made everything — and He made me on purpose.',
-    memoryVerse: 'God saw all that he had made, and it was very good.',
+    bigIdea: 'Then God made people, and He said it was very good.',
+    memoryVerse: 'Then God saw everything that He had made, and indeed it was very good.',
     memoryVerseRef: 'Genesis 1:31',
-    art: ['Creation Day collage', '"God Made Me Special" self portrait'],
-    science: ['Living vs Nonliving', 'Five Senses'],
+    art: ['God Created Me & My World craft', 'God Created Me & My World coloring page'],
+    science: ['Living vs Nonliving'],
   },
   {
     id: 'w2',
     number: 2,
-    theme: "Noah: Weather, Water & God's Promise",
-    bibleRef: 'Genesis 6–9',
-    bigIdea: 'God keeps His promises, and the rainbow reminds us.',
-    memoryVerse: 'I have set my rainbow in the clouds.',
-    memoryVerseRef: 'Genesis 9:13',
-    art: ['Rainbow resist', 'Ark craft'],
-    science: ['Weather observation', 'Sink or float'],
+    theme: 'God Made Me & My Family',
+    bibleRef: 'Genesis 1-2',
+    bigIdea: 'God made your family on purpose, too.',
+    memoryVerse: 'So God created man in His own image.',
+    memoryVerseRef: 'Genesis 1:27',
+    art: ['God Made Me & My Family craft', 'God Made Me & My Family coloring page'],
+    science: ['My Five Senses'],
   },
   {
     id: 'w3',
     number: 3,
-    theme: 'Joseph: Colors, Patterns & Feelings',
-    bibleRef: 'Genesis 37, 39–45',
-    bigIdea: 'God can turn hard things into good things.',
-    memoryVerse: 'You intended to harm me, but God intended it for good.',
-    memoryVerseRef: 'Genesis 50:20',
-    art: ['Colorful coat collage', 'Pattern weaving'],
-    science: ['Color mixing', 'Texture investigation'],
+    theme: 'Noah Trusted God',
+    bibleRef: 'Genesis 6-9',
+    bigIdea: 'God put a rainbow in the sky as His promise.',
+    memoryVerse: 'Thus Noah did; according to all that God commanded him, so he did.',
+    memoryVerseRef: 'Genesis 6:22',
+    art: ['Noah Trusted God craft', 'Noah Trusted God coloring page'],
+    science: ['What Living Things Need'],
   },
   {
     id: 'w4',
     number: 4,
-    theme: 'Moses: Light, Sound & Courage',
-    bibleRef: 'Exodus 2–14',
-    bigIdea: 'God gives us courage to do hard things.',
-    memoryVerse: 'The Lord will fight for you; you need only to be still.',
-    memoryVerseRef: 'Exodus 14:14',
-    art: ['Burning bush craft', 'Shadow art'],
-    science: ['Light and shadows', 'Sound and vibration'],
+    theme: 'Abraham Follows God',
+    bibleRef: 'Genesis 12',
+    bigIdea: 'Abraham trusted God every step of the way.',
+    memoryVerse: 'I will bless you.',
+    memoryVerseRef: 'Genesis 12:2',
+    art: ['Abraham Follows God craft', 'Abraham Follows God coloring page'],
+    science: ['Animal Habitats'],
   },
   {
     id: 'w5',
     number: 5,
-    theme: 'David & Goliath: Strength, Measurement & Growth',
+    theme: 'Joseph: God Has a Plan',
+    bibleRef: 'Genesis 37-50',
+    bigIdea: 'God turned something bad into something good.',
+    memoryVerse: 'God meant it for good.',
+    memoryVerseRef: 'Genesis 50:20',
+    art: ['Joseph: God Has a Plan craft', 'Joseph: God Has a Plan coloring page'],
+    science: ['Landforms & Water'],
+  },
+  {
+    id: 'w6',
+    number: 6,
+    theme: 'Baby Moses: God Protects',
+    bibleRef: 'Exodus 1-3',
+    bigIdea: 'When Moses grew up, God spoke to him from a burning bush.',
+    memoryVerse: 'I will certainly be with you.',
+    memoryVerseRef: 'Exodus 3:12',
+    art: ['Baby Moses: God Protects craft', 'Baby Moses: God Protects coloring page'],
+    science: ['Matter: Solids & Liquids'],
+  },
+  {
+    id: 'w7',
+    number: 7,
+    theme: 'Let My People Go',
+    bibleRef: 'Exodus 5-12',
+    bigIdea: 'God set His people free.',
+    memoryVerse: 'Let My people go, that they may serve Me.',
+    memoryVerseRef: 'Exodus 9:1',
+    art: ['Let My People Go craft', 'Let My People Go coloring page'],
+    science: ['States of Matter: Solid, Liquid, Gas'],
+  },
+  {
+    id: 'w8',
+    number: 8,
+    theme: 'Quarter Review: God Keeps His Promises',
+    bibleRef: 'Exodus 14-15',
+    bigIdea: 'The people sang a thank-you song to God.',
+    memoryVerse: 'The LORD is my strength and song.',
+    memoryVerseRef: 'Exodus 15:2',
+    art: ['Quarter Review: God Keeps His Promises craft', 'Quarter Review: God Keeps His Promises coloring page'],
+    science: ['Science Review & Experiment Day'],
+  },
+  {
+    id: 'w9',
+    number: 9,
+    theme: 'The Ten Commandments',
+    bibleRef: 'Exodus 19-20',
+    bigIdea: 'God\'s rules keep us safe and happy.',
+    memoryVerse: 'Honor your father and your mother.',
+    memoryVerseRef: 'Exodus 20:12',
+    art: ['The Ten Commandments craft', 'The Ten Commandments coloring page'],
+    science: ['Force & Motion: Push and Pull'],
+  },
+  {
+    id: 'w10',
+    number: 10,
+    theme: 'God Provides: Manna in the Desert',
+    bibleRef: 'Exodus 16',
+    bigIdea: 'God gave His people just what they needed, every day.',
+    memoryVerse: 'Man shall not live by bread alone.',
+    memoryVerseRef: 'Deuteronomy 8:3',
+    art: ['God Provides: Manna in the Desert craft', 'God Provides: Manna in the Desert coloring page'],
+    science: ['Energy: Light & Heat from the Sun'],
+  },
+  {
+    id: 'w11',
+    number: 11,
+    theme: 'Joshua & the Walls of Jericho',
+    bibleRef: 'Joshua 1-6',
+    bigIdea: 'The people obeyed, and the walls fell down.',
+    memoryVerse: 'Be strong and of good courage.',
+    memoryVerseRef: 'Joshua 1:9',
+    art: ['Joshua & the Walls of Jericho craft', 'Joshua & the Walls of Jericho coloring page'],
+    science: ['Simple Machines: Ramp, Lever, Wheel'],
+  },
+  {
+    id: 'w12',
+    number: 12,
+    theme: 'Gideon: Small but Mighty',
+    bibleRef: 'Judges 6-7',
+    bigIdea: 'God won the battle so everyone knew it was His power.',
+    memoryVerse: 'The LORD is with you, mighty man of valor!',
+    memoryVerseRef: 'Judges 6:12',
+    art: ['Gideon: Small but Mighty craft', 'Gideon: Small but Mighty coloring page'],
+    science: ['Ecosystems: Pond & Forest'],
+  },
+  {
+    id: 'w13',
+    number: 13,
+    theme: 'Ruth: Loyal Love',
+    bibleRef: 'Ruth 1-4',
+    bigIdea: 'God took care of Ruth and gave her a new family.',
+    memoryVerse: 'Your people shall be my people, and your God, my God.',
+    memoryVerseRef: 'Ruth 1:16',
+    art: ['Ruth: Loyal Love craft', 'Ruth: Loyal Love coloring page'],
+    science: ['Food Chains'],
+  },
+  {
+    id: 'w14',
+    number: 14,
+    theme: 'David & Goliath',
     bibleRef: '1 Samuel 17',
-    bigIdea: 'God makes us brave when we trust Him.',
-    memoryVerse: 'The battle is the Lord’s.',
+    bigIdea: 'The battle belonged to the Lord.',
+    memoryVerse: 'The battle is the LORD\'s.',
     memoryVerseRef: '1 Samuel 17:47',
-    art: ['Five-stone craft', 'Goliath measurement art'],
-    science: ['Measurement', 'Plant growth'],
+    art: ['David & Goliath craft', 'David & Goliath coloring page'],
+    science: ['Weather Patterns'],
+  },
+  {
+    id: 'w15',
+    number: 15,
+    theme: 'David the Shepherd (Psalm 23)',
+    bibleRef: 'Psalm 23',
+    bigIdea: 'God cares for us like a good shepherd cares for his sheep.',
+    memoryVerse: 'The LORD is my shepherd; I shall not want.',
+    memoryVerseRef: 'Psalm 23:1',
+    art: ['David the Shepherd (Psalm 23) craft', 'David the Shepherd (Psalm 23) coloring page'],
+    science: ['Climate: Hot & Cold Places'],
   },
 ]
 
@@ -151,100 +261,280 @@ type GradeBandKey = 'prek' | 'k' | '1st'
 const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
   1: {
     prek: {
-      math: { title: 'Count Objects 1–5', minutes: 6, essential: true, printable: true },
+      math: { title: 'Five Frame: Count 1-5', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter A Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Five Senses Walk', minutes: 10, essential: false, printable: false },
+      science: { title: 'Living vs Nonliving', minutes: 10, essential: false, printable: false },
     },
     k: {
-      math: { title: 'Counting 0–10 and +1', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Letter Sound /ă/ — Multisensory', minutes: 6, essential: true, printable: true },
-      science: { title: 'Living vs Nonliving Sort', minutes: 10, essential: false, printable: true },
+      math: { title: 'Ten Frames: Count & +1', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Aa - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Living vs Nonliving', minutes: 10, essential: false, printable: false },
     },
     '1st': {
       math: { title: 'Number Bonds to 10', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Short A: Decodable Reading', minutes: 10, essential: true, printable: true },
-      science: { title: 'Living vs Nonliving Sort', minutes: 12, essential: false, printable: true },
+      science: { title: 'Living vs Nonliving', minutes: 10, essential: false, printable: true },
     },
   },
   2: {
     prek: {
-      math: { title: 'Count & Match 1–5 with Water Drops', minutes: 6, essential: true, printable: true },
-      literacy: { title: 'Letter B and the Blue Rainbow', minutes: 5, essential: true, printable: true },
-      science: { title: 'Sink or Float', minutes: 10, essential: false, printable: false },
+      math: { title: 'Five Frame: Count 1-5', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter B Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'My Five Senses', minutes: 10, essential: false, printable: false },
     },
     k: {
-      math: { title: 'Counting to 20 and Skip +1', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Short A Word Families: -at, -an', minutes: 7, essential: true, printable: true },
-      science: { title: 'Weather Observation', minutes: 10, essential: false, printable: false },
+      math: { title: 'Teen Numbers: 10 and Some More', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Mm - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'My Five Senses', minutes: 10, essential: false, printable: false },
     },
     '1st': {
-      math: { title: 'Addition within 10', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Short E Decodable Reader', minutes: 10, essential: true, printable: true },
-      science: { title: 'Water Density: Sink or Float', minutes: 12, essential: false, printable: true },
+      math: { title: 'Tens & Ones: Teen Numbers', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short E: Decodable Reading', minutes: 10, essential: true, printable: true },
+      science: { title: 'My Five Senses', minutes: 10, essential: false, printable: true },
     },
   },
   3: {
     prek: {
-      math: { title: 'Sort & Count by Color', minutes: 6, essential: true, printable: true },
-      literacy: { title: 'Letter C and Colors', minutes: 5, essential: true, printable: true },
-      science: { title: 'Color Mixing', minutes: 10, essential: false, printable: false },
+      math: { title: 'Circles & Squares', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter C Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'What Living Things Need', minutes: 10, essential: false, printable: false },
     },
     k: {
-      math: { title: 'Patterns: AB and AAB', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Short O and Color Words', minutes: 7, essential: true, printable: true },
-      science: { title: 'Texture Investigation', minutes: 10, essential: false, printable: false },
+      math: { title: 'Compare with Ten Frames', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Ss - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'What Living Things Need', minutes: 10, essential: false, printable: false },
     },
     '1st': {
-      math: { title: 'Subtraction within 10', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Short O Word Building', minutes: 10, essential: true, printable: true },
-      science: { title: 'Patterns in Nature', minutes: 12, essential: false, printable: true },
+      math: { title: 'Make 10 to Add', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short I: Decodable Reading', minutes: 10, essential: true, printable: true },
+      science: { title: 'What Living Things Need', minutes: 10, essential: false, printable: true },
     },
   },
   4: {
     prek: {
-      math: { title: 'Shapes & Shadow Sizes', minutes: 6, essential: true, printable: true },
-      literacy: { title: 'Letter D and Sound', minutes: 5, essential: true, printable: true },
-      science: { title: 'Light and Shadows', minutes: 10, essential: false, printable: false },
+      math: { title: 'Big & Small', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter D Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Animal Habitats', minutes: 10, essential: false, printable: false },
     },
     k: {
-      math: { title: 'Number Order 1–20', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Sight Words: the, is, my, we', minutes: 7, essential: true, printable: true },
-      science: { title: 'Sound and Vibration', minutes: 10, essential: false, printable: false },
+      math: { title: 'Shapes All Around', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Tt - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Animal Habitats', minutes: 10, essential: false, printable: false },
     },
     '1st': {
-      math: { title: 'Shadows and Measurement', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Silent E Introduction', minutes: 10, essential: true, printable: true },
-      science: { title: 'Light and Shadows Lab', minutes: 12, essential: false, printable: true },
+      math: { title: 'Subtract with 10', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short O: Decodable Reading', minutes: 10, essential: true, printable: true },
+      science: { title: 'Animal Habitats', minutes: 10, essential: false, printable: true },
     },
   },
   5: {
     prek: {
-      math: { title: 'Count the 5 Stones', minutes: 6, essential: true, printable: true },
-      literacy: { title: 'Letter Review A–D', minutes: 5, essential: true, printable: true },
-      science: { title: 'Plant Growth: Seed to Plant', minutes: 10, essential: false, printable: false },
+      math: { title: 'Count & Color 1-5', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter E Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Landforms & Water', minutes: 10, essential: false, printable: false },
     },
     k: {
-      math: { title: 'Counting to 20 and Shapes', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Compare & Sort: Big vs Small', minutes: 7, essential: true, printable: true },
-      science: { title: 'Measurement: Big vs Small', minutes: 10, essential: false, printable: false },
+      math: { title: 'Number Bonds of 5', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Pp - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Landforms & Water', minutes: 10, essential: false, printable: false },
     },
     '1st': {
-      math: { title: 'Measurement: Length', minutes: 8, essential: true, printable: true },
-      literacy: { title: 'Sight & CVC Review', minutes: 10, essential: true, printable: true },
-      science: { title: 'Measuring Plants', minutes: 12, essential: false, printable: true },
+      math: { title: 'Number Bonds & Equal Groups', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Short U: Decodable Reading', minutes: 10, essential: true, printable: true },
+      science: { title: 'Landforms & Water', minutes: 10, essential: false, printable: true },
+    },
+  },
+  6: {
+    prek: {
+      math: { title: 'Match the Halves', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter F Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Matter: Solids & Liquids', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Halves & Fair Shares', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Nn - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Matter: Solids & Liquids', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Fractions: Halves & Fourths', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Digraph SH: Read & Write', minutes: 10, essential: true, printable: true },
+      science: { title: 'Matter: Solids & Liquids', minutes: 10, essential: false, printable: true },
+    },
+  },
+  7: {
+    prek: {
+      math: { title: 'Shape Patterns', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter G Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'States of Matter: Solid, Liquid, Gas', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Ways to Make 5', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Cc - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'States of Matter: Solid, Liquid, Gas', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Equal Parts & Fair Shares', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Digraph CH: Read & Write', minutes: 10, essential: true, printable: true },
+      science: { title: 'States of Matter: Solid, Liquid, Gas', minutes: 10, essential: false, printable: true },
+    },
+  },
+  8: {
+    prek: {
+      math: { title: 'Review: Count & Shapes', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter Review A-G', minutes: 5, essential: true, printable: true },
+      science: { title: 'Science Review & Experiment Day', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Q1 Review: Count, Shapes, Add', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Review Aa-Cc', minutes: 6, essential: true, printable: true },
+      science: { title: 'Science Review & Experiment Day', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Quarter 1 Math Review', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Reading Check: Q1 Review', minutes: 10, essential: true, printable: true },
+      science: { title: 'Science Review & Experiment Day', minutes: 10, essential: false, printable: true },
+    },
+  },
+  9: {
+    prek: {
+      math: { title: 'Count 6-10', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter H Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Force & Motion: Push and Pull', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Pennies & Dimes', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Dd - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Force & Motion: Push and Pull', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Coins: Count On from 10', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Digraph TH: Read & Write', minutes: 10, essential: true, printable: true },
+      science: { title: 'Force & Motion: Push and Pull', minutes: 10, essential: false, printable: true },
+    },
+  },
+  10: {
+    prek: {
+      math: { title: 'Count to 10', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter I Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Energy: Light & Heat from the Sun', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Count by 10s', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Gg - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Energy: Light & Heat from the Sun', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Tens & Money', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Digraph WH: Read & Write', minutes: 10, essential: true, printable: true },
+      science: { title: 'Energy: Light & Heat from the Sun', minutes: 10, essential: false, printable: true },
+    },
+  },
+  11: {
+    prek: {
+      math: { title: 'Long & Short', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter J Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Simple Machines: Ramp, Lever, Wheel', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Longer or Shorter?', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Oo - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Simple Machines: Ramp, Lever, Wheel', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Measure & Compare', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Silent E: a_e Words', minutes: 10, essential: true, printable: true },
+      science: { title: 'Simple Machines: Ramp, Lever, Wheel', minutes: 10, essential: false, printable: true },
+    },
+  },
+  12: {
+    prek: {
+      math: { title: 'Trace Triangles', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter K Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Ecosystems: Pond & Forest', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Sides & Corners', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Bb - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Ecosystems: Pond & Forest', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Shapes: Sides & Corners', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Silent E: i_e Words', minutes: 10, essential: true, printable: true },
+      science: { title: 'Ecosystems: Pond & Forest', minutes: 10, essential: false, printable: true },
+    },
+  },
+  13: {
+    prek: {
+      math: { title: 'Count the Squares', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter L Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Food Chains', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Count the Squares', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Ff - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Food Chains', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Count Squares: Area & Sides', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Silent E: o_e Words', minutes: 10, essential: true, printable: true },
+      science: { title: 'Food Chains', minutes: 10, essential: false, printable: true },
+    },
+  },
+  14: {
+    prek: {
+      math: { title: 'My Day in Order', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter M Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Weather Patterns', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Clock Hands & Hours', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Hh - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Weather Patterns', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Clocks to the Hour & Half Hour', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Silent E: u_e Words', minutes: 10, essential: true, printable: true },
+      science: { title: 'Weather Patterns', minutes: 10, essential: false, printable: true },
+    },
+  },
+  15: {
+    prek: {
+      math: { title: 'Count & Pattern Review', minutes: 6, essential: true, printable: true },
+      literacy: { title: 'Letter N Exposure & Trace', minutes: 5, essential: true, printable: true },
+      science: { title: 'Climate: Hot & Cold Places', minutes: 10, essential: false, printable: false },
+    },
+    k: {
+      math: { title: 'Picture Problems to 5', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Letter Ll - Sound & Trace', minutes: 6, essential: true, printable: true },
+      science: { title: 'Climate: Hot & Cold Places', minutes: 10, essential: false, printable: false },
+    },
+    '1st': {
+      math: { title: 'Bar Model Word Problems', minutes: 8, essential: true, printable: true },
+      literacy: { title: 'Silent E Review & Rhymes', minutes: 10, essential: true, printable: true },
+      science: { title: 'Climate: Hot & Cold Places', minutes: 10, essential: false, printable: true },
     },
   },
 }
 
 const BIBLE_TITLES: Record<number, string> = {
-  1: 'Family Bible: God Created Everything',
-  2: 'Family Bible: Noah and the Rainbow Promise',
-  3: 'Family Bible: Joseph — Good Things from Hard',
-  4: 'Family Bible: Moses and Courage',
-  5: 'Family Bible: David and Goliath',
+  1: 'Family Bible: God Created Me & My World',
+  2: 'Family Bible: God Made Me & My Family',
+  3: 'Family Bible: Noah Trusted God',
+  4: 'Family Bible: Abraham Follows God',
+  5: 'Family Bible: Joseph: God Has a Plan',
+  6: 'Family Bible: Baby Moses: God Protects',
+  7: 'Family Bible: Let My People Go',
+  8: 'Family Bible: Quarter Review: God Keeps His Promises',
+  9: 'Family Bible: The Ten Commandments',
+  10: 'Family Bible: God Provides: Manna in the Desert',
+  11: 'Family Bible: Joshua & the Walls of Jericho',
+  12: 'Family Bible: Gideon: Small but Mighty',
+  13: 'Family Bible: Ruth: Loyal Love',
+  14: 'Family Bible: David & Goliath',
+  15: 'Family Bible: David the Shepherd (Psalm 23)',
 }
 
-const BIBLE_MINUTES: Record<number, number> = { 1: 7, 2: 8, 3: 8, 4: 7, 5: 8 }
+const BIBLE_MINUTES: Record<number, number> = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 7, 7: 7, 8: 7, 9: 7, 10: 7, 11: 7, 12: 7, 13: 7, 14: 7, 15: 7 }
 
 const SUBJECT_KEYS: Array<'math' | 'literacy' | 'science'> = [
   'math',
@@ -346,50 +636,6 @@ function buildAssignments(lessons: Lesson[]): Assignment[] {
   return out
 }
 
-const WORKSHEET_POOL: Array<{
-  title: string
-  type: Resource['type']
-  subject: Resource['subject']
-  skill: string
-  gradeBand: Resource['gradeBand']
-}> = [
-  { title: 'Number Bonds to 10 Practice', type: 'Math Practice', subject: 'math', skill: 'Number Bonds', gradeBand: '1st' },
-  { title: 'Short A Word Family Cards', type: 'Flash Cards', subject: 'literacy', skill: 'Short A', gradeBand: '1st' },
-  { title: 'Letter A Tracing Page', type: 'Tracing', subject: 'literacy', skill: 'Handwriting', gradeBand: 'pre-k' },
-  { title: 'Count & Color 1–5', type: 'Worksheet', subject: 'math', skill: 'Counting', gradeBand: 'pre-k' },
-  { title: 'Counting to 20 Chart', type: 'Math Practice', subject: 'math', skill: 'Counting', gradeBand: 'k' },
-  { title: 'Short A Decodable Passage', type: 'Reading Passage', subject: 'literacy', skill: 'Decodable Reading', gradeBand: '1st' },
-  { title: 'Creation Days Coloring Book', type: 'Coloring', subject: 'bible', skill: 'Creation', gradeBand: 'pre-k' },
-  { title: 'Genesis 1 Read-Aloud Mini Book', type: 'Mini Book', subject: 'bible', skill: 'Creation', gradeBand: 'k' },
-  { title: 'Living vs Nonliving Cut & Paste', type: 'Cut & Paste', subject: 'science', skill: 'Classification', gradeBand: 'k' },
-]
-
-const CONTRIBUTORS: Array<Resource['contributor']> = ['Venessa', 'Lola']
-
-function buildResources(): Resource[] {
-  const out: Resource[] = []
-  let n = 0
-  const nextId = () => `r-seed-${++n}`
-  for (const week of weeks) {
-    WORKSHEET_POOL.forEach((w, index) => {
-      out.push({
-        id: nextId(),
-        title: w.title,
-        type: w.type,
-        subject: w.subject,
-        skill: w.skill,
-        gradeBand: w.gradeBand,
-        weekNumber: week.number,
-        minutes: 10,
-        owner: index % 3 === 0 ? 'h-venessa' : 'shared',
-        contributor: CONTRIBUTORS[index % CONTRIBUTORS.length],
-        saved: index % 2 === 0,
-      })
-    })
-  }
-  return out
-}
-
 // ---- Built exports ---------------------------------------------------------
 
 export const lessons: Lesson[] = buildLessons()
@@ -440,7 +686,7 @@ const PACKET_CHILD_FOLDER: Record<string, string> = {
   'c-amelia': 'Amelia',
 }
 
-const PACKET_WEEKS = [1, 2, 3, 4, 5]
+const PACKET_WEEKS = Array.from({ length: 15 }, (_, i) => i + 1)
 
 function weekFolder(weekNumber: number) {
   return `week-${String(weekNumber).padStart(2, '0')}`
@@ -497,7 +743,7 @@ function dayTitle(day: 'monday' | 'tuesday' | 'thursday' | 'friday') {
   return 'Friday'
 }
 
-export const resources: Resource[] = [...buildResources(), ...buildPacketResources()]
+export const resources: Resource[] = buildPacketResources()
 
 export const readAloud: ReadAloudBook[] = [
   { id: 'b1', title: 'The Berenstain Bears and the Spooky Old Tree', status: 'currently-reading', householdId: 'h-venessa' },
