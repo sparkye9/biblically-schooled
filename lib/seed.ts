@@ -10,6 +10,7 @@ import type {
   Skill,
   SupplyItem,
 } from './types'
+import { MAX_PACKET_WEEK, packetUrlFor, parentChecklistUrlFor } from './worksheet-packets'
 
 export const DEMO_DAY = 'tuesday' as const
 export const DEMO_WEEK = 1
@@ -1251,25 +1252,7 @@ export const skills: Skill[] = [
 // Seraiah's content relabeled with her name (same Pre-K plan, both girls).
 // ---------------------------------------------------------------------------
 
-const PACKET_DAY_FILE: Record<'monday' | 'tuesday' | 'thursday' | 'friday', string> = {
-  monday: 'Mon',
-  tuesday: 'Tue',
-  thursday: 'Thu',
-  friday: 'Fri',
-}
-
-const PACKET_CHILD_FOLDER: Record<string, string> = {
-  'c-alijah': 'Alijah',
-  'c-olori': 'Olori-Joy',
-  'c-seraiah': 'Seraiah',
-  'c-amelia': 'Amelia',
-}
-
-const PACKET_WEEKS = Array.from({ length: 35 }, (_, i) => i + 1)
-
-function weekFolder(weekNumber: number) {
-  return `week-${String(weekNumber).padStart(2, '0')}`
-}
+const PACKET_WEEKS = Array.from({ length: MAX_PACKET_WEEK }, (_, i) => i + 1)
 
 function buildPacketResources(): Resource[] {
   const out: Resource[] = []
@@ -1278,8 +1261,9 @@ function buildPacketResources(): Resource[] {
 
   for (const weekNumber of PACKET_WEEKS) {
     for (const child of children) {
-      const folder = PACKET_CHILD_FOLDER[child.id]
       for (const day of HOME_DAYS) {
+        const fileUrl = packetUrlFor(child.id, weekNumber, day)
+        if (!fileUrl) continue
         out.push({
           id: nextId(),
           title: `Week ${weekNumber} · ${dayTitle(day)} Packet — ${child.name}`,
@@ -1293,24 +1277,27 @@ function buildPacketResources(): Resource[] {
           contributor: child.name,
           saved: false,
           childId: child.id,
-          fileUrl: `/worksheets/${weekFolder(weekNumber)}/${folder}/${PACKET_DAY_FILE[day]}.pdf`,
+          fileUrl,
         })
       }
     }
-    out.push({
-      id: nextId(),
-      title: `Week ${weekNumber} Parent Checklist`,
-      type: 'Parent Checklist',
-      subject: 'review',
-      skill: 'Sunday prep & weekly rhythm',
-      gradeBand: 'pre-k',
-      weekNumber,
-      minutes: 10,
-      owner: 'h-venessa',
-      contributor: 'Venessa',
-      saved: false,
-      fileUrl: `/worksheets/${weekFolder(weekNumber)}/Parent_Checklist.pdf`,
-    })
+    const checklistUrl = parentChecklistUrlFor(weekNumber)
+    if (checklistUrl) {
+      out.push({
+        id: nextId(),
+        title: `Week ${weekNumber} Parent Checklist`,
+        type: 'Parent Checklist',
+        subject: 'review',
+        skill: 'Sunday prep & weekly rhythm',
+        gradeBand: 'pre-k',
+        weekNumber,
+        minutes: 10,
+        owner: 'h-venessa',
+        contributor: 'Venessa',
+        saved: false,
+        fileUrl: checklistUrl,
+      })
+    }
   }
   return out
 }

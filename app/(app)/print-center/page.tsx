@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Printer, Check, FileText, BookOpen, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { packetUrlFor } from '@/lib/worksheet-packets'
 
 export default function PrintCenterPage() {
   const store = useStore()
@@ -26,6 +27,7 @@ export default function PrintCenterPage() {
         title: i.lesson.title,
         sub: `${i.lesson.minutes} min`,
         subject: i.lesson.subject,
+        fileUrl: packetUrlFor(child.id, i.lesson.weekNumber, i.lesson.day) ?? undefined,
       })),
   )
 
@@ -48,7 +50,7 @@ export default function PrintCenterPage() {
       title: p.title,
       sub: `${p.child.name} · ${p.sub}`,
       subject: p.subject,
-      fileUrl: undefined as string | undefined,
+      fileUrl: p.fileUrl,
     })),
     ...printableResources
       .filter((r) => r.type !== 'Daily Packet' && r.type !== 'Parent Checklist')

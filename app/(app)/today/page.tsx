@@ -9,6 +9,7 @@ import {
   Zap,
   ListChecks,
   Play,
+  Printer,
   Clock,
   AlertCircle,
   CheckCircle2,
@@ -23,11 +24,12 @@ import {
   type AssignedLesson,
 } from '@/lib/selectors'
 import { PageHeader, ChildAvatar, ActivityBadge } from '@/components/primitives'
-import { ActivityCard } from '@/components/activity-card'
+import { ActivityCard, interactiveHref } from '@/components/activity-card'
 import { RotationAssistant } from '@/components/rotation-assistant'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { dayLabels } from '@/lib/ui'
+import { packetUrlFor } from '@/lib/worksheet-packets'
 
 type DayMode = 'essential' | '30' | '60' | 'full'
 
@@ -307,11 +309,26 @@ function WorkColumn({
                 <ActivityBadge type={i.lesson.activityType} />
                 {i.lesson.interactive && (
                   <Button size="sm" variant="ghost" asChild>
-                    <Link href="/lessons/phonics">
+                    <Link href={interactiveHref[i.lesson.interactive]}>
                       <Play className="size-3.5" />
                     </Link>
                   </Button>
                 )}
+                {i.lesson.printable &&
+                  (() => {
+                    const packetUrl = packetUrlFor(
+                      i.assignment.childId,
+                      i.lesson.weekNumber,
+                      i.lesson.day,
+                    )
+                    return packetUrl ? (
+                      <Button size="sm" variant="ghost" asChild>
+                        <a href={packetUrl} target="_blank" rel="noreferrer">
+                          <Printer className="size-3.5" />
+                        </a>
+                      </Button>
+                    ) : null
+                  })()}
               </div>
             </li>
           ))}

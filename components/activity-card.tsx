@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/store'
 import type { AssignedLesson } from '@/lib/selectors'
+import { packetUrlFor } from '@/lib/worksheet-packets'
 import { ActivityBadge, SubjectPill } from '@/components/primitives'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,7 +26,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 
-const interactiveHref: Record<string, string> = {
+export const interactiveHref: Record<string, string> = {
   phonics: '/lessons/phonics',
   'math-manipulatives': '/lessons/math',
   'word-building': '/lessons/word-building',
@@ -42,6 +43,7 @@ export function ActivityCard({
   const { toggleAssignment } = useStore()
   const { lesson, assignment } = item
   const done = assignment.status === 'done'
+  const packetUrl = packetUrlFor(assignment.childId, lesson.weekNumber, lesson.day)
 
   return (
     <div
@@ -84,7 +86,14 @@ export function ActivityCard({
           </Button>
         )}
 
-        {lesson.printable && (
+        {lesson.printable && packetUrl && (
+          <Button size="sm" variant="ghost" asChild>
+            <a href={packetUrl} target="_blank" rel="noreferrer">
+              <Printer className="size-4" /> Print
+            </a>
+          </Button>
+        )}
+        {lesson.printable && !packetUrl && (
           <Button size="sm" variant="ghost" asChild>
             <Link href="/print-center">
               <Printer className="size-4" /> Print
