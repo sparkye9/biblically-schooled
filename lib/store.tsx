@@ -100,6 +100,43 @@ interface StoreContext extends State {
 
 const Ctx = createContext<StoreContext | null>(null)
 
+/**
+ * Merge a previously-saved state with the current seed. The user's saved data
+ * (edits, added items, progress) is preserved, and any seed items that are
+ * missing from the saved copy (e.g. newly added households, lessons, worksheets)
+ * are merged in by id so new curriculum content always appears.
+ */
+function mergeState(seed: State, saved: Partial<State>): State {
+  const byId = <T extends { id: string }>(items: T[], ids: string[]) =>
+    items.filter((i) => !ids.includes(i.id))
+  const savedIds = (arr: { id: string }[] | undefined) =>
+    new Set((arr ?? []).map((i) => i.id))
+
+  const arrays: (keyof State)[] = [
+    'households',
+    'children',
+    'weeks',
+    'lessons',
+    'assignments',
+    'skills',
+    'resources',
+    'readAloud',
+    'supplies',
+    'coverageRequests',
+    'parentNotes',
+  ]
+
+  const next: State = { ...seed, ...saved }
+  for (const key of arrays) {
+    const seedArr = seed[key] as { id: string }[]
+    const savedArr = (saved[key] as { id: string }[] | undefined) ?? []
+    const have = savedIds(savedArr)
+    const missing = byId(seedArr, [...have])
+    ;(next as unknown as Record<string, unknown>)[key] = [...savedArr, ...missing]
+  }
+  return next
+}
+
 function uid(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 9)}`
 }
@@ -113,7 +150,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) {
         const parsed = JSON.parse(raw)
-        setState((s) => ({ ...s, ...parsed }))
+        setState((s) => mergeState(s, parsed))
       }
     } catch {
       /* ignore */
