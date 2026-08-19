@@ -116,9 +116,9 @@
 
   /* Child accents */
   --child-alijah: oklch(0.6 0.08 240);     /* muted blue */
-  --child-olori: oklch(0.68 0.09 15);      /* dusty rose */
-  --child-seraiah: oklch(0.62 0.08 150);   /* sage */
-  --child-amelia: oklch(0.74 0.11 80);     /* soft warm gold */
+  --child-olori: oklch(0.7 0.16 350);     /* pink */
+  --child-seraiah: oklch(0.62 0.16 300);  /* purple */
+  --child-amelia: oklch(0.68 0.16 300);   /* purple */
 
   --sidebar: oklch(0.955 0.016 78);
   --sidebar-foreground: oklch(0.34 0.03 55);
