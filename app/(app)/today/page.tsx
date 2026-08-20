@@ -308,10 +308,13 @@ function WorkColumn({
               <div className="flex items-center gap-2">
                 <ActivityBadge type={i.lesson.activityType} />
                 {i.lesson.interactive && (
-                  <Button size="sm" variant="ghost" asChild>
-                    <Link href={interactiveHref[i.lesson.interactive]}>
-                      <Play className="size-3.5" />
-                    </Link>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    nativeButton={false}
+                    render={<Link href={interactiveHref[i.lesson.interactive]} />}
+                  >
+                    <Play className="size-3.5" />
                   </Button>
                 )}
                 {i.lesson.printable &&
@@ -322,10 +325,13 @@ function WorkColumn({
                       i.lesson.day,
                     )
                     return packetUrl ? (
-                      <Button size="sm" variant="ghost" asChild>
-                        <a href={packetUrl} target="_blank" rel="noreferrer">
-                          <Printer className="size-3.5" />
-                        </a>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        nativeButton={false}
+                        render={<a href={packetUrl} target="_blank" rel="noreferrer" />}
+                      >
+                        <Printer className="size-3.5" />
                       </Button>
                     ) : null
                   })()}

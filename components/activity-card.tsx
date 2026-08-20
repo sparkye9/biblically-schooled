@@ -79,25 +79,34 @@ export function ActivityCard({
         </Button>
 
         {lesson.interactive && (
-          <Button size="sm" variant="outline" asChild>
-            <Link href={interactiveHref[lesson.interactive]}>
-              <Play className="size-4" /> Do online
-            </Link>
+          <Button
+            size="sm"
+            variant="outline"
+            nativeButton={false}
+            render={<Link href={interactiveHref[lesson.interactive]} />}
+          >
+            <Play className="size-4" /> Do online
           </Button>
         )}
 
         {lesson.printable && packetUrl && (
-          <Button size="sm" variant="ghost" asChild>
-            <a href={packetUrl} target="_blank" rel="noreferrer">
-              <Printer className="size-4" /> Print
-            </a>
+          <Button
+            size="sm"
+            variant="ghost"
+            nativeButton={false}
+            render={<a href={packetUrl} target="_blank" rel="noreferrer" />}
+          >
+            <Printer className="size-4" /> Print
           </Button>
         )}
         {lesson.printable && !packetUrl && (
-          <Button size="sm" variant="ghost" asChild>
-            <Link href="/print-center">
-              <Printer className="size-4" /> Print
-            </Link>
+          <Button
+            size="sm"
+            variant="ghost"
+            nativeButton={false}
+            render={<Link href="/print-center" />}
+          >
+            <Printer className="size-4" /> Print
           </Button>
         )}
 
@@ -115,10 +124,8 @@ function HelpMeTeach({ item }: { item: AssignedLesson }) {
   const { lesson } = item
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="text-primary">
-          <Lightbulb className="size-4" /> Help me teach this
-        </Button>
+      <DialogTrigger render={<Button size="sm" variant="ghost" className="text-primary" />}>
+        <Lightbulb className="size-4" /> Help me teach this
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
@@ -202,10 +209,8 @@ function MyChildIsStuck({ title }: { title: string }) {
         if (!o) setRevealed(1)
       }}
     >
-      <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="text-muted-foreground">
-          <LifeBuoy className="size-4" /> Stuck?
-        </Button>
+      <DialogTrigger render={<Button size="sm" variant="ghost" className="text-muted-foreground" />}>
+        <LifeBuoy className="size-4" /> Stuck?
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

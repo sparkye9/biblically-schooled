@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactElement } from 'react'
 import { Plus, UserPlus, Users } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import type { ChildColor, GradeBand } from '@/lib/types'
@@ -34,7 +34,7 @@ export function AddProfileDialog({
   trigger,
   onAdded,
 }: {
-  trigger?: ReactNode
+  trigger?: ReactElement
   onAdded?: (profileId: string) => void
 }) {
   const store = useStore()
@@ -44,13 +44,15 @@ export function AddProfileDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger ?? (
-          <Button>
-            <Plus className="size-4" /> Add profile
-          </Button>
-        )}
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          trigger ?? (
+            <Button>
+              <Plus className="size-4" /> Add profile
+            </Button>
+          )
+        }
+      />
       <DialogContent className="sm:max-w-md">
         <form
           onSubmit={(event) => {
@@ -116,7 +118,7 @@ export function AddChildDialog({
   defaultHouseholdId,
   onAdded,
 }: {
-  trigger?: ReactNode
+  trigger?: ReactElement
   defaultHouseholdId?: string
   onAdded?: (childId: string) => void
 }) {
@@ -139,13 +141,15 @@ export function AddChildDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger ?? (
-          <Button>
-            <UserPlus className="size-4" /> Add child
-          </Button>
-        )}
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          trigger ?? (
+            <Button>
+              <UserPlus className="size-4" /> Add child
+            </Button>
+          )
+        }
+      />
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <form
           onSubmit={(event) => {

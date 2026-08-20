@@ -141,13 +141,12 @@ export default function SundayPrepPage() {
 
               {step.href && (
                 <Button
-                  asChild
                   variant="outline"
                   className="shrink-0 gap-1.5 bg-transparent"
+                  nativeButton={false}
+                  render={<Link href={step.href} />}
                 >
-                  <Link href={step.href}>
-                    {step.hrefLabel} <ArrowRight className="size-4" />
-                  </Link>
+                  {step.hrefLabel} <ArrowRight className="size-4" />
                 </Button>
               )}
             </Card>

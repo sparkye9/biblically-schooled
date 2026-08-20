@@ -119,10 +119,13 @@ export default function PrintCenterPage() {
                   <p className="text-sm text-muted-foreground">Sunday prep, materials & weekly rhythm — one page for the whole household.</p>
                 </div>
               </div>
-              <Button variant="outline" className="gap-1.5" asChild>
-                <a href={checklist.fileUrl} target="_blank" rel="noreferrer">
-                  <Download className="size-4" /> Open checklist
-                </a>
+              <Button
+                variant="outline"
+                className="gap-1.5"
+                nativeButton={false}
+                render={<a href={checklist.fileUrl} target="_blank" rel="noreferrer" />}
+              >
+                <Download className="size-4" /> Open checklist
               </Button>
             </Card>
           ))}

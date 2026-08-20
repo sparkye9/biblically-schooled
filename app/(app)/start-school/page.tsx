@@ -60,8 +60,8 @@ export default function StartSchoolPage() {
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
         <p className="font-serif text-2xl font-semibold">Nothing scheduled today</p>
         <p className="mt-1 text-muted-foreground">Enjoy the margin.</p>
-        <Button asChild className="mt-4">
-          <Link href="/">Back home</Link>
+        <Button className="mt-4" nativeButton={false} render={<Link href="/" />}>
+          Back home
         </Button>
       </div>
     )
@@ -86,10 +86,14 @@ export default function StartSchoolPage() {
             {finished ? 'Complete' : `Step ${index + 1} of ${steps.length}`}
           </p>
         </div>
-        <Button variant="ghost" size="icon" asChild className="ml-4">
-          <Link href="/" aria-label="Exit guided mode">
-            <X className="size-5" />
-          </Link>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="ml-4"
+          nativeButton={false}
+          render={<Link href="/" aria-label="Exit guided mode" />}
+        >
+          <X className="size-5" />
         </Button>
       </div>
 
@@ -200,10 +204,12 @@ function StepCard({
 
       <div className="mt-6 flex flex-wrap gap-2">
         {lesson.interactive && (
-          <Button variant="outline" asChild>
-            <Link href="/lessons/phonics">
-              <Play className="size-4" /> Open activity
-            </Link>
+          <Button
+            variant="outline"
+            nativeButton={false}
+            render={<Link href="/lessons/phonics" />}
+          >
+            <Play className="size-4" /> Open activity
           </Button>
         )}
         <Button variant="ghost">
@@ -309,11 +315,15 @@ function FinishCard() {
         for another day &mdash; no guilt.
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-2">
-        <Button asChild>
-          <Link href="/">Back home</Link>
+        <Button nativeButton={false} render={<Link href="/" />}>
+          Back home
         </Button>
-        <Button variant="outline" asChild>
-          <Link href="/progress">Log progress</Link>
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href="/progress" />}
+        >
+          Log progress
         </Button>
       </div>
     </div>

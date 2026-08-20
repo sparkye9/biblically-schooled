@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useState, type ReactNode, type ReactElement } from 'react'
 import {
   CalendarDays,
   CheckCircle2,
@@ -241,7 +241,7 @@ function WeekEditor({
   onSaved,
 }: {
   week?: CurriculumWeek
-  trigger?: ReactNode
+  trigger?: ReactElement
   onSaved: (weekNumber: number) => void
 }) {
   const store = useStore()
@@ -264,13 +264,15 @@ function WeekEditor({
         if (nextOpen) setForm(week ? weekToForm(week) : blankWeekForm())
       }}
     >
-      <DialogTrigger asChild>
-        {trigger ?? (
-          <Button variant="outline">
-            <Edit3 className="size-4" /> Edit week
-          </Button>
-        )}
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          trigger ?? (
+            <Button variant="outline">
+              <Edit3 className="size-4" /> Edit week
+            </Button>
+          )
+        }
+      />
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <form
           onSubmit={(event) => {
@@ -343,7 +345,7 @@ function LessonEditor({
   weekNumber: number
   lesson?: Lesson
   defaultDay?: DayName
-  trigger: ReactNode
+  trigger: ReactElement
   onSaved: () => void
 }) {
   const store = useStore()
@@ -366,7 +368,7 @@ function LessonEditor({
         }
       }}
     >
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogTrigger render={trigger} />
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl">
         <form
           onSubmit={(event) => {
