@@ -496,12 +496,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Five Frame: Count 1-5', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter A Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Living vs Nonliving', minutes: 10, essential: false, printable: false },
+      science: { title: 'Living vs Nonliving', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Ten Frames: Count & +1', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Aa - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Living vs Nonliving', minutes: 10, essential: false, printable: false },
+      science: { title: 'Living vs Nonliving', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Number Bonds to 10', minutes: 8, essential: true, printable: true },
@@ -513,12 +513,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Five Frame: Count 1-5', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter B Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'My Five Senses', minutes: 10, essential: false, printable: false },
+      science: { title: 'My Five Senses', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Teen Numbers: 10 and Some More', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Mm - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'My Five Senses', minutes: 10, essential: false, printable: false },
+      science: { title: 'My Five Senses', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Tens & Ones: Teen Numbers', minutes: 8, essential: true, printable: true },
@@ -530,12 +530,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Circles & Squares', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter C Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'What Living Things Need', minutes: 10, essential: false, printable: false },
+      science: { title: 'What Living Things Need', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Compare with Ten Frames', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Ss - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'What Living Things Need', minutes: 10, essential: false, printable: false },
+      science: { title: 'What Living Things Need', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Make 10 to Add', minutes: 8, essential: true, printable: true },
@@ -547,12 +547,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Big & Small', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter D Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Animal Habitats', minutes: 10, essential: false, printable: false },
+      science: { title: 'Animal Habitats', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Shapes All Around', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Tt - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Animal Habitats', minutes: 10, essential: false, printable: false },
+      science: { title: 'Animal Habitats', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Subtract with 10', minutes: 8, essential: true, printable: true },
@@ -564,12 +564,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count & Color 1-5', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter E Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Landforms & Water', minutes: 10, essential: false, printable: false },
+      science: { title: 'Landforms & Water', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Number Bonds of 5', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Pp - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Landforms & Water', minutes: 10, essential: false, printable: false },
+      science: { title: 'Landforms & Water', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Number Bonds & Equal Groups', minutes: 8, essential: true, printable: true },
@@ -581,12 +581,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Match the Halves', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter F Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Matter: Solids & Liquids', minutes: 10, essential: false, printable: false },
+      science: { title: 'Matter: Solids & Liquids', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Halves & Fair Shares', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Nn - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Matter: Solids & Liquids', minutes: 10, essential: false, printable: false },
+      science: { title: 'Matter: Solids & Liquids', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Fractions: Halves & Fourths', minutes: 8, essential: true, printable: true },
@@ -598,12 +598,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Shape Patterns', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter G Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'States of Matter: Solid, Liquid, Gas', minutes: 10, essential: false, printable: false },
+      science: { title: 'States of Matter: Solid, Liquid, Gas', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Ways to Make 5', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Cc - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'States of Matter: Solid, Liquid, Gas', minutes: 10, essential: false, printable: false },
+      science: { title: 'States of Matter: Solid, Liquid, Gas', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Equal Parts & Fair Shares', minutes: 8, essential: true, printable: true },
@@ -615,12 +615,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Review: Count & Shapes', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Review A-G', minutes: 5, essential: true, printable: true },
-      science: { title: 'Science Review & Experiment Day', minutes: 10, essential: false, printable: false },
+      science: { title: 'Science Review & Experiment Day', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Q1 Review: Count, Shapes, Add', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Review Aa-Cc', minutes: 6, essential: true, printable: true },
-      science: { title: 'Science Review & Experiment Day', minutes: 10, essential: false, printable: false },
+      science: { title: 'Science Review & Experiment Day', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Quarter 1 Math Review', minutes: 8, essential: true, printable: true },
@@ -632,12 +632,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count 6-10', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter H Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Force & Motion: Push and Pull', minutes: 10, essential: false, printable: false },
+      science: { title: 'Force & Motion: Push and Pull', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Pennies & Dimes', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Dd - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Force & Motion: Push and Pull', minutes: 10, essential: false, printable: false },
+      science: { title: 'Force & Motion: Push and Pull', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Coins: Count On from 10', minutes: 8, essential: true, printable: true },
@@ -649,12 +649,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count to 10', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter I Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Energy: Light & Heat from the Sun', minutes: 10, essential: false, printable: false },
+      science: { title: 'Energy: Light & Heat from the Sun', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Count by 10s', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Gg - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Energy: Light & Heat from the Sun', minutes: 10, essential: false, printable: false },
+      science: { title: 'Energy: Light & Heat from the Sun', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Tens & Money', minutes: 8, essential: true, printable: true },
@@ -666,12 +666,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Long & Short', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter J Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Simple Machines: Ramp, Lever, Wheel', minutes: 10, essential: false, printable: false },
+      science: { title: 'Simple Machines: Ramp, Lever, Wheel', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Longer or Shorter?', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Oo - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Simple Machines: Ramp, Lever, Wheel', minutes: 10, essential: false, printable: false },
+      science: { title: 'Simple Machines: Ramp, Lever, Wheel', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Measure & Compare', minutes: 8, essential: true, printable: true },
@@ -683,12 +683,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Trace Triangles', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter K Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Ecosystems: Pond & Forest', minutes: 10, essential: false, printable: false },
+      science: { title: 'Ecosystems: Pond & Forest', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Sides & Corners', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Bb - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Ecosystems: Pond & Forest', minutes: 10, essential: false, printable: false },
+      science: { title: 'Ecosystems: Pond & Forest', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Shapes: Sides & Corners', minutes: 8, essential: true, printable: true },
@@ -700,12 +700,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count the Squares', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter L Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Food Chains', minutes: 10, essential: false, printable: false },
+      science: { title: 'Food Chains', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Count the Squares', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Ff - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Food Chains', minutes: 10, essential: false, printable: false },
+      science: { title: 'Food Chains', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Count Squares: Area & Sides', minutes: 8, essential: true, printable: true },
@@ -717,12 +717,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'My Day in Order', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter M Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Weather Patterns', minutes: 10, essential: false, printable: false },
+      science: { title: 'Weather Patterns', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Clock Hands & Hours', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Hh - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Weather Patterns', minutes: 10, essential: false, printable: false },
+      science: { title: 'Weather Patterns', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Clocks to the Hour & Half Hour', minutes: 8, essential: true, printable: true },
@@ -734,12 +734,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count & Pattern Review', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter N Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Climate: Hot & Cold Places', minutes: 10, essential: false, printable: false },
+      science: { title: 'Climate: Hot & Cold Places', minutes: 10, essential: false, printable: true },
     },
     k: {
       math: { title: 'Picture Problems to 5', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Ll - Sound & Trace', minutes: 6, essential: true, printable: true },
-      science: { title: 'Climate: Hot & Cold Places', minutes: 10, essential: false, printable: false },
+      science: { title: 'Climate: Hot & Cold Places', minutes: 10, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Bar Model Word Problems', minutes: 8, essential: true, printable: true },
@@ -751,12 +751,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Review: Count 1-10', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Review A-N', minutes: 5, essential: true, printable: true },
-      science: { title: 'Science Review & Experiment Day', minutes: 12, essential: false, printable: false },
+      science: { title: 'Science Review & Experiment Day', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Q2 Review: Frames & Teens', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Letter Review + First Blends', minutes: 7, essential: true, printable: true },
-      science: { title: 'Science Review & Experiment Day', minutes: 12, essential: false, printable: false },
+      science: { title: 'Science Review & Experiment Day', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Quarter 2 Math Review', minutes: 8, essential: true, printable: true },
@@ -768,12 +768,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'One for You, One for Me', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter O Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Living Things Up Close', minutes: 12, essential: false, printable: false },
+      science: { title: 'Living Things Up Close', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Fair Halves or Not?', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Rr + Blend: rat, ram', minutes: 7, essential: true, printable: true },
-      science: { title: 'Living Things Up Close', minutes: 12, essential: false, printable: false },
+      science: { title: 'Living Things Up Close', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Halves, Thirds & Fourths', minutes: 8, essential: true, printable: true },
@@ -785,12 +785,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Match the Halves', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter P Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Plant Parts', minutes: 12, essential: false, printable: false },
+      science: { title: 'Plant Parts', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Two Halves Make a Whole', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Ee + Blend: ten, net', minutes: 7, essential: true, printable: true },
-      science: { title: 'Plant Parts', minutes: 12, essential: false, printable: false },
+      science: { title: 'Plant Parts', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Add Fractions with Pictures', minutes: 8, essential: true, printable: true },
@@ -802,12 +802,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Color Patterns', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Q Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'My Amazing Body', minutes: 12, essential: false, printable: false },
+      science: { title: 'My Amazing Body', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Color Patterns', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Ww + Blend: wet, win', minutes: 7, essential: true, printable: true },
-      science: { title: 'My Amazing Body', minutes: 12, essential: false, printable: false },
+      science: { title: 'My Amazing Body', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'For-Every Patterns', minutes: 8, essential: true, printable: true },
@@ -819,12 +819,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'How Many of 5?', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter R Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Healthy Food, Strong Body', minutes: 12, essential: false, printable: false },
+      science: { title: 'Healthy Food, Strong Body', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Out of 10 Frames', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Jj + Blend: jam, jet', minutes: 7, essential: true, printable: true },
-      science: { title: 'Healthy Food, Strong Body', minutes: 12, essential: false, printable: false },
+      science: { title: 'Healthy Food, Strong Body', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Out of 10', minutes: 8, essential: true, printable: true },
@@ -836,12 +836,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'What Number Is Missing?', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter S Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Earth\'s Layers', minutes: 12, essential: false, printable: false },
+      science: { title: 'Earth\'s Layers', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Missing Part of 5', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Kk + Blend: kit, kid', minutes: 7, essential: true, printable: true },
-      science: { title: 'Earth\'s Layers', minutes: 12, essential: false, printable: false },
+      science: { title: 'Earth\'s Layers', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Find the Missing Number', minutes: 8, essential: true, printable: true },
@@ -853,12 +853,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Find and Color the Box', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter T Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Rocks & Minerals', minutes: 12, essential: false, printable: false },
+      science: { title: 'Rocks & Minerals', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Find the Box', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Uu + Blend: up, cup', minutes: 7, essential: true, printable: true },
-      science: { title: 'Rocks & Minerals', minutes: 12, essential: false, printable: false },
+      science: { title: 'Rocks & Minerals', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Grid Treasure Map', minutes: 8, essential: true, printable: true },
@@ -870,12 +870,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count & Color Graph', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter U Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Gifts from the Earth (Natural Resources)', minutes: 12, essential: false, printable: false },
+      science: { title: 'Gifts from the Earth (Natural Resources)', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Count & Color Graph', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Vv + Blend: van, vet', minutes: 7, essential: true, printable: true },
-      science: { title: 'Gifts from the Earth (Natural Resources)', minutes: 12, essential: false, printable: false },
+      science: { title: 'Gifts from the Earth (Natural Resources)', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Count & Graph', minutes: 8, essential: true, printable: true },
@@ -887,12 +887,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Review: Count & Letters', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Review O-U', minutes: 5, essential: true, printable: true },
-      science: { title: 'Science Review & Experiment Day', minutes: 12, essential: false, printable: false },
+      science: { title: 'Science Review & Experiment Day', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Q3 Review: Blend & Count', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Review + Blend Check', minutes: 7, essential: true, printable: true },
-      science: { title: 'Science Review & Experiment Day', minutes: 12, essential: false, printable: false },
+      science: { title: 'Science Review & Experiment Day', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Quarter 3 Math Review', minutes: 8, essential: true, printable: true },
@@ -904,12 +904,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Sheep Stories: One More', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter V Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Engineering: Build a Tall Tower', minutes: 12, essential: false, printable: false },
+      science: { title: 'Engineering: Build a Tall Tower', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Ten-Frame Story Problems', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Yy + Blend: yes, yam', minutes: 7, essential: true, printable: true },
-      science: { title: 'Engineering: Build a Tall Tower', minutes: 12, essential: false, printable: false },
+      science: { title: 'Engineering: Build a Tall Tower', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Two-Step Bar Models', minutes: 8, essential: true, printable: true },
@@ -921,12 +921,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Trace Shapes Review', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter W Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Inventions Old & New', minutes: 12, essential: false, printable: false },
+      science: { title: 'Inventions Old & New', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Shapes & Measure Review', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Zz + Blend: zip, zag', minutes: 7, essential: true, printable: true },
-      science: { title: 'Inventions Old & New', minutes: 12, essential: false, printable: false },
+      science: { title: 'Inventions Old & New', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Shapes & Measure Review', minutes: 8, essential: true, printable: true },
@@ -938,12 +938,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count to 10 Review', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter X Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Caring for God\'s World', minutes: 12, essential: false, printable: false },
+      science: { title: 'Caring for God\'s World', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Count & Add Review', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Qq + Blend: quit, quiz', minutes: 7, essential: true, printable: true },
-      science: { title: 'Caring for God\'s World', minutes: 12, essential: false, printable: false },
+      science: { title: 'Caring for God\'s World', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Big Arithmetic Review', minutes: 8, essential: true, printable: true },
@@ -955,12 +955,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count the Sticks', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Y Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Saving Water & Power', minutes: 12, essential: false, printable: false },
+      science: { title: 'Saving Water & Power', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Tally Marks', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Xx + Blend: box, fox', minutes: 7, essential: true, printable: true },
-      science: { title: 'Saving Water & Power', minutes: 12, essential: false, printable: false },
+      science: { title: 'Saving Water & Power', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Tally Marks & Chance', minutes: 8, essential: true, printable: true },
@@ -972,12 +972,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Penny Counting', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Z Exposure & Trace', minutes: 5, essential: true, printable: true },
-      science: { title: 'Keeping Our World Clean', minutes: 12, essential: false, printable: false },
+      science: { title: 'Keeping Our World Clean', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Penny Store', minutes: 8, essential: true, printable: true },
       literacy: { title: 'Review: y, z, q, x + Vowels', minutes: 7, essential: true, printable: true },
-      science: { title: 'Keeping Our World Clean', minutes: 12, essential: false, printable: false },
+      science: { title: 'Keeping Our World Clean', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Store Math', minutes: 8, essential: true, printable: true },
@@ -989,12 +989,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Three Happy Jars', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Alphabet Celebration A-Z', minutes: 5, essential: true, printable: true },
-      science: { title: 'Sink or Float? A Real Investigation', minutes: 12, essential: false, printable: false },
+      science: { title: 'Sink or Float? A Real Investigation', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Save, Spend, Give Jars', minutes: 8, essential: true, printable: true },
       literacy: { title: 'CVC Words: Read & Build', minutes: 7, essential: true, printable: true },
-      science: { title: 'Sink or Float? A Real Investigation', minutes: 12, essential: false, printable: false },
+      science: { title: 'Sink or Float? A Real Investigation', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Save, Spend, Give', minutes: 8, essential: true, printable: true },
@@ -1006,12 +1006,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Set the Table: One Each', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Review A-G', minutes: 5, essential: true, printable: true },
-      science: { title: 'Healthy Me: Sleep, Water, Move', minutes: 12, essential: false, printable: false },
+      science: { title: 'Healthy Me: Sleep, Water, Move', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Picnic Helper: Count It Out', minutes: 8, essential: true, printable: true },
       literacy: { title: 'CVC Family: -at, -ag', minutes: 7, essential: true, printable: true },
-      science: { title: 'Healthy Me: Sleep, Water, Move', minutes: 12, essential: false, printable: false },
+      science: { title: 'Healthy Me: Sleep, Water, Move', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Applied Project: Plan a Picnic', minutes: 8, essential: true, printable: true },
@@ -1023,12 +1023,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Count 1-10 Review', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Review H-N', minutes: 5, essential: true, printable: true },
-      science: { title: 'My Science Choice', minutes: 12, essential: false, printable: false },
+      science: { title: 'My Science Choice', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Big Year Review', minutes: 8, essential: true, printable: true },
       literacy: { title: 'CVC Family: -it, -ig', minutes: 7, essential: true, printable: true },
-      science: { title: 'My Science Choice', minutes: 12, essential: false, printable: false },
+      science: { title: 'My Science Choice', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Big Year Review 1', minutes: 8, essential: true, printable: true },
@@ -1040,12 +1040,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Project: Count & Color Graph', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Review O-U', minutes: 5, essential: true, printable: true },
-      science: { title: 'Final Project: Observe & Record', minutes: 12, essential: false, printable: false },
+      science: { title: 'Final Project: Observe & Record', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Project: Count & Graph', minutes: 8, essential: true, printable: true },
       literacy: { title: 'CVC Family: -og, -op', minutes: 7, essential: true, printable: true },
-      science: { title: 'Final Project: Observe & Record', minutes: 12, essential: false, printable: false },
+      science: { title: 'Final Project: Observe & Record', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Project Math: Measure & Graph', minutes: 8, essential: true, printable: true },
@@ -1057,12 +1057,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Show What You Know', minutes: 6, essential: true, printable: true },
       literacy: { title: 'Letter Review V-Z', minutes: 5, essential: true, printable: true },
-      science: { title: 'Science Favorites: Enrichment Day', minutes: 12, essential: false, printable: false },
+      science: { title: 'Science Favorites: Enrichment Day', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Show What You Know', minutes: 8, essential: true, printable: true },
       literacy: { title: 'CVC Family: -ug, -ed', minutes: 7, essential: true, printable: true },
-      science: { title: 'Science Favorites: Enrichment Day', minutes: 12, essential: false, printable: false },
+      science: { title: 'Science Favorites: Enrichment Day', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Final Assessment', minutes: 8, essential: true, printable: true },
@@ -1074,12 +1074,12 @@ const WEEK_PLANS: Record<number, Record<GradeBandKey, GradePlans>> = {
     prek: {
       math: { title: 'Numbers & Stars Party', minutes: 6, essential: true, printable: true },
       literacy: { title: 'I Know My ABCs!', minutes: 5, essential: true, printable: true },
-      science: { title: 'My Year in Science', minutes: 12, essential: false, printable: false },
+      science: { title: 'My Year in Science', minutes: 12, essential: false, printable: true },
     },
     k: {
       math: { title: 'Numbers I Know: 1-20', minutes: 8, essential: true, printable: true },
       literacy: { title: 'I Can Read! Celebration', minutes: 7, essential: true, printable: true },
-      science: { title: 'My Year in Science', minutes: 12, essential: false, printable: false },
+      science: { title: 'My Year in Science', minutes: 12, essential: false, printable: true },
     },
     '1st': {
       math: { title: 'Celebration Math', minutes: 8, essential: true, printable: true },
@@ -1171,6 +1171,29 @@ function buildLessons(): Lesson[] {
       printable: true,
     })
 
+    // Shared family Art, Music & Life Skills — every child, Friday.
+    out.push({
+      id: nextId(),
+      title: 'Art, Music & Life Skills',
+      subject: 'art',
+      activityType: 'optional',
+      weekNumber: week.number,
+      day: 'friday',
+      gradeBand: 'pre-k',
+      minutes: 15,
+      essential: false,
+      owner: 'shared',
+      youNeed: week.art,
+      teach: [
+        `Art project: ${week.art[0] ?? "this week's craft"}.`,
+        'Move & do: sing a worship song together as a family.',
+        'Life skill: put away your own school supplies when done.',
+      ],
+      ask: ['What did you enjoy making?', 'What did you notice while making it?'],
+      watchFor: 'Keep it playful — this is enrichment, not a test.',
+      printable: true,
+    })
+
     for (const { key: gradeKey, gradeBand } of GRADE_BANDS) {
       const plan = WEEK_PLANS[week.number][gradeKey]
       for (const day of HOME_DAYS) {
@@ -1214,8 +1237,8 @@ function buildAssignments(lessons: Lesson[]): Assignment[] {
   const nextId = () => `a-seed-${++n}`
   for (const lesson of lessons) {
     for (const child of children) {
-      const isBible = lesson.subject === 'bible'
-      if (!isBible && lesson.gradeBand !== child.gradeBand) continue
+      const isShared = lesson.subject === 'bible' || lesson.subject === 'art'
+      if (!isShared && lesson.gradeBand !== child.gradeBand) continue
       out.push({
         id: nextId(),
         lessonId: lesson.id,
