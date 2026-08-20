@@ -3,14 +3,32 @@
 import { useState } from 'react'
 import { useStore } from '@/lib/store'
 import { accent, accentBg } from '@/lib/ui'
-import { PageHeader } from '@/components/primitives'
+import { childrenInView } from '@/lib/selectors'
+import { packetUrlFor } from '@/lib/worksheet-packets'
+import type { Child, Lesson } from '@/lib/types'
+import { PageHeader, ChildAvatar } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
-import { BookOpen, Palette, FlaskConical, Quote, ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  BookOpen,
+  Palette,
+  FlaskConical,
+  Quote,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+} from 'lucide-react'
 
 export default function BiblePage() {
   const store = useStore()
   const [weekNum, setWeekNum] = useState(store.currentWeek)
   const week = store.weeks.find((w) => w.number === weekNum) ?? store.weeks[0]
+  const kids = childrenInView(store.children, store.currentView)
+  const artLesson = store.lessons.find(
+    (l) => l.weekNumber === week.number && l.subject === 'art',
+  )
+  const scienceLesson = store.lessons.find(
+    (l) => l.weekNumber === week.number && l.subject === 'science',
+  )
 
   return (
     <div>
@@ -85,12 +103,18 @@ export default function BiblePage() {
           title="Art connects to the theme"
           items={week.art}
           token="child-seraiah"
+          lesson={artLesson}
+          weekNumber={week.number}
+          kids={kids}
         />
         <ThemeList
           Icon={FlaskConical}
           title="Science connects to the theme"
           items={week.science}
           token="child-olori"
+          lesson={scienceLesson}
+          weekNumber={week.number}
+          kids={kids}
         />
       </div>
 
@@ -126,12 +150,25 @@ function ThemeList({
   title,
   items,
   token,
+  lesson,
+  weekNumber,
+  kids,
 }: {
   Icon: typeof Palette
   title: string
   items: string[]
   token: string
+  lesson?: Lesson
+  weekNumber: number
+  kids: Child[]
 }) {
+  const downloads = kids
+    .map((child) => ({
+      child,
+      url: lesson ? packetUrlFor(child.id, weekNumber, lesson.day) : null,
+    }))
+    .filter((d): d is { child: Child; url: string } => !!d.url)
+
   return (
     <Card className="p-5">
       <div className="mb-3 flex items-center gap-2">
@@ -157,6 +194,28 @@ function ThemeList({
           </li>
         ))}
       </ul>
+      {downloads.length > 0 && (
+        <div className="mt-3 border-t border-border pt-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            Worksheet
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {downloads.map(({ child, url }) => (
+              <a
+                key={child.id}
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
+              >
+                <ChildAvatar child={child} size="sm" />
+                {child.name}
+                <Download className="size-3.5 text-muted-foreground" />
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </Card>
   )
 }

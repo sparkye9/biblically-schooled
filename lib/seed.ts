@@ -1129,11 +1129,7 @@ const BIBLE_TITLES: Record<number, string> = {
 
 const BIBLE_MINUTES: Record<number, number> = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 7, 7: 7, 8: 7, 9: 7, 10: 7, 11: 7, 12: 7, 13: 7, 14: 7, 15: 7, 16: 7, 17: 7, 18: 7, 19: 7, 20: 7, 21: 7, 22: 7, 23: 7, 24: 7, 25: 7, 26: 7, 27: 7, 28: 7, 29: 7, 30: 7, 31: 7, 32: 7, 33: 7, 34: 7, 35: 7 }
 
-const SUBJECT_KEYS: Array<'math' | 'literacy' | 'science'> = [
-  'math',
-  'literacy',
-  'science',
-]
+const DAILY_SUBJECT_KEYS: Array<'math' | 'literacy'> = ['math', 'literacy']
 
 const GRADE_BANDS: Array<{ key: GradeBandKey; gradeBand: GradeBand }> = [
   { key: 'prek', gradeBand: 'pre-k' },
@@ -1197,23 +1193,20 @@ function buildLessons(): Lesson[] {
     for (const { key: gradeKey, gradeBand } of GRADE_BANDS) {
       const plan = WEEK_PLANS[week.number][gradeKey]
       for (const day of HOME_DAYS) {
-        for (const subject of SUBJECT_KEYS) {
+        for (const subject of DAILY_SUBJECT_KEYS) {
           const s = plan[subject]
-          const isScience = subject === 'science'
           out.push({
             id: nextId(),
             title: s.title,
             subject,
-            activityType: isScience ? 'hands-on' : 'mom-time',
+            activityType: 'mom-time',
             weekNumber: week.number,
             day,
             gradeBand,
             minutes: s.minutes,
             essential: s.essential,
             owner: 'shared',
-            youNeed: isScience
-              ? ['Objects from around the house']
-              : ['A few supplies from this week’s list'],
+            youNeed: ['A few supplies from this week’s list'],
             teach: [
               `Introduce ${s.title} for Week ${week.number}.`,
               'Model it once, then let your child try with help.',
@@ -1221,11 +1214,37 @@ function buildLessons(): Lesson[] {
             ],
             ask: ['What was easy?', 'What did you notice?'],
             watchFor: 'Stop while they’re still enjoying it.',
-            interactive: isScience ? 'math-manipulatives' : 'phonics',
+            interactive: 'phonics',
             printable: s.printable,
           })
         }
       }
+
+      // Science — Tuesday only ("Practice + Explore" day), matching the
+      // real worksheet packets, which only include a science page there.
+      const science = plan.science
+      out.push({
+        id: nextId(),
+        title: science.title,
+        subject: 'science',
+        activityType: 'hands-on',
+        weekNumber: week.number,
+        day: 'tuesday',
+        gradeBand,
+        minutes: science.minutes,
+        essential: science.essential,
+        owner: 'shared',
+        youNeed: ['Objects from around the house'],
+        teach: [
+          `Introduce ${science.title} for Week ${week.number}.`,
+          'Model it once, then let your child try with help.',
+          'Wrap up by celebrating what they did.',
+        ],
+        ask: ['What was easy?', 'What did you notice?'],
+        watchFor: 'Stop while they’re still enjoying it.',
+        interactive: 'math-manipulatives',
+        printable: science.printable,
+      })
     }
   }
   return out

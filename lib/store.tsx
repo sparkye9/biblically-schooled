@@ -43,6 +43,8 @@ interface State {
   currentDay: string
   /** optional PIN required to view the app; unset means no lock */
   viewPin?: string
+  /** ids the user explicitly deleted, so seed content never resurrects them */
+  deletedIds: string[]
 }
 
 const initialState: State = {
@@ -61,6 +63,7 @@ const initialState: State = {
   currentWeek: seed.DEMO_WEEK,
   currentDay: seed.DEMO_DAY,
   viewPin: undefined,
+  deletedIds: [],
 }
 
 interface StoreContext extends State {
@@ -105,11 +108,13 @@ const Ctx = createContext<StoreContext | null>(null)
  * Merge a previously-saved state with the current seed. The user's saved data
  * (edits, added items, progress) is preserved, and any seed items that are
  * missing from the saved copy (e.g. newly added households, lessons, worksheets)
- * are merged in by id so new curriculum content always appears.
+ * are merged in by id so new curriculum content always appears. Seed items the
+ * user explicitly deleted are tracked in `deletedIds` so they aren't confused
+ * with items merely missing-because-never-saved and silently resurrected.
  */
 function mergeState(seed: State, saved: Partial<State>): State {
-  const byId = <T extends { id: string }>(items: T[], ids: string[]) =>
-    items.filter((i) => !ids.includes(i.id))
+  const byId = <T extends { id: string }>(items: T[], ids: Set<string>) =>
+    items.filter((i) => !ids.has(i.id))
   const savedIds = (arr: { id: string }[] | undefined) =>
     new Set((arr ?? []).map((i) => i.id))
 
@@ -126,12 +131,14 @@ function mergeState(seed: State, saved: Partial<State>): State {
     'parentNotes',
   ]
 
-  const next: State = { ...seed, ...saved }
+  const deletedIds = new Set([...(seed.deletedIds ?? []), ...(saved.deletedIds ?? [])])
+
+  const next: State = { ...seed, ...saved, deletedIds: [...deletedIds] }
   for (const key of arrays) {
     const seedArr = seed[key] as { id: string }[]
     const savedArr = (saved[key] as { id: string }[] | undefined) ?? []
     const have = savedIds(savedArr)
-    const missing = byId(seedArr, [...have])
+    const missing = byId(seedArr, new Set([...have, ...deletedIds]))
     ;(next as unknown as Record<string, unknown>)[key] = [...savedArr, ...missing]
   }
   return next
@@ -284,6 +291,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ...s,
           lessons: s.lessons.filter((l) => l.id !== id),
           assignments: s.assignments.filter((a) => a.lessonId !== id),
+          deletedIds: [...s.deletedIds, id],
         })),
       setLessonAssignments: (lessonId, childIds) =>
         setState((s) => ({
@@ -314,6 +322,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setState((s) => ({
           ...s,
           resources: s.resources.filter((r) => r.id !== resourceId),
+          deletedIds: [...s.deletedIds, resourceId],
         })),
       toggleSupply: (supplyId) =>
         setState((s) => ({
@@ -344,6 +353,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setState((s) => ({
           ...s,
           readAloud: s.readAloud.filter((b) => b.id !== bookId),
+          deletedIds: [...s.deletedIds, bookId],
         })),
       saveNote: (note) =>
         setState((s) => ({

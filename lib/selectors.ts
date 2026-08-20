@@ -37,9 +37,13 @@ export function countDone(items: AssignedLesson[]) {
 
 export function sortByActivity(items: AssignedLesson[]): AssignedLesson[] {
   const order = { 'mom-time': 0, independent: 1, 'hands-on': 2, optional: 3 }
-  return [...items].sort(
-    (a, b) => order[a.lesson.activityType] - order[b.lesson.activityType],
-  )
+  return [...items].sort((a, b) => {
+    // Bible/devotion time always opens the day; everything else can move around.
+    const aBible = a.lesson.subject === 'bible' ? 0 : 1
+    const bBible = b.lesson.subject === 'bible' ? 0 : 1
+    if (aBible !== bBible) return aBible - bBible
+    return order[a.lesson.activityType] - order[b.lesson.activityType]
+  })
 }
 
 /** Day-length filter: which lessons to keep */
