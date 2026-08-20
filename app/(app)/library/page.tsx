@@ -7,8 +7,15 @@ import { PageHeader } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { BookHeart, Plus, BookMarked, CheckCircle2, Library as LibraryIcon } from 'lucide-react'
+import { BookHeart, Plus, BookMarked, CheckCircle2, Library as LibraryIcon, Trash2 } from 'lucide-react'
 import type { ReadAloudBook } from '@/lib/types'
+
+const STATUS_ORDER: ReadAloudBook['status'][] = [
+  'library',
+  'currently-reading',
+  'finished',
+  'favorite',
+]
 
 const STATUS_META: Record<
   ReadAloudBook['status'],
@@ -19,6 +26,9 @@ const STATUS_META: Record<
   library: { label: 'To Borrow', token: 'child-olori', Icon: LibraryIcon },
   finished: { label: 'Finished', token: 'child-amelia', Icon: CheckCircle2 },
 }
+
+const fieldClass =
+  'h-8 rounded-lg border border-input bg-background px-2 text-xs font-semibold outline-none focus:border-ring focus:ring-3 focus:ring-ring/30'
 
 export default function LibraryPage() {
   const store = useStore()
@@ -100,9 +110,38 @@ export default function LibraryPage() {
                   {books.map((b) => (
                     <li
                       key={b.id}
-                      className="rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground"
+                      className="flex items-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm font-medium text-foreground"
                     >
-                      {b.title}
+                      <span className="min-w-0 flex-1 truncate">{b.title}</span>
+                      <select
+                        aria-label={`Move ${b.title} to a different shelf`}
+                        value={b.status}
+                        onChange={(e) =>
+                          store.setReadAloudStatus(
+                            b.id,
+                            e.target.value as ReadAloudBook['status'],
+                          )
+                        }
+                        className={fieldClass}
+                      >
+                        {STATUS_ORDER.map((s) => (
+                          <option key={s} value={s}>
+                            {STATUS_META[s].label}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`Remove "${b.title}" from the basket?`)) {
+                            store.deleteReadAloud(b.id)
+                          }
+                        }}
+                        aria-label={`Delete ${b.title}`}
+                        className="shrink-0 rounded-full p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
                     </li>
                   ))}
                 </ul>

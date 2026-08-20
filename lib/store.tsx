@@ -88,6 +88,8 @@ interface StoreContext extends State {
   deleteResource: (resourceId: string) => void
   toggleSupply: (supplyId: string) => void
   addReadAloud: (title: string, householdId: string) => void
+  setReadAloudStatus: (bookId: string, status: ReadAloudBook['status']) => void
+  deleteReadAloud: (bookId: string) => void
   saveNote: (note: Omit<ParentNote, 'id'>) => void
   assignLesson: (lessonId: string, childId: string) => void
   reset: () => void
@@ -328,6 +330,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
             },
             ...s.readAloud,
           ],
+        })),
+      setReadAloudStatus: (bookId, status) =>
+        setState((s) => ({
+          ...s,
+          readAloud: s.readAloud.map((b) => (b.id === bookId ? { ...b, status } : b)),
+        })),
+      deleteReadAloud: (bookId) =>
+        setState((s) => ({
+          ...s,
+          readAloud: s.readAloud.filter((b) => b.id !== bookId),
         })),
       saveNote: (note) =>
         setState((s) => ({
