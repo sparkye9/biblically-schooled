@@ -24,6 +24,24 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Real accounts (one-time setup)
+
+The app now requires signing in, with one shared login per household, and your
+data lives in a real Postgres database instead of just one browser's local
+storage. Two one-time steps in the Vercel dashboard:
+
+1. **Attach a database** — Project → Storage → Create Database → Postgres.
+   Vercel automatically injects the connection env vars on the next deploy;
+   nothing to copy by hand.
+2. **Set an auth secret** — Project → Settings → Environment Variables →
+   `AUTH_SECRET`. Generate one with `npx auth secret`, or:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+   ```
+
+After redeploying, visit `/setup` once to create the email + password for
+each household, then sign in at `/login`. See `.env.example` for details.
+
 ## Learn More
 
 To learn more, take a look at the following resources:

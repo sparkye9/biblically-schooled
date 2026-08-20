@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSession, signOut } from 'next-auth/react'
 import { useStore } from '@/lib/store'
 import { accentBg } from '@/lib/ui'
 import { PageHeader, ChildAvatar } from '@/components/primitives'
@@ -8,12 +9,14 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Plus, RotateCcw, Home, User, Users } from 'lucide-react'
+import { Plus, RotateCcw, Home, User, Users, LogOut } from 'lucide-react'
 import { AddProfileDialog, AddChildDialog } from '@/components/profile-dialogs'
 
 export default function SettingsPage() {
   const store = useStore()
+  const { data: session } = useSession()
   const [confirmReset, setConfirmReset] = useState(false)
+  const signedInHousehold = store.households.find((h) => h.id === session?.user?.householdId)
 
   return (
     <div className="space-y-6">
@@ -22,6 +25,23 @@ export default function SettingsPage() {
         title="Settings"
         description="Add family profiles and learners, or start fresh with the demo data."
       />
+
+      {session && (
+        <section>
+          <h2 className="mb-3 font-serif text-xl font-semibold">Account</h2>
+          <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-bold text-foreground">
+                Signed in as {signedInHousehold?.momName ?? session.user?.email}
+              </p>
+              <p className="text-sm text-muted-foreground">{session.user?.email}</p>
+            </div>
+            <Button variant="outline" onClick={() => signOut({ callbackUrl: '/login' })}>
+              <LogOut className="size-4" /> Sign out
+            </Button>
+          </Card>
+        </section>
+      )}
 
       {/* Families */}
       <section>

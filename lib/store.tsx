@@ -141,19 +141,44 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState)
   const [hydrated, setHydrated] = useState(false)
 
+  // Hydrate from localStorage first (instant), then reconcile with the
+  // server's copy so every signed-in device converges on the same data.
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        setState((s) => mergeState(s, parsed))
+    let cancelled = false
+
+    async function hydrate() {
+      let working = initialState
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY)
+        if (raw) working = mergeState(working, JSON.parse(raw))
+      } catch {
+        /* ignore */
       }
-    } catch {
-      /* ignore */
+
+      try {
+        const res = await fetch('/api/state')
+        if (res.ok) {
+          const { data } = await res.json()
+          if (data) working = mergeState(working, data)
+        }
+      } catch {
+        /* offline, or no database attached yet — local state stands */
+      }
+
+      if (!cancelled) {
+        setState(working)
+        setHydrated(true)
+      }
     }
-    setHydrated(true)
+
+    hydrate()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
+  // Persist every change locally (instant) and to the server (debounced),
+  // so the household's data follows them across devices.
   useEffect(() => {
     if (!hydrated) return
     try {
@@ -161,6 +186,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } catch {
       /* ignore */
     }
+
+    const timeout = setTimeout(() => {
+      fetch('/api/state', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state),
+      }).catch(() => {
+        /* offline, or no database attached yet — localStorage still has it */
+      })
+    }, 800)
+    return () => clearTimeout(timeout)
   }, [state, hydrated])
 
   const api = useMemo<StoreContext>(() => {

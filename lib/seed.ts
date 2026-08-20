@@ -17,8 +17,20 @@ export const DEMO_DAY = 'tuesday' as const
 export const DEMO_WEEK = 1
 
 export const households: Household[] = [
-  { id: 'h-venessa', name: "Venessa's Homeschool", momName: 'Venessa', momInitial: 'V' },
-  { id: 'h-lola', name: "Damilola's Homeschool", momName: 'Damilola', momInitial: 'D' },
+  {
+    id: 'h-venessa',
+    name: "Venessa's Homeschool",
+    momName: 'Venessa',
+    lastName: 'Olanrewaju',
+    momInitial: 'V',
+  },
+  {
+    id: 'h-lola',
+    name: "Damilola's Homeschool",
+    momName: 'Damilola',
+    lastName: 'Gallion',
+    momInitial: 'D',
+  },
 ]
 
 export const children: Child[] = [

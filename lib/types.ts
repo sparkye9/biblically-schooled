@@ -35,6 +35,7 @@ export interface Household {
   id: string
   name: string
   momName: string
+  lastName?: string
   momInitial: string
 }
 
