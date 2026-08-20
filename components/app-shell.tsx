@@ -21,6 +21,7 @@ import {
   Check,
   MoreHorizontal,
   HeartHandshake,
+  NotebookPen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/store'
@@ -37,6 +38,7 @@ import {
 const nav = [
   { href: '/', label: 'Home', Icon: Home },
   { href: '/today', label: 'Today', Icon: CalendarDays },
+  { href: '/teaching-guide', label: 'Teaching Guide', Icon: NotebookPen },
   { href: '/bible', label: 'Bible & Theme', Icon: BookOpen },
   { href: '/children', label: 'Children', Icon: Users },
   { href: '/progress', label: 'Progress', Icon: TrendingUp },
@@ -64,7 +66,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh bg-background">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 lg:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 print:hidden lg:flex">
         <Brand />
         <nav className="mt-6 flex flex-1 flex-col gap-1 overflow-y-auto">
           {nav.map(({ href, label, Icon }) => {
@@ -89,15 +91,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main column */}
-      <div className="lg:pl-64">
+      <div className="print:pl-0 lg:pl-64">
         <TopBar />
-        <main className="mx-auto w-full max-w-6xl px-4 pb-28 pt-4 sm:px-6 lg:pb-12 lg:pt-6">
+        <main className="mx-auto w-full max-w-6xl px-4 pb-28 pt-4 print:pb-0 print:pt-0 sm:px-6 lg:pb-12 lg:pt-6">
           {children}
         </main>
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex items-stretch border-t border-border bg-card/95 backdrop-blur lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex items-stretch border-t border-border bg-card/95 backdrop-blur print:hidden lg:hidden">
         {mobileNav.map(({ href, label, Icon }) => {
           const active = href === '/' ? pathname === '/' : pathname.startsWith(href)
           return (
@@ -157,7 +159,7 @@ function Brand() {
 
 function TopBar() {
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-background/85 px-4 py-3 backdrop-blur sm:px-6">
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-border bg-background/85 px-4 py-3 backdrop-blur print:hidden sm:px-6">
       <div className="flex items-center gap-2 lg:hidden">
         <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
           <HeartHandshake className="size-4" />

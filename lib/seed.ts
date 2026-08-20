@@ -2,6 +2,7 @@ import type {
   Assignment,
   Child,
   CurriculumWeek,
+  GradeBand,
   Household,
   Lesson,
   ParentNote,
@@ -1122,11 +1123,11 @@ const SUBJECT_KEYS: Array<'math' | 'literacy' | 'science'> = [
   'science',
 ]
 
-const GRADE_KEY: Record<string, GradeBandKey> = {
-  'pre-k': 'prek',
-  k: 'k',
-  '1st': '1st',
-}
+const GRADE_BANDS: Array<{ key: GradeBandKey; gradeBand: GradeBand }> = [
+  { key: 'prek', gradeBand: 'pre-k' },
+  { key: 'k', gradeBand: 'k' },
+  { key: '1st', gradeBand: '1st' },
+]
 
 function buildLessons(): Lesson[] {
   const out: Lesson[] = []
@@ -1158,8 +1159,7 @@ function buildLessons(): Lesson[] {
       printable: true,
     })
 
-    for (const child of children) {
-      const gradeKey = GRADE_KEY[child.gradeBand]
+    for (const { key: gradeKey, gradeBand } of GRADE_BANDS) {
       const plan = WEEK_PLANS[week.number][gradeKey]
       for (const day of HOME_DAYS) {
         for (const subject of SUBJECT_KEYS) {
@@ -1172,7 +1172,7 @@ function buildLessons(): Lesson[] {
             activityType: isScience ? 'hands-on' : 'mom-time',
             weekNumber: week.number,
             day,
-            gradeBand: child.gradeBand,
+            gradeBand,
             minutes: s.minutes,
             essential: s.essential,
             owner: 'shared',
