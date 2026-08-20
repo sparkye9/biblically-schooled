@@ -11,7 +11,7 @@ import {
   Users,
 } from 'lucide-react'
 import { useStore } from '@/lib/store'
-import { dayLabels, subjectMeta } from '@/lib/ui'
+import { dayLabels, gradeBandOptions, subjectMeta } from '@/lib/ui'
 import type {
   ActivityType,
   CurriculumWeek,
@@ -39,11 +39,7 @@ import { Textarea } from '@/components/ui/textarea'
 const days: DayName[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
 const subjects = Object.keys(subjectMeta) as Subject[]
 const activityTypes: ActivityType[] = ['mom-time', 'independent', 'hands-on', 'optional']
-const gradeBands: { value: GradeBand; label: string }[] = [
-  { value: 'pre-k', label: 'Pre-K' },
-  { value: 'k', label: 'Kindergarten' },
-  { value: '1st', label: '1st Grade' },
-]
+const gradeBands = gradeBandOptions
 const fieldClass =
   'h-9 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/30'
 

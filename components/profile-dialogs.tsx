@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactElement } from 'react'
 import { Plus, UserPlus, Users } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import type { ChildColor, GradeBand } from '@/lib/types'
+import { gradeBandOptions as gradeOptions } from '@/lib/ui'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -16,12 +17,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
-const gradeOptions: { value: GradeBand; label: string }[] = [
-  { value: 'pre-k', label: 'Pre-K' },
-  { value: 'k', label: 'Kindergarten' },
-  { value: '1st', label: '1st Grade' },
-]
 
 const colors: { value: ChildColor; label: string }[] = [
   { value: 'child-alijah', label: 'Blue' },

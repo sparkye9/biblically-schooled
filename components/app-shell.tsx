@@ -22,6 +22,7 @@ import {
   MoreHorizontal,
   HeartHandshake,
   NotebookPen,
+  GraduationCap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/store'
@@ -42,6 +43,7 @@ const nav = [
   { href: '/bible', label: 'Bible & Theme', Icon: BookOpen },
   { href: '/children', label: 'Children', Icon: Users },
   { href: '/progress', label: 'Progress', Icon: TrendingUp },
+  { href: '/portfolio', label: 'Portfolio', Icon: GraduationCap },
   { href: '/planner', label: 'Weekly Planner', Icon: LayoutGrid },
   { href: '/shared', label: 'Shared Planning', Icon: Users2 },
   { href: '/printables', label: 'Printables', Icon: FolderOpen },

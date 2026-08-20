@@ -34,10 +34,16 @@ export default function KidPage({
   const done = items.filter((i) => i.assignment.status === 'done').length
   const allDone = items.length > 0 && done === items.length
   const color = child.color
+  const lowDistraction = child.lowDistraction
+
+  // Low-distraction: one task at a time instead of the whole list.
+  const visibleItems = lowDistraction
+    ? items.filter((i) => i.assignment.status !== 'done').slice(0, 1)
+    : items
 
   function complete(assignmentId: string, wasDone: boolean) {
     store.toggleAssignment(assignmentId)
-    if (!wasDone) {
+    if (!wasDone && !lowDistraction) {
       setCelebrate(true)
       setTimeout(() => setCelebrate(false), 1400)
     }
@@ -107,7 +113,7 @@ export default function KidPage({
           </div>
         ) : (
           <div className="space-y-4">
-            {items.map((i) => {
+            {visibleItems.map((i) => {
               const { Icon, label } = subjectMeta[i.lesson.subject]
               const isDone = i.assignment.status === 'done'
               return (

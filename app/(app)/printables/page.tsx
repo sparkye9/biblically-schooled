@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import { getWorksheetFile, saveWorksheetFile } from '@/lib/worksheet-files'
-import { subjectMeta } from '@/lib/ui'
+import { gradeBandLabels, gradeBandOptions, subjectMeta } from '@/lib/ui'
 import type { GradeBand, ResourceType, Subject } from '@/lib/types'
 import { PageHeader, SubjectPill } from '@/components/primitives'
 import { Button } from '@/components/ui/button'
@@ -183,9 +183,9 @@ export default function PrintablesPage() {
             <Input id="worksheet-skill" value={skill} onChange={(event) => setSkill(event.target.value)} />
           </Field>
           <NativeSelect label="Grade" value={gradeBand} onChange={(value) => setGradeBand(value as GradeBand)}>
-            <option value="pre-k">Pre-K</option>
-            <option value="k">Kindergarten</option>
-            <option value="1st">1st Grade</option>
+            {gradeBandOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
           </NativeSelect>
           <NativeSelect label="Week" value={String(weekNumber)} onChange={(value) => setWeekNumber(Number(value))}>
             {store.weeks.map((week) => <option key={week.id} value={week.number}>Week {week.number}</option>)}
@@ -257,7 +257,7 @@ export default function PrintablesPage() {
                 <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">Week {resource.weekNumber}</span>
               </div>
               <p className="mt-3 text-sm text-muted-foreground">
-                {resource.skill} · {gradeLabel(resource.gradeBand)} · {resource.minutes} min
+                {resource.skill} · {gradeBandLabels[resource.gradeBand]} · {resource.minutes} min
               </p>
               <p className="mt-1 text-xs text-muted-foreground">Shared by {resource.contributor}</p>
               {resource.fileUrl && (
@@ -299,10 +299,4 @@ function Field({ label, id, className, children }: { label: string; id: string; 
 function NativeSelect({ label, value, onChange, children }: { label: string; value: string; onChange: (value: string) => void; children: React.ReactNode }) {
   const id = `resource-${label.toLowerCase().replaceAll(' ', '-')}`
   return <div className="space-y-2"><Label htmlFor={id}>{label}</Label><select id={id} value={value} onChange={(event) => onChange(event.target.value)} className={fieldClass}>{children}</select></div>
-}
-
-function gradeLabel(gradeBand: GradeBand) {
-  if (gradeBand === 'pre-k') return 'Pre-K'
-  if (gradeBand === 'k') return 'Kindergarten'
-  return '1st Grade'
 }

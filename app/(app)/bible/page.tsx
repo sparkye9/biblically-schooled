@@ -17,7 +17,7 @@ export default function BiblePage() {
       <PageHeader
         eyebrow="Faith at the Center"
         title="Bible & Weekly Theme"
-        description="Every subject flows out of one Bible theme each week, so the whole family learns together — from Pre-K to 1st grade."
+        description="Every subject flows out of one Bible theme each week, so the whole family learns together — Pre-K through the upper grades."
       />
 
       {/* Week switcher */}

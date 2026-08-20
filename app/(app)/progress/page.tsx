@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useStore } from '@/lib/store'
 import { childrenInView } from '@/lib/selectors'
 import { skillStatusMeta, accent, accentBg } from '@/lib/ui'
@@ -8,7 +9,7 @@ import type { SkillStatus } from '@/lib/types'
 import { PageHeader, ChildAvatar } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Feather, Calculator, Check, RotateCcw } from 'lucide-react'
+import { Feather, Calculator, Check, RotateCcw, GraduationCap } from 'lucide-react'
 
 const STATUS_ORDER: SkillStatus[] = [
   'not-introduced',
@@ -37,7 +38,15 @@ export default function ProgressPage() {
         eyebrow="Skill Journey"
         title="Progress"
         description="Growth over grades. Tap a skill to move it forward as your child shows what they know — no red marks, ever."
-      />
+      >
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link href={`/portfolio?child=${child.id}`} />}
+        >
+          <GraduationCap className="size-4" /> View portfolio
+        </Button>
+      </PageHeader>
 
       <div className="mb-6 flex flex-wrap gap-2">
         {kids.map((c) => (

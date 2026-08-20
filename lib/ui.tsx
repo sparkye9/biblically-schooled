@@ -12,7 +12,7 @@ import {
   Users2,
   Sparkles,
 } from 'lucide-react'
-import type { ActivityType, SkillStatus, Subject } from './types'
+import type { ActivityType, GradeBand, SkillStatus, Subject } from './types'
 
 export const activityMeta: Record<
   ActivityType,
@@ -97,3 +97,24 @@ export const dayRhythm: Record<string, string> = {
 }
 
 export const viewIcons = { shared: Users2, mom: User, sparkle: Sparkles, help: HandHelping }
+
+export const gradeBandOptions: { value: GradeBand; label: string }[] = [
+  { value: 'pre-k', label: 'Pre-K' },
+  { value: 'k', label: 'Kindergarten' },
+  { value: '1st', label: '1st Grade' },
+  { value: '2nd', label: '2nd Grade' },
+  { value: '3rd', label: '3rd Grade' },
+  { value: '4th', label: '4th Grade' },
+  { value: '5th', label: '5th Grade' },
+  { value: '6th', label: '6th Grade' },
+  { value: '7th', label: '7th Grade' },
+  { value: '8th', label: '8th Grade' },
+  { value: '9th', label: '9th Grade' },
+  { value: '10th', label: '10th Grade' },
+  { value: '11th', label: '11th Grade' },
+  { value: '12th', label: '12th Grade' },
+]
+
+export const gradeBandLabels: Record<GradeBand, string> = Object.fromEntries(
+  gradeBandOptions.map((option) => [option.value, option.label]),
+) as Record<GradeBand, string>
