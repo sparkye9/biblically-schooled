@@ -1,22 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-import { useSession, signOut } from 'next-auth/react'
 import { useStore } from '@/lib/store'
 import { accentBg } from '@/lib/ui'
 import { PageHeader, ChildAvatar } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Plus, RotateCcw, Home, User, Users, LogOut } from 'lucide-react'
+import { Plus, RotateCcw, Home, User, Users, Lock } from 'lucide-react'
 import { AddProfileDialog, AddChildDialog } from '@/components/profile-dialogs'
 
 export default function SettingsPage() {
   const store = useStore()
-  const { data: session } = useSession()
   const [confirmReset, setConfirmReset] = useState(false)
-  const signedInHousehold = store.households.find((h) => h.id === session?.user?.householdId)
+  const [pinInput, setPinInput] = useState('')
 
   return (
     <div className="space-y-6">
@@ -26,22 +25,50 @@ export default function SettingsPage() {
         description="Add family profiles and learners, or start fresh with the demo data."
       />
 
-      {session && (
-        <section>
-          <h2 className="mb-3 font-serif text-xl font-semibold">Account</h2>
-          <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+      <section>
+        <h2 className="mb-3 font-serif text-xl font-semibold">App lock</h2>
+        <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
+              <Lock className="size-5" />
+            </span>
             <div>
               <p className="font-bold text-foreground">
-                Signed in as {signedInHousehold?.momName ?? session.user?.email}
+                {store.viewPin ? 'PIN is set' : 'No PIN set'}
               </p>
-              <p className="text-sm text-muted-foreground">{session.user?.email}</p>
+              <p className="text-sm text-muted-foreground">
+                Optional — require a PIN to view this homeschool on this device.
+              </p>
             </div>
-            <Button variant="outline" onClick={() => signOut({ callbackUrl: '/login' })}>
-              <LogOut className="size-4" /> Sign out
+          </div>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              inputMode="numeric"
+              placeholder={store.viewPin ? 'New PIN' : 'Set a PIN'}
+              value={pinInput}
+              onChange={(event) => setPinInput(event.target.value)}
+              className="w-32"
+              maxLength={12}
+            />
+            <Button
+              variant="outline"
+              disabled={!pinInput}
+              onClick={() => {
+                store.setViewPin(pinInput)
+                setPinInput('')
+              }}
+            >
+              Save
             </Button>
-          </Card>
-        </section>
-      )}
+            {store.viewPin && (
+              <Button variant="ghost" onClick={() => store.setViewPin(null)}>
+                Remove
+              </Button>
+            )}
+          </div>
+        </Card>
+      </section>
 
       {/* Families */}
       <section>

@@ -1,13 +1,13 @@
-import { SessionProvider } from 'next-auth/react'
 import { AppShell } from '@/components/app-shell'
+import { PinGate } from '@/components/pin-gate'
 import { StoreProvider } from '@/lib/store'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
-      <StoreProvider>
+    <StoreProvider>
+      <PinGate>
         <AppShell>{children}</AppShell>
-      </StoreProvider>
-    </SessionProvider>
+      </PinGate>
+    </StoreProvider>
   )
 }
