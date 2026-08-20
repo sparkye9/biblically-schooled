@@ -10,6 +10,7 @@ import {
   Clock,
   ArrowRight,
   Play,
+  Edit3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/store'
@@ -17,6 +18,7 @@ import type { AssignedLesson } from '@/lib/selectors'
 import { packetUrlFor } from '@/lib/worksheet-packets'
 import { ActivityBadge, SubjectPill } from '@/components/primitives'
 import { Button } from '@/components/ui/button'
+import { LessonEditor } from '@/components/lesson-editor'
 import {
   Dialog,
   DialogContent,
@@ -115,6 +117,17 @@ export function ActivityCard({
         )}
 
         <MyChildIsStuck title={lesson.title} />
+
+        <LessonEditor
+          lesson={lesson}
+          weekNumber={lesson.weekNumber}
+          onSaved={() => {}}
+          trigger={
+            <Button size="sm" variant="ghost" aria-label={`Edit ${lesson.title}`}>
+              <Edit3 className="size-4" /> Edit
+            </Button>
+          }
+        />
       </div>
     </div>
   )

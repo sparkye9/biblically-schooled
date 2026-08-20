@@ -13,6 +13,7 @@ import {
   Clock,
   AlertCircle,
   CheckCircle2,
+  Plus,
 } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import {
@@ -27,9 +28,11 @@ import { PageHeader, ChildAvatar, ActivityBadge } from '@/components/primitives'
 import { ActivityCard, interactiveHref } from '@/components/activity-card'
 import { RotationAssistant } from '@/components/rotation-assistant'
 import { Button } from '@/components/ui/button'
+import { LessonEditor } from '@/components/lesson-editor'
 import { cn } from '@/lib/utils'
 import { dayLabels } from '@/lib/ui'
 import { packetUrlFor } from '@/lib/worksheet-packets'
+import type { DayName } from '@/lib/types'
 
 type DayMode = 'essential' | '30' | '60' | 'full'
 
@@ -129,6 +132,17 @@ export default function TodayPage() {
                         <CheckCircle2 className="size-3.5" /> Core day complete
                       </span>
                     )}
+                    <LessonEditor
+                      weekNumber={currentWeek}
+                      defaultDay={currentDay as DayName}
+                      defaultChildId={child.id}
+                      onSaved={() => {}}
+                      trigger={
+                        <Button size="sm" variant="outline">
+                          <Plus className="size-4" /> Add lesson
+                        </Button>
+                      }
+                    />
                   </div>
                   <div className="grid gap-3 md:grid-cols-2">
                     {sortByActivity(keep).map((item) => (
