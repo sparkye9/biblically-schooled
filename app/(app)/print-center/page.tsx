@@ -7,7 +7,7 @@ import { accentBg } from '@/lib/ui'
 import { PageHeader } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Printer, Check, FileText, BookOpen, Download } from 'lucide-react'
+import { Printer, Check, FileText, BookOpen, Download, Package } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function PrintCenterPage() {
@@ -72,6 +72,11 @@ export default function PrintCenterPage() {
     urls.forEach((url) => window.open(url, '_blank', 'noopener,noreferrer'))
   }
 
+  const downloadWeekZip = (childId: string, weekNumber: number) => {
+    const url = `/api/download-week?childId=${encodeURIComponent(childId)}&weekNumber=${weekNumber}`
+    window.location.href = url
+  }
+
   return (
     <div>
       <PageHeader
@@ -123,14 +128,24 @@ export default function PrintCenterPage() {
                     <p className="text-xs text-muted-foreground">Bible, math & literacy — 4 ready-to-print days</p>
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="gap-1.5"
-                  onClick={() => openAllPdfs(packets.map((p) => p.fileUrl!))}
-                >
-                  <Printer className="size-4" /> Open all 4
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => openAllPdfs(packets.map((p) => p.fileUrl!))}
+                  >
+                    <Printer className="size-4" /> Open all 4
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => downloadWeekZip(child.id, store.currentWeek)}
+                  >
+                    <Package className="size-4" /> Download zip
+                  </Button>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {packets.map((packet) => {
