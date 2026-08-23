@@ -2,20 +2,37 @@
 
 import { useState } from 'react'
 import { useStore } from '@/lib/store'
-import { accentBg } from '@/lib/ui'
+import { accentBg, dayLabels } from '@/lib/ui'
 import { PageHeader, ChildAvatar } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Plus, RotateCcw, Home, User, Users, Lock } from 'lucide-react'
+import { Label } from '@/components/ui/label'
+import { Plus, RotateCcw, Home, User, Users, Lock, CalendarDays, CalendarOff, Trash2 } from 'lucide-react'
 import { AddProfileDialog, AddChildDialog } from '@/components/profile-dialogs'
+import { capitalize, formatISODate as formatDate } from '@/lib/school-calendar'
 
 export default function SettingsPage() {
   const store = useStore()
   const [confirmReset, setConfirmReset] = useState(false)
   const [pinInput, setPinInput] = useState('')
+  const [startDateInput, setStartDateInput] = useState(store.schoolYearStartDate)
+  const [breakLabel, setBreakLabel] = useState('')
+  const [breakStart, setBreakStart] = useState('')
+  const [breakEnd, setBreakEnd] = useState('')
+
+  const { schoolStatus } = store
+  const statusText = schoolStatus.isWeekend
+    ? `${capitalize(schoolStatus.actualDayName)} · Rest day.`
+    : schoolStatus.notStarted
+      ? `School starts ${formatDate(store.schoolYearStartDate)}.`
+      : schoolStatus.onBreak
+        ? `On break${schoolStatus.pause?.label ? ` — ${schoolStatus.pause.label}` : ''}. Back to Week ${store.currentWeek}, ${dayLabels[store.currentDay]} when it ends.`
+        : schoolStatus.isUpcoming
+          ? `Next school day: Week ${store.currentWeek}, ${dayLabels[store.currentDay]}.`
+          : `Today: Week ${store.currentWeek}, ${dayLabels[store.currentDay]}.`
 
   return (
     <div className="space-y-6">
@@ -24,6 +41,134 @@ export default function SettingsPage() {
         title="Settings"
         description="Add family profiles and learners, or start fresh with the demo data."
       />
+
+      {/* School calendar */}
+      <section>
+        <h2 className="mb-3 font-serif text-xl font-semibold">School Calendar</h2>
+        <Card className="space-y-5 p-5">
+          <div className="flex items-start gap-3 rounded-2xl bg-muted/50 p-4">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+              <CalendarDays className="size-4" />
+            </span>
+            <p className="text-sm font-semibold text-foreground">{statusText}</p>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex-1">
+              <Label htmlFor="school-start" className="mb-2">
+                School year start date
+              </Label>
+              <Input
+                id="school-start"
+                type="date"
+                value={startDateInput}
+                onChange={(event) => setStartDateInput(event.target.value)}
+                className="sm:max-w-56"
+              />
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                Week 1, Monday begins here. Everything else — today&apos;s week and day —
+                tracks forward from this date automatically.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              disabled={!startDateInput || startDateInput === store.schoolYearStartDate}
+              onClick={() => store.setSchoolYearStartDate(startDateInput)}
+            >
+              Save
+            </Button>
+          </div>
+
+          <div className="border-t border-border pt-5">
+            <div className="mb-3 flex items-center gap-2">
+              <CalendarOff className="size-4 text-primary" />
+              <h3 className="font-serif text-lg font-semibold">Pause weeks (breaks)</h3>
+            </div>
+            <p className="mb-3 text-sm text-muted-foreground">
+              Add a break — a holiday, a sick week, anything — and the schedule skips
+              those days without losing your place. Weeks after the break shift forward
+              to match.
+            </p>
+
+            {store.pausedWeeks.length > 0 && (
+              <div className="mb-4 space-y-2">
+                {store.pausedWeeks
+                  .slice()
+                  .sort((a, b) => a.startDate.localeCompare(b.startDate))
+                  .map((p) => (
+                    <div
+                      key={p.id}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-border p-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="font-bold text-foreground">{p.label || 'Break'}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(p.startDate)} &ndash; {formatDate(p.endDate)}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Remove ${p.label || 'break'}`}
+                        onClick={() => store.removePausedWeek(p.id)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
+              <div>
+                <Label htmlFor="break-label" className="mb-2">Label</Label>
+                <Input
+                  id="break-label"
+                  placeholder="Christmas Break"
+                  value={breakLabel}
+                  onChange={(event) => setBreakLabel(event.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="break-start" className="mb-2">Start</Label>
+                <Input
+                  id="break-start"
+                  type="date"
+                  value={breakStart}
+                  onChange={(event) => setBreakStart(event.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="break-end" className="mb-2">End</Label>
+                <Input
+                  id="break-end"
+                  type="date"
+                  value={breakEnd}
+                  onChange={(event) => setBreakEnd(event.target.value)}
+                />
+              </div>
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  disabled={!breakStart || !breakEnd || breakEnd < breakStart}
+                  onClick={() => {
+                    store.addPausedWeek({
+                      startDate: breakStart,
+                      endDate: breakEnd,
+                      label: breakLabel || undefined,
+                    })
+                    setBreakLabel('')
+                    setBreakStart('')
+                    setBreakEnd('')
+                  }}
+                >
+                  <Plus className="size-4" /> Add
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </section>
 
       <section>
         <h2 className="mb-3 font-serif text-xl font-semibold">App lock</h2>

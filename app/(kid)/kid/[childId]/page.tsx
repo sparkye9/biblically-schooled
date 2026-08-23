@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useStore } from '@/lib/store'
 import { assignedLessonsFor, sortByActivity } from '@/lib/selectors'
 import { subjectMeta, accent } from '@/lib/ui'
-import { Check, Star, X, PartyPopper } from 'lucide-react'
+import { capitalize, isNoSchoolToday } from '@/lib/school-calendar'
+import { Check, Star, Sun, X, PartyPopper } from 'lucide-react'
 
 export default function KidPage({
   params,
@@ -25,12 +26,15 @@ export default function KidPage({
     )
   }
 
-  const items = sortByActivity(
-    assignedLessonsFor(child.id, store.assignments, store.lessons, {
-      week: store.currentWeek,
-      day: store.currentDay,
-    }),
-  )
+  const noSchoolToday = isNoSchoolToday(store.schoolStatus)
+  const items = noSchoolToday
+    ? []
+    : sortByActivity(
+        assignedLessonsFor(child.id, store.assignments, store.lessons, {
+          week: store.currentWeek,
+          day: store.currentDay,
+        }),
+      )
   const done = items.filter((i) => i.assignment.status === 'done').length
   const allDone = items.length > 0 && done === items.length
   const color = child.color
@@ -83,37 +87,53 @@ export default function KidPage({
           </Link>
         </div>
 
-        {/* Star tracker */}
-        <div className="mb-6 flex items-center justify-center gap-2 rounded-3xl bg-card p-4 shadow-sm">
-          {items.map((i) => (
-            <Star
-              key={i.assignment.id}
-              className="size-8 transition-all"
-              style={{
-                color: `var(--${color})`,
-                fill:
-                  i.assignment.status === 'done'
-                    ? `var(--${color})`
-                    : 'transparent',
-                opacity: i.assignment.status === 'done' ? 1 : 0.35,
-              }}
-            />
-          ))}
-        </div>
-
-        {allDone ? (
+        {noSchoolToday ? (
           <div className="rounded-3xl bg-card p-8 text-center shadow-sm">
-            <PartyPopper className="mx-auto mb-3 size-14" style={accent(color)} />
+            <Sun className="mx-auto mb-3 size-14" style={accent(color)} />
             <h2 className="font-serif text-2xl font-bold text-foreground">
-              You did it!
+              {store.schoolStatus.isWeekend
+                ? `${capitalize(store.schoolStatus.actualDayName)} is a rest day!`
+                : store.schoolStatus.onBreak
+                  ? "You're on a break!"
+                  : "School hasn't started yet!"}
             </h2>
             <p className="mt-1 text-muted-foreground">
-              All your stars are filled in. Great work today!
+              No school today — go play and enjoy your day!
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {visibleItems.map((i) => {
+          <>
+            {/* Star tracker */}
+            <div className="mb-6 flex items-center justify-center gap-2 rounded-3xl bg-card p-4 shadow-sm">
+              {items.map((i) => (
+                <Star
+                  key={i.assignment.id}
+                  className="size-8 transition-all"
+                  style={{
+                    color: `var(--${color})`,
+                    fill:
+                      i.assignment.status === 'done'
+                        ? `var(--${color})`
+                        : 'transparent',
+                    opacity: i.assignment.status === 'done' ? 1 : 0.35,
+                  }}
+                />
+              ))}
+            </div>
+
+            {allDone ? (
+              <div className="rounded-3xl bg-card p-8 text-center shadow-sm">
+                <PartyPopper className="mx-auto mb-3 size-14" style={accent(color)} />
+                <h2 className="font-serif text-2xl font-bold text-foreground">
+                  You did it!
+                </h2>
+                <p className="mt-1 text-muted-foreground">
+                  All your stars are filled in. Great work today!
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {visibleItems.map((i) => {
               const { Icon, label } = subjectMeta[i.lesson.subject]
               const isDone = i.assignment.status === 'done'
               return (
@@ -155,7 +175,9 @@ export default function KidPage({
                 </button>
               )
             })}
-          </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 

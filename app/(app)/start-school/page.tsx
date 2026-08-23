@@ -21,15 +21,27 @@ import {
 } from '@/lib/selectors'
 import { ActivityBadge, SubjectPill } from '@/components/primitives'
 import { Button } from '@/components/ui/button'
+import { interactiveHref } from '@/components/activity-card'
 import { subjectMeta } from '@/lib/ui'
+import { speak } from '@/lib/speech'
+import { capitalize, isNoSchoolToday } from '@/lib/school-calendar'
 import { cn } from '@/lib/utils'
 
 export default function StartSchoolPage() {
-  const { children, assignments, lessons, currentView, currentWeek, currentDay } =
-    useStore()
+  const {
+    children,
+    assignments,
+    lessons,
+    currentView,
+    currentWeek,
+    currentDay,
+    schoolStatus,
+  } = useStore()
   const inView = childrenInView(children, currentView)
+  const noSchoolToday = isNoSchoolToday(schoolStatus)
 
   const steps = useMemo<{ item: AssignedLesson; childName: string }[]>(() => {
+    if (noSchoolToday) return []
     // family bible first, then per-child sorted by activity
     const bible: { item: AssignedLesson; childName: string }[] = []
     const rest: { item: AssignedLesson; childName: string }[] = []
@@ -50,15 +62,22 @@ export default function StartSchoolPage() {
       })
     })
     return [...bible, ...rest]
-  }, [inView, assignments, lessons, currentWeek, currentDay])
+  }, [inView, assignments, lessons, currentWeek, currentDay, noSchoolToday])
 
   const [index, setIndex] = useState(0)
   const { toggleAssignment } = useStore()
 
   if (steps.length === 0) {
+    const title = schoolStatus.isWeekend
+      ? `${capitalize(schoolStatus.actualDayName)} — Rest Day`
+      : schoolStatus.onBreak
+        ? schoolStatus.pause?.label
+          ? `On Break — ${schoolStatus.pause.label}`
+          : 'On Break'
+        : 'Nothing scheduled today'
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <p className="font-serif text-2xl font-semibold">Nothing scheduled today</p>
+        <p className="font-serif text-2xl font-semibold">{title}</p>
         <p className="mt-1 text-muted-foreground">Enjoy the margin.</p>
         <Button className="mt-4" nativeButton={false} render={<Link href="/" />}>
           Back home
@@ -207,12 +226,15 @@ function StepCard({
           <Button
             variant="outline"
             nativeButton={false}
-            render={<Link href="/lessons/phonics" />}
+            render={<Link href={interactiveHref[lesson.interactive]} />}
           >
             <Play className="size-4" /> Open activity
           </Button>
         )}
-        <Button variant="ghost">
+        <Button
+          variant="ghost"
+          onClick={() => speak([lesson.title, ...(lesson.teach ?? [])].join('. '))}
+        >
           <Volume2 className="size-4" /> Play audio
         </Button>
         <div className="flex-1" />

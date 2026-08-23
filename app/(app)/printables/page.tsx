@@ -60,6 +60,11 @@ export default function PrintablesPage() {
     (resource) =>
       // Hide placeholder entries with no actual file behind them.
       (resource.fileUrl || resource.fileKey) &&
+      // Daily Packets & Parent Checklists already have their own grouped,
+      // week-by-week view in Print Center — listing all 35 weeks' worth here
+      // too just buries real uploads under hundreds of duplicate-looking cards.
+      resource.type !== 'Daily Packet' &&
+      resource.type !== 'Parent Checklist' &&
       (store.currentView === 'shared' ||
         resource.owner === 'shared' ||
         resource.owner === store.currentView),

@@ -2,34 +2,18 @@
 
 import { useState } from 'react'
 import { useStore } from '@/lib/store'
-import { childrenInView, assignedLessonsFor } from '@/lib/selectors'
+import { childrenInView } from '@/lib/selectors'
 import { accentBg } from '@/lib/ui'
 import { PageHeader } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Printer, Check, FileText, BookOpen, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { packetUrlFor } from '@/lib/worksheet-packets'
 
 export default function PrintCenterPage() {
   const store = useStore()
   const inView = childrenInView(store.children, store.currentView)
   const [picked, setPicked] = useState<Set<string>>(new Set())
-
-  const printableLessons = inView.flatMap((child) =>
-    assignedLessonsFor(child.id, store.assignments, store.lessons, {
-      week: store.currentWeek,
-    })
-      .filter((i) => i.lesson.printable)
-      .map((i) => ({
-        id: i.assignment.id,
-        child,
-        title: i.lesson.title,
-        sub: `${i.lesson.minutes} min`,
-        subject: i.lesson.subject,
-        fileUrl: packetUrlFor(child.id, i.lesson.weekNumber, i.lesson.day) ?? undefined,
-      })),
-  )
 
   const inViewIds = new Set(inView.map((c) => c.id))
   const printableResources = store.resources.filter((r) => {
@@ -44,24 +28,18 @@ export default function PrintCenterPage() {
     (r) => r.type === 'Parent Checklist' && r.fileUrl,
   )
 
-  const all = [
-    ...printableLessons.map((p) => ({
-      id: p.id,
-      title: p.title,
-      sub: `${p.child.name} · ${p.sub}`,
-      subject: p.subject,
-      fileUrl: p.fileUrl,
-    })),
-    ...printableResources
-      .filter((r) => r.type !== 'Daily Packet' && r.type !== 'Parent Checklist')
-      .map((r) => ({
-        id: r.id,
-        title: r.title,
-        sub: `${r.type} · Week ${r.weekNumber}`,
-        subject: r.subject,
-        fileUrl: r.fileUrl,
-      })),
-  ]
+  // Bible/math/literacy lessons all share the same combined daily packet PDF
+  // (already offered above), so only genuinely separate resources — uploaded
+  // worksheets, extra Bible/Art/Science pages — get their own card here.
+  const all = printableResources
+    .filter((r) => r.type !== 'Daily Packet' && r.type !== 'Parent Checklist')
+    .map((r) => ({
+      id: r.id,
+      title: r.title,
+      sub: `${r.type} · Week ${r.weekNumber}`,
+      subject: r.subject,
+      fileUrl: r.fileUrl,
+    }))
   const total = all.length
 
   const toggle = (id: string) => {

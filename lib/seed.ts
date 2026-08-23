@@ -6,6 +6,7 @@ import type {
   Household,
   Lesson,
   ParentNote,
+  PausedWeek,
   ReadAloudBook,
   Resource,
   Skill,
@@ -13,8 +14,10 @@ import type {
 } from './types'
 import { MAX_PACKET_WEEK, packetUrlFor, parentChecklistUrlFor } from './worksheet-packets'
 
-export const DEMO_DAY = 'tuesday' as const
-export const DEMO_WEEK = 1
+/** First school day of the year. Week/day track this automatically from today's date. */
+export const SCHOOL_YEAR_START_DATE = '2026-08-24'
+
+export const pausedWeeks: PausedWeek[] = []
 
 export const households: Household[] = [
   {
@@ -1214,7 +1217,7 @@ function buildLessons(): Lesson[] {
             ],
             ask: ['What was easy?', 'What did you notice?'],
             watchFor: 'Stop while they’re still enjoying it.',
-            interactive: 'phonics',
+            interactive: subject === 'math' ? 'math-manipulatives' : 'phonics',
             printable: s.printable,
           })
         }
@@ -1242,7 +1245,6 @@ function buildLessons(): Lesson[] {
         ],
         ask: ['What was easy?', 'What did you notice?'],
         watchFor: 'Stop while they’re still enjoying it.',
-        interactive: 'math-manipulatives',
         printable: science.printable,
       })
     }

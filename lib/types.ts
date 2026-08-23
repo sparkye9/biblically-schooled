@@ -176,3 +176,13 @@ export interface ParentNote {
   needsPractice: string
   enjoyed: string
 }
+
+/** A break in the school calendar — weekends already skip automatically, this is for extra days off. */
+export interface PausedWeek {
+  id: string
+  /** ISO yyyy-mm-dd, first day of the break */
+  startDate: string
+  /** ISO yyyy-mm-dd, last day of the break (inclusive) */
+  endDate: string
+  label?: string
+}

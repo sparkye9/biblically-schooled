@@ -11,12 +11,14 @@ import {
   BookOpen,
   ArrowRight,
   CheckCircle2,
+  Sun,
 } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import { assignedLessonsFor, childrenInView, countDone } from '@/lib/selectors'
 import { ChildAvatar, ProgressRing } from '@/components/primitives'
 import { buttonVariants } from '@/components/ui/button'
 import { dayLabels, dayRhythm } from '@/lib/ui'
+import { capitalize, formatISODate, isNoSchoolToday } from '@/lib/school-calendar'
 
 export default function HomePage() {
   const store = useStore()
@@ -29,6 +31,7 @@ export default function HomePage() {
     currentView,
     currentWeek,
     currentDay,
+    schoolStatus,
   } = store
 
   const week = weeks.find((w) => w.number === currentWeek)!
@@ -45,6 +48,24 @@ export default function HomePage() {
     setGreeting(hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening')
   }, [])
 
+  const noSchoolToday = isNoSchoolToday(schoolStatus)
+  const todayTitle = schoolStatus.isWeekend
+    ? `${capitalize(schoolStatus.actualDayName)} · Rest Day`
+    : schoolStatus.onBreak
+      ? schoolStatus.pause?.label
+        ? `On Break — ${schoolStatus.pause.label}`
+        : 'On Break'
+      : schoolStatus.notStarted
+        ? `${capitalize(schoolStatus.actualDayName)} · School Hasn't Started Yet`
+        : `${dayLabels[currentDay]} · Week ${currentWeek}`
+  const todaySubtitle = schoolStatus.isWeekend
+    ? 'No lessons today — rest, worship, and enjoy the day together.'
+    : schoolStatus.onBreak
+      ? `Lessons resume after ${formatISODate(schoolStatus.pause?.endDate ?? '')}.`
+      : schoolStatus.notStarted
+        ? `School starts ${formatISODate(store.schoolYearStartDate)}.`
+        : undefined
+
   return (
     <div className="space-y-8">
       {/* Greeting + today band */}
@@ -58,27 +79,37 @@ export default function HomePage() {
               <p className="text-xs font-bold uppercase tracking-widest text-primary">
                 Today
               </p>
-              <p className="mt-1 text-lg font-bold text-foreground">
-                {dayLabels[currentDay]} &middot; Week {currentWeek}
-              </p>
-              <p className="font-serif text-2xl font-semibold text-balance text-foreground">
-                {week.theme}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {dayRhythm[currentDay]} &middot; {week.bibleRef}
-              </p>
+              <p className="mt-1 text-lg font-bold text-foreground">{todayTitle}</p>
+              {noSchoolToday ? (
+                <p className="mt-1 text-sm text-muted-foreground">{todaySubtitle}</p>
+              ) : (
+                <>
+                  <p className="font-serif text-2xl font-semibold text-balance text-foreground">
+                    {week.theme}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {dayRhythm[currentDay]} &middot; {week.bibleRef}
+                  </p>
+                </>
+              )}
             </div>
-            <div className="flex flex-col gap-2 sm:items-end">
-              <Link
-                href="/start-school"
-                className={buttonVariants({ size: 'lg', className: 'h-12 rounded-2xl px-8 text-base' })}
-              >
-                <Play className="size-5" /> Start School
-              </Link>
-              <p className="text-xs text-muted-foreground">
-                Guided, one step at a time
-              </p>
-            </div>
+            {noSchoolToday ? (
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+                <Sun className="size-6" />
+              </span>
+            ) : (
+              <div className="flex flex-col gap-2 sm:items-end">
+                <Link
+                  href="/start-school"
+                  className={buttonVariants({ size: 'lg', className: 'h-12 rounded-2xl px-8 text-base' })}
+                >
+                  <Play className="size-5" /> Start School
+                </Link>
+                <p className="text-xs text-muted-foreground">
+                  Guided, one step at a time
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -94,44 +125,50 @@ export default function HomePage() {
             View plan <ArrowRight className="size-4" />
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {inView.map((child) => {
-            const items = assignedLessonsFor(child.id, assignments, lessons, {
-              week: currentWeek,
-              day: currentDay,
-            })
-            const { done, total } = countDone(items)
-            const coreDone = items
-              .filter((i) => ['math', 'literacy', 'bible'].includes(i.lesson.subject))
-              .every((i) => i.assignment.status === 'done')
-            return (
-              <Link
-                key={child.id}
-                href={`/kid/${child.id}`}
-                className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-4 transition-shadow hover:shadow-md"
-              >
-                <ProgressRing value={done} total={total} color={child.color} />
-                <div className="min-w-0 flex-1">
-                  <p className="font-bold text-foreground">{child.name}</p>
-                  <p className="text-sm text-muted-foreground">{child.grade}</p>
-                  <p className="mt-1 text-xs font-semibold text-muted-foreground">
-                    {done} of {total} core activities
-                  </p>
-                </div>
-                {total > 0 && coreDone && (
-                  <span className="flex items-center gap-1 rounded-full bg-secondary px-2 py-1 text-[10px] font-bold uppercase text-secondary-foreground">
-                    <CheckCircle2 className="size-3" /> Core
-                  </span>
-                )}
-              </Link>
-            )
-          })}
-          {inView.length === 0 && (
-            <p className="text-muted-foreground">
-              No children in this view. Switch households or add a child in Settings.
-            </p>
-          )}
-        </div>
+        {noSchoolToday ? (
+          <p className="rounded-2xl border border-dashed border-border p-4 text-sm text-muted-foreground">
+            {todaySubtitle}
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {inView.map((child) => {
+              const items = assignedLessonsFor(child.id, assignments, lessons, {
+                week: currentWeek,
+                day: currentDay,
+              })
+              const { done, total } = countDone(items)
+              const coreDone = items
+                .filter((i) => ['math', 'literacy', 'bible'].includes(i.lesson.subject))
+                .every((i) => i.assignment.status === 'done')
+              return (
+                <Link
+                  key={child.id}
+                  href={`/kid/${child.id}`}
+                  className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-4 transition-shadow hover:shadow-md"
+                >
+                  <ProgressRing value={done} total={total} color={child.color} />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-foreground">{child.name}</p>
+                    <p className="text-sm text-muted-foreground">{child.grade}</p>
+                    <p className="mt-1 text-xs font-semibold text-muted-foreground">
+                      {done} of {total} core activities
+                    </p>
+                  </div>
+                  {total > 0 && coreDone && (
+                    <span className="flex items-center gap-1 rounded-full bg-secondary px-2 py-1 text-[10px] font-bold uppercase text-secondary-foreground">
+                      <CheckCircle2 className="size-3" /> Core
+                    </span>
+                  )}
+                </Link>
+              )
+            })}
+            {inView.length === 0 && (
+              <p className="text-muted-foreground">
+                No children in this view. Switch households or add a child in Settings.
+              </p>
+            )}
+          </div>
+        )}
       </section>
 
       {/* Quick actions */}

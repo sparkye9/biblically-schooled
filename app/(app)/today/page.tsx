@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   Briefcase,
@@ -14,6 +14,7 @@ import {
   AlertCircle,
   CheckCircle2,
   Plus,
+  Sun,
 } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import {
@@ -32,6 +33,7 @@ import { LessonEditor } from '@/components/lesson-editor'
 import { cn } from '@/lib/utils'
 import { dayLabels } from '@/lib/ui'
 import { packetUrlFor } from '@/lib/worksheet-packets'
+import { capitalize, formatISODate, isNoSchoolToday } from '@/lib/school-calendar'
 import type { DayName } from '@/lib/types'
 
 type DayMode = 'essential' | '30' | '60' | 'full'
@@ -44,13 +46,45 @@ const modes: { id: DayMode; label: string }[] = [
 ]
 
 export default function TodayPage() {
-  const { children, assignments, lessons, currentView, currentWeek, currentDay } =
-    useStore()
+  const {
+    children,
+    assignments,
+    lessons,
+    currentView,
+    currentWeek,
+    currentDay,
+    schoolStatus,
+    schoolYearStartDate,
+  } = useStore()
   const [mode, setMode] = useState<DayMode>('full')
   const [workMode, setWorkMode] = useState(false)
   const [pulled, setPulled] = useState(false)
 
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('mode')
+    if (modes.some((m) => m.id === requested)) setMode(requested as DayMode)
+  }, [])
+
   const inView = childrenInView(children, currentView)
+
+  if (isNoSchoolToday(schoolStatus)) {
+    const title = schoolStatus.isWeekend
+      ? `${capitalize(schoolStatus.actualDayName)} \u00b7 Rest Day`
+      : schoolStatus.onBreak
+        ? schoolStatus.pause?.label
+          ? `On Break \u2014 ${schoolStatus.pause.label}`
+          : 'On Break'
+        : `School starts ${formatISODate(schoolYearStartDate)}`
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
+        <span className="flex size-14 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+          <Sun className="size-7" />
+        </span>
+        <p className="mt-4 font-serif text-2xl font-semibold">{title}</p>
+        <p className="mt-1 text-muted-foreground">No lessons today. Enjoy the margin.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">

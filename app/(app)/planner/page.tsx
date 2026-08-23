@@ -33,8 +33,9 @@ import { LessonEditor, days, fieldClass, Field, lines } from '@/components/lesso
 export default function PlannerPage() {
   const store = useStore()
   const [message, setMessage] = useState('')
+  const [editingWeek, setEditingWeek] = useState(store.currentWeek)
   const week =
-    store.weeks.find((item) => item.number === store.currentWeek) ?? store.weeks[0]
+    store.weeks.find((item) => item.number === editingWeek) ?? store.weeks[0]
 
   if (!week) {
     return <p className="text-muted-foreground">No curriculum weeks are available.</p>
@@ -57,7 +58,10 @@ export default function PlannerPage() {
       >
         {store.weeks.length < 36 && (
           <WeekEditor
-            onSaved={(number) => setMessage(`Week ${number} added.`)}
+            onSaved={(number) => {
+              setEditingWeek(number)
+              setMessage(`Week ${number} added.`)
+            }}
             trigger={
               <Button variant="outline">
                 <Plus className="size-4" /> Add week
@@ -102,7 +106,7 @@ export default function PlannerPage() {
               id="planner-week"
               value={week.number}
               onChange={(event) => {
-                store.setCurrentWeek(Number(event.target.value))
+                setEditingWeek(Number(event.target.value))
                 setMessage('')
               }}
               className={fieldClass}
