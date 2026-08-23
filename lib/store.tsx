@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react'
 import * as seed from './seed'
+import { getSchoolCalendarStatus, type SchoolCalendarStatus } from './school-calendar'
 import type {
   Assignment,
   Child,
@@ -17,6 +18,7 @@ import type {
   Household,
   Lesson,
   ParentNote,
+  PausedWeek,
   ReadAloudBook,
   Resource,
   Skill,
@@ -39,8 +41,10 @@ interface State {
   parentNotes: ParentNote[]
   currentView: string // 'shared' | householdId
   activeMomHouseholdId: string
-  currentWeek: number
-  currentDay: string
+  /** ISO yyyy-mm-dd — the first school day of the year; week/day track from here */
+  schoolYearStartDate: string
+  /** scheduled breaks — the calendar skips these days without losing your place */
+  pausedWeeks: PausedWeek[]
   /** optional PIN required to view the app; unset means no lock */
   viewPin?: string
   /** ids the user explicitly deleted, so seed content never resurrects them */
@@ -60,17 +64,24 @@ const initialState: State = {
   parentNotes: seed.parentNotes,
   currentView: 'h-venessa',
   activeMomHouseholdId: 'h-venessa',
-  currentWeek: seed.DEMO_WEEK,
-  currentDay: seed.DEMO_DAY,
+  schoolYearStartDate: seed.SCHOOL_YEAR_START_DATE,
+  pausedWeeks: seed.pausedWeeks,
   viewPin: undefined,
   deletedIds: [],
 }
 
 interface StoreContext extends State {
+  /** today's week number and day name, kept in sync with the real calendar */
+  currentWeek: number
+  currentDay: string
+  /** full detail behind currentWeek/currentDay — break status, upcoming flag, etc. */
+  schoolStatus: SchoolCalendarStatus
   setView: (view: string) => void
   setActiveMom: (householdId: string) => void
-  setCurrentWeek: (week: number) => void
-  setCurrentDay: (day: string) => void
+  setSchoolYearStartDate: (date: string) => void
+  addPausedWeek: (input: Omit<PausedWeek, 'id'>) => string
+  updatePausedWeek: (id: string, patch: Partial<Omit<PausedWeek, 'id'>>) => void
+  removePausedWeek: (id: string) => void
   toggleAssignment: (assignmentId: string) => void
   setChildMode: (childId: string, on: boolean) => void
   setLowDistraction: (childId: string, on: boolean) => void
@@ -151,6 +162,8 @@ function uid(prefix: string) {
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<State>(initialState)
   const [hydrated, setHydrated] = useState(false)
+  // ticks once a minute so a tab left open overnight rolls to the next school day on its own
+  const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
     try {
@@ -166,6 +179,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 60_000)
+    return () => clearInterval(t)
+  }, [])
+
+  useEffect(() => {
     if (!hydrated) return
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
@@ -177,8 +195,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const api = useMemo<StoreContext>(() => {
     const patch = (p: Partial<State>) => setState((s) => ({ ...s, ...p }))
 
+    const rawStatus = getSchoolCalendarStatus(state.schoolYearStartDate, state.pausedWeeks, now)
+    const maxWeek = state.weeks.length ? Math.max(...state.weeks.map((w) => w.number)) : 1
+    const schoolStatus: SchoolCalendarStatus = {
+      ...rawStatus,
+      weekNumber: Math.min(Math.max(rawStatus.weekNumber, 1), maxWeek),
+    }
+
     return {
       ...state,
+      currentWeek: schoolStatus.weekNumber,
+      currentDay: schoolStatus.day,
+      schoolStatus,
       setView: (view) => patch({ currentView: view }),
       setActiveMom: (householdId) =>
         setState((s) => ({
@@ -186,8 +214,25 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           activeMomHouseholdId: householdId,
           currentView: householdId,
         })),
-      setCurrentWeek: (week) => patch({ currentWeek: week }),
-      setCurrentDay: (day) => patch({ currentDay: day }),
+      setSchoolYearStartDate: (date) => patch({ schoolYearStartDate: date }),
+      addPausedWeek: (input) => {
+        const id = uid('pw')
+        setState((s) => ({
+          ...s,
+          pausedWeeks: [...s.pausedWeeks, { ...input, id }],
+        }))
+        return id
+      },
+      updatePausedWeek: (id, changes) =>
+        setState((s) => ({
+          ...s,
+          pausedWeeks: s.pausedWeeks.map((p) => (p.id === id ? { ...p, ...changes } : p)),
+        })),
+      removePausedWeek: (id) =>
+        setState((s) => ({
+          ...s,
+          pausedWeeks: s.pausedWeeks.filter((p) => p.id !== id),
+        })),
       toggleAssignment: (assignmentId) =>
         setState((s) => ({
           ...s,
@@ -380,7 +425,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setState(initialState)
       },
     }
-  }, [state])
+  }, [state, now])
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>
 }
