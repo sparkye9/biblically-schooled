@@ -32,7 +32,7 @@ export const interactiveHref: Record<string, string> = {
   phonics: '/lessons/phonics',
   'math-manipulatives': '/lessons/math',
   'word-building': '/lessons/word-building',
-  'memory-verse': '/bible',
+  'memory-verse': '/lessons/memory-verse',
 }
 
 export function ActivityCard({

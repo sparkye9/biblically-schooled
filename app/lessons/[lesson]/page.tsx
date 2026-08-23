@@ -2,7 +2,7 @@
 
 import { use, useState } from 'react'
 import Link from 'next/link'
-import { X, Calculator, BookOpen, Home } from 'lucide-react'
+import { X, Calculator, BookOpen, Home, Quote } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import { childrenInView } from '@/lib/selectors'
 import { accent, accentBg } from '@/lib/ui'
@@ -10,6 +10,7 @@ import { ChildAvatar } from '@/components/primitives'
 import { PhonicsBoard } from '@/components/interactive/phonics'
 import { WordBuilder } from '@/components/interactive/word-building'
 import { NumberBondBoard } from '@/components/interactive/math-manipulatives'
+import { MemoryVerseBoard } from '@/components/interactive/memory-verse'
 
 const LESSONS: Record<
   string,
@@ -30,6 +31,11 @@ const LESSONS: Record<
     sub: 'Build a word letter by letter, then hear it.',
     Icon: BookOpen,
   },
+  'memory-verse': {
+    title: 'Memory Verse',
+    sub: "Hide a word at a time and say this week's verse together.",
+    Icon: Quote,
+  },
 }
 
 export default function LessonPage({
@@ -38,9 +44,10 @@ export default function LessonPage({
   params: Promise<{ lesson: string }>
 }) {
   const { lesson } = use(params)
-  const { children, currentView } = useStore()
+  const { children, currentView, currentWeek, weeks } = useStore()
   const inView = childrenInView(children, currentView)
   const meta = LESSONS[lesson] ?? LESSONS['word-building']
+  const week = weeks.find((w) => w.number === currentWeek) ?? weeks[0]
 
   const [childId, setChildId] = useState(inView[0]?.id ?? children[0]?.id ?? '')
   const child = inView.find((c) => c.id === childId) ?? inView[0] ?? children[0]
@@ -129,6 +136,13 @@ export default function LessonPage({
           {lesson === 'phonics' && <PhonicsBoard color={child.color} />}
           {lesson === 'math' && <NumberBondBoard color={child.color} />}
           {lesson === 'word-building' && <WordBuilder color={child.color} />}
+          {lesson === 'memory-verse' && week && (
+            <MemoryVerseBoard
+              verse={week.memoryVerse}
+              reference={week.memoryVerseRef}
+              color={child.color}
+            />
+          )}
         </div>
 
         <div className="mt-6 flex justify-center">

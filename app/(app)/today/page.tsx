@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   Briefcase,
@@ -49,6 +49,11 @@ export default function TodayPage() {
   const [mode, setMode] = useState<DayMode>('full')
   const [workMode, setWorkMode] = useState(false)
   const [pulled, setPulled] = useState(false)
+
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('mode')
+    if (modes.some((m) => m.id === requested)) setMode(requested as DayMode)
+  }, [])
 
   const inView = childrenInView(children, currentView)
 

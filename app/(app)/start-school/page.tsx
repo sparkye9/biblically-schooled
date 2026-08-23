@@ -21,7 +21,9 @@ import {
 } from '@/lib/selectors'
 import { ActivityBadge, SubjectPill } from '@/components/primitives'
 import { Button } from '@/components/ui/button'
+import { interactiveHref } from '@/components/activity-card'
 import { subjectMeta } from '@/lib/ui'
+import { speak } from '@/lib/speech'
 import { cn } from '@/lib/utils'
 
 export default function StartSchoolPage() {
@@ -207,12 +209,15 @@ function StepCard({
           <Button
             variant="outline"
             nativeButton={false}
-            render={<Link href="/lessons/phonics" />}
+            render={<Link href={interactiveHref[lesson.interactive]} />}
           >
             <Play className="size-4" /> Open activity
           </Button>
         )}
-        <Button variant="ghost">
+        <Button
+          variant="ghost"
+          onClick={() => speak([lesson.title, ...(lesson.teach ?? [])].join('. '))}
+        >
           <Volume2 className="size-4" /> Play audio
         </Button>
         <div className="flex-1" />
