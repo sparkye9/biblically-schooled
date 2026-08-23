@@ -1,9 +1,22 @@
 import type { DayName, PausedWeek } from './types'
 
+export type WeekdayName =
+  | 'sunday'
+  | 'monday'
+  | 'tuesday'
+  | 'wednesday'
+  | 'thursday'
+  | 'friday'
+  | 'saturday'
+
 export interface SchoolCalendarStatus {
   weekNumber: number
   day: DayName
-  /** today isn't a school day (weekend or on break) — this is the next upcoming one */
+  /** today's real day of the week — always accurate, including weekends */
+  actualDayName: WeekdayName
+  /** today is a Saturday or Sunday — always a rest day, school or not */
+  isWeekend: boolean
+  /** today isn't a school day (weekend or on break) — weekNumber/day above are the next upcoming one */
   isUpcoming: boolean
   /** today falls inside a paused range */
   onBreak: boolean
@@ -13,6 +26,34 @@ export interface SchoolCalendarStatus {
 }
 
 const DAY_NAMES: DayName[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+const WEEKDAY_NAMES: WeekdayName[] = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+]
+
+export function capitalize(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1)
+}
+
+export function formatISODate(iso: string): string {
+  if (!iso) return ''
+  return parseISODate(iso).toLocaleDateString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+/** True when there's no school today for any reason — weekend, a break, or before the start date. */
+export function isNoSchoolToday(status: SchoolCalendarStatus): boolean {
+  return status.isWeekend || status.onBreak || status.notStarted
+}
 
 function parseISODate(iso: string): Date {
   const [y, m, d] = iso.split('-').map(Number)
@@ -57,9 +98,19 @@ export function getSchoolCalendarStatus(
 ): SchoolCalendarStatus {
   const start = startOfDay(parseISODate(schoolYearStartDate))
   const todayStart = startOfDay(today)
+  const actualDayName = WEEKDAY_NAMES[todayStart.getDay()]
+  const isWeekendToday = isWeekend(todayStart)
 
   if (todayStart < start) {
-    return { weekNumber: 1, day: 'monday', isUpcoming: true, onBreak: false, notStarted: true }
+    return {
+      weekNumber: 1,
+      day: 'monday',
+      actualDayName,
+      isWeekend: isWeekendToday,
+      isUpcoming: true,
+      onBreak: false,
+      notStarted: true,
+    }
   }
 
   const activePause = findPause(todayStart, pausedWeeks)
@@ -85,6 +136,8 @@ export function getSchoolCalendarStatus(
   return {
     weekNumber,
     day,
+    actualDayName,
+    isWeekend: isWeekendToday,
     isUpcoming: rolled,
     onBreak: !!activePause,
     pause: activePause,

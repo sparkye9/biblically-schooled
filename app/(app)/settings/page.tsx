@@ -12,17 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Plus, RotateCcw, Home, User, Users, Lock, CalendarDays, CalendarOff, Trash2 } from 'lucide-react'
 import { AddProfileDialog, AddChildDialog } from '@/components/profile-dialogs'
-
-function formatDate(iso: string) {
-  if (!iso) return ''
-  const [y, m, d] = iso.split('-').map(Number)
-  return new Date(y, (m ?? 1) - 1, d ?? 1).toLocaleDateString(undefined, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
+import { capitalize, formatISODate as formatDate } from '@/lib/school-calendar'
 
 export default function SettingsPage() {
   const store = useStore()
@@ -34,13 +24,15 @@ export default function SettingsPage() {
   const [breakEnd, setBreakEnd] = useState('')
 
   const { schoolStatus } = store
-  const statusText = schoolStatus.notStarted
-    ? `School starts ${formatDate(store.schoolYearStartDate)}.`
-    : schoolStatus.onBreak
-      ? `On break${schoolStatus.pause?.label ? ` — ${schoolStatus.pause.label}` : ''}. Back to Week ${store.currentWeek}, ${dayLabels[store.currentDay]} when it ends.`
-      : schoolStatus.isUpcoming
-        ? `Next school day: Week ${store.currentWeek}, ${dayLabels[store.currentDay]}.`
-        : `Today: Week ${store.currentWeek}, ${dayLabels[store.currentDay]}.`
+  const statusText = schoolStatus.isWeekend
+    ? `${capitalize(schoolStatus.actualDayName)} · Rest day.`
+    : schoolStatus.notStarted
+      ? `School starts ${formatDate(store.schoolYearStartDate)}.`
+      : schoolStatus.onBreak
+        ? `On break${schoolStatus.pause?.label ? ` — ${schoolStatus.pause.label}` : ''}. Back to Week ${store.currentWeek}, ${dayLabels[store.currentDay]} when it ends.`
+        : schoolStatus.isUpcoming
+          ? `Next school day: Week ${store.currentWeek}, ${dayLabels[store.currentDay]}.`
+          : `Today: Week ${store.currentWeek}, ${dayLabels[store.currentDay]}.`
 
   return (
     <div className="space-y-6">

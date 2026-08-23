@@ -1217,7 +1217,7 @@ function buildLessons(): Lesson[] {
             ],
             ask: ['What was easy?', 'What did you notice?'],
             watchFor: 'Stop while they’re still enjoying it.',
-            interactive: 'phonics',
+            interactive: subject === 'math' ? 'math-manipulatives' : 'phonics',
             printable: s.printable,
           })
         }
@@ -1245,7 +1245,6 @@ function buildLessons(): Lesson[] {
         ],
         ask: ['What was easy?', 'What did you notice?'],
         watchFor: 'Stop while they’re still enjoying it.',
-        interactive: 'math-manipulatives',
         printable: science.printable,
       })
     }

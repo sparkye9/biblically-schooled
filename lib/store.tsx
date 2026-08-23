@@ -26,7 +26,9 @@ import type {
   SupplyItem,
 } from './types'
 
-const STORAGE_KEY = 'biblically-schooled-v4'
+// Bumped: corrected seed lesson data (math/science lessons pointed at the
+// wrong interactive activity) needs to reach everyone, not just new saves.
+const STORAGE_KEY = 'biblically-schooled-v5'
 
 interface State {
   households: Household[]
