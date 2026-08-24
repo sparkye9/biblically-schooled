@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 import fs from 'fs'
-import { createReadStream } from 'fs'
-
-const archiver = require('archiver')
 
 const WORKSHEETS_ROOT = path.join(process.cwd(), 'public', 'worksheets')
 
@@ -46,49 +43,25 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Create response with streaming
-    const response = new NextResponse(
-      new ReadableStream((controller) => {
-        const archive = archiver('zip', { zlib: { level: 6 } })
+    // Collect the PDF URLs for all three days
+    const days = ['Mon', 'Tue', 'Thu']
+    const pdfs: string[] = []
 
-        archive.on('error', (err: Error) => {
-          controller.error(err)
-        })
+    days.forEach((day) => {
+      const filePath = path.join(weekFolder, `${day}.pdf`)
+      if (fs.existsSync(filePath)) {
+        pdfs.push(`/worksheets/week-${week}/${childFolder}/${day}.pdf`)
+      }
+    })
 
-        archive.on('data', (chunk: Buffer) => {
-          controller.enqueue(chunk)
-        })
-
-        archive.on('end', () => {
-          controller.close()
-        })
-
-        // Add PDF files for Monday, Tuesday, Thursday
-        const days = ['Mon', 'Tue', 'Thu']
-
-        days.forEach((day) => {
-          const filePath = path.join(weekFolder, `${day}.pdf`)
-          if (fs.existsSync(filePath)) {
-            archive.file(filePath, {
-              name: `${childFolder}_Week${weekNumber}_${day}.pdf`,
-            })
-          }
-        })
-
-        archive.finalize()
-      })
-    )
-
-    response.headers.set('Content-Type', 'application/zip')
-    response.headers.set(
-      'Content-Disposition',
-      `attachment; filename="Week${weekNumber}_${childFolder}.zip"`
-    )
-
-    return response
+    return NextResponse.json({
+      childFolder,
+      weekNumber,
+      pdfs,
+    })
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create zip' },
+      { error: error instanceof Error ? error.message : 'Failed to fetch PDFs' },
       { status: 500 }
     )
   }

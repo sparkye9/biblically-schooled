@@ -72,9 +72,22 @@ export default function PrintCenterPage() {
     urls.forEach((url) => window.open(url, '_blank', 'noopener,noreferrer'))
   }
 
-  const downloadWeekZip = (childId: string, weekNumber: number) => {
-    const url = `/api/download-week?childId=${encodeURIComponent(childId)}&weekNumber=${weekNumber}`
-    window.location.href = url
+  const downloadWeekZip = async (childId: string, weekNumber: number) => {
+    try {
+      const response = await fetch(
+        `/api/download-week?childId=${encodeURIComponent(childId)}&weekNumber=${weekNumber}`
+      )
+      if (!response.ok) throw new Error('Failed to fetch PDFs')
+      const data = await response.json()
+      if (data.pdfs && Array.isArray(data.pdfs)) {
+        // Open all PDFs in new tabs
+        data.pdfs.forEach((url: string) => {
+          window.open(url, '_blank', 'noopener,noreferrer')
+        })
+      }
+    } catch (error) {
+      console.error('Error downloading week PDFs:', error)
+    }
   }
 
   return (
