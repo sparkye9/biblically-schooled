@@ -468,7 +468,7 @@ export const weeks: CurriculumWeek[] = [
 ]
 
 // ---------------------------------------------------------------------------
-// Curriculum builder — fills every week with lessons, assignments & worksheets
+// Curriculum builder - fills every week with lessons, assignments & worksheets
 // so every household and grade sees a full, usable term on first load.
 // ---------------------------------------------------------------------------
 
@@ -1140,13 +1140,162 @@ const GRADE_BANDS: Array<{ key: GradeBandKey; gradeBand: GradeBand }> = [
   { key: '1st', gradeBand: '1st' },
 ]
 
+function getScienceContent(title: string) {
+  const baseLower = title.toLowerCase()
+
+  if (baseLower.includes('living') || baseLower.includes('nonliving')) {
+    return {
+      youNeed: ['Objects from around the house (rocks, plants, toys, etc.)'],
+      teach: [
+        'Gather objects from around the house.',
+        'Sort them into "living" and "nonliving" piles.',
+        'Talk about what makes something alive (grows, needs food/water, moves on its own).',
+        'Find a few more objects and sort them together.',
+      ],
+      ask: ['What makes something living?', 'Can you find more living things?'],
+      watchFor: 'Let your child explore and discover - there is no rush.',
+    }
+  }
+
+  if (baseLower.includes('nature') || baseLower.includes('explore')) {
+    return {
+      youNeed: ['Paper & crayons', 'Magnifying glass (optional)', 'Small container for collections'],
+      teach: [
+        'Go outside or look out a window together.',
+        'Notice things in nature (plants, bugs, sky, weather).',
+        'Draw or collect what you see.',
+        'Talk about why things are the way they are.',
+      ],
+      ask: ['What did you notice?', 'Why do you think leaves change colors?'],
+      watchFor: 'Curiosity is the goal - let them lead.',
+    }
+  }
+
+  if (baseLower.includes('water') || baseLower.includes('sink')) {
+    return {
+      youNeed: ['Sink or large bucket', 'Various objects (cork, rock, plastic, toy)'],
+      teach: [
+        'Fill a sink or bucket with water.',
+        'Test objects one at a time to see if they float or sink.',
+        'Predict before dropping each object.',
+        'Talk about why some float and others sink.',
+      ],
+      ask: ['What do you think will happen?', 'Why did it float/sink?'],
+      watchFor: 'Make predictions together before testing.',
+    }
+  }
+
+  return {
+    youNeed: ['Objects from around the house'],
+    teach: [
+      `Explore and discover with ${title}.`,
+      'Try out different materials or objects.',
+      'Make observations together.',
+      'Celebrate what your child finds interesting.',
+    ],
+    ask: ['What did you find?', 'What do you notice?'],
+    watchFor: 'Make it a fun exploration, not a formal lesson.',
+  }
+}
+
+function getPhonicsContent(title: string) {
+  const baseLower = title.toLowerCase()
+
+  if (baseLower.includes('exposure')) {
+    return {
+      youNeed: ['Letter card or flashcard', 'Whiteboard & marker, or pencil & paper'],
+      teach: [
+        'Show the letter and say its name.',
+        'Point to the letter strokes as you trace it in the air.',
+        'Let your child trace the letter on paper or whiteboard.',
+        'Find other objects starting with this letter around the house.',
+      ],
+      ask: ['What letter is this?', 'What words start with this letter?'],
+      watchFor: 'Keep it playful - this is just an introduction.',
+      activityType: 'hands-on',
+    }
+  }
+
+  if (baseLower.includes('sound')) {
+    return {
+      youNeed: ['Letter card', 'Objects that match the letter sound (optional)'],
+      teach: [
+        'Show the letter and make its sound (not the letter name).',
+        'Have your child repeat the sound with you.',
+        'Find things around the house that start with that sound.',
+        'Practice the sound a few times, then stop.',
+      ],
+      ask: ['What sound does this letter make?', 'Can you think of a word with this sound?'],
+      watchFor: 'Focus on the sound, not the letter name.',
+      activityType: 'hands-on',
+    }
+  }
+
+  if (baseLower.includes('decodable') || baseLower.includes('reading')) {
+    return {
+      youNeed: ['Decodable reader or worksheet'],
+      teach: [
+        'Point to each word as your child reads.',
+        'Help sound out words if needed, then blend them.',
+        'Re-read the page for fluency.',
+        'Talk about what the story says.',
+      ],
+      ask: ['What was the story about?', 'Can you find words with the sound we practiced?'],
+      watchFor: 'Celebrate correct blending attempts.',
+      activityType: 'mom-time',
+    }
+  }
+
+  if (baseLower.includes('digraph') || baseLower.includes('blend')) {
+    return {
+      youNeed: ['Letter cards', 'Whiteboard & marker, or pencil & paper'],
+      teach: [
+        'Show how two letters make one sound together.',
+        'Practice the sound a few times.',
+        'Find words that use this combination.',
+        'Have your child write or trace words with this digraph.',
+      ],
+      ask: ['What sound do these letters make together?', 'Can you think of more words with this?'],
+      watchFor: 'Focus on the blended sound, not separate letter sounds.',
+      activityType: 'hands-on',
+    }
+  }
+
+  if (baseLower.includes('review')) {
+    return {
+      youNeed: ['Letter cards or flashcards from letters learned'],
+      teach: [
+        'Mix up the letter cards.',
+        'Point to each letter and have your child say the sound.',
+        'Include a few challenging ones.',
+        'Celebrate the letters your child knows well.',
+      ],
+      ask: ['Which sounds do you remember?', 'Which letter was hardest to learn?'],
+      watchFor: 'This is practice, not a test - keep it relaxed and fun.',
+      activityType: 'hands-on',
+    }
+  }
+
+  return {
+    youNeed: ['Worksheet or practice materials'],
+    teach: [
+      `Work through ${title} together.`,
+      'Model the first example, then let your child try.',
+      'Help as needed, then celebrate their work.',
+    ],
+    ask: ['What was easy?', 'What did you notice?'],
+    watchFor: 'Stop while they are still enjoying it.',
+    activityType: 'independent',
+  }
+}
+
 function buildLessons(): Lesson[] {
   const out: Lesson[] = []
   let n = 0
   const nextId = () => `l-seed-${++n}`
 
   for (const week of weeks) {
-    // Shared family Bible lesson — every child, Monday.
+    // Shared family Bible lesson - every child, Monday.
     out.push({
       id: nextId(),
       title: BIBLE_TITLES[week.number],
@@ -1161,7 +1310,7 @@ function buildLessons(): Lesson[] {
       youNeed: ['A Bible', 'Crayons for a coloring page'],
       teach: [
         `Read ${week.bibleRef} together.`,
-        'Talk about this week’s big idea.',
+        'Talk about this week's big idea.',
         `Practice the memory verse: ${week.memoryVerseRef}.`,
       ],
       ask: ['What did you learn about God this week?', 'How can we thank God today?'],
@@ -1170,7 +1319,7 @@ function buildLessons(): Lesson[] {
       printable: true,
     })
 
-    // Shared family Art, Music & Life Skills — every child, Friday.
+    // Shared family Art, Music & Life Skills - every child, Friday.
     out.push({
       id: nextId(),
       title: 'Art, Music & Life Skills',
@@ -1189,7 +1338,7 @@ function buildLessons(): Lesson[] {
         'Life skill: put away your own school supplies when done.',
       ],
       ask: ['What did you enjoy making?', 'What did you notice while making it?'],
-      watchFor: 'Keep it playful — this is enrichment, not a test.',
+      watchFor: 'Keep it playful - this is enrichment, not a test.',
       printable: true,
     })
 
@@ -1198,34 +1347,38 @@ function buildLessons(): Lesson[] {
       for (const day of HOME_DAYS) {
         for (const subject of DAILY_SUBJECT_KEYS) {
           const s = plan[subject]
+          const isLiteracy = subject === 'literacy'
+          const phonicsContent = isLiteracy ? getPhonicsContent(s.title) : null
+
           out.push({
             id: nextId(),
             title: s.title,
             subject,
-            activityType: 'mom-time',
+            activityType: isLiteracy && phonicsContent ? phonicsContent.activityType : (subject === 'math' ? 'mom-time' : 'mom-time'),
             weekNumber: week.number,
             day,
             gradeBand,
             minutes: s.minutes,
             essential: s.essential,
             owner: 'shared',
-            youNeed: ['A few supplies from this week’s list'],
-            teach: [
+            youNeed: isLiteracy && phonicsContent ? phonicsContent.youNeed : ['A few supplies from this weeks list'],
+            teach: isLiteracy && phonicsContent ? phonicsContent.teach : [
               `Introduce ${s.title} for Week ${week.number}.`,
               'Model it once, then let your child try with help.',
               'Wrap up by celebrating what they did.',
             ],
-            ask: ['What was easy?', 'What did you notice?'],
-            watchFor: 'Stop while they’re still enjoying it.',
+            ask: isLiteracy && phonicsContent ? phonicsContent.ask : ['What was easy?', 'What did you notice?'],
+            watchFor: isLiteracy && phonicsContent ? phonicsContent.watchFor : 'Stop while they are still enjoying it.',
             interactive: subject === 'math' ? 'math-manipulatives' : 'phonics',
             printable: s.printable,
           })
         }
       }
 
-      // Science — Tuesday only ("Practice + Explore" day), matching the
+      // Science - Tuesday only ("Practice + Explore" day), matching the
       // real worksheet packets, which only include a science page there.
       const science = plan.science
+      const scienceContent = getScienceContent(science.title)
       out.push({
         id: nextId(),
         title: science.title,
@@ -1237,14 +1390,10 @@ function buildLessons(): Lesson[] {
         minutes: science.minutes,
         essential: science.essential,
         owner: 'shared',
-        youNeed: ['Objects from around the house'],
-        teach: [
-          `Introduce ${science.title} for Week ${week.number}.`,
-          'Model it once, then let your child try with help.',
-          'Wrap up by celebrating what they did.',
-        ],
-        ask: ['What was easy?', 'What did you notice?'],
-        watchFor: 'Stop while they’re still enjoying it.',
+        youNeed: scienceContent.youNeed,
+        teach: scienceContent.teach,
+        ask: scienceContent.ask,
+        watchFor: scienceContent.watchFor,
         printable: science.printable,
       })
     }
@@ -1294,16 +1443,16 @@ export const skills: Skill[] = [
   { id: 's13', childId: 'c-olori', track: 'math', name: 'Number Sense', status: 'learning' },
   { id: 's14', childId: 'c-seraiah', track: 'literacy', name: 'Letter Exposure', status: 'learning' },
   { id: 's15', childId: 'c-seraiah', track: 'literacy', name: 'Phonological Awareness', status: 'learning' },
-  { id: 's16', childId: 'c-seraiah', track: 'math', name: 'Counting 1–5', status: 'practicing' },
+  { id: 's16', childId: 'c-seraiah', track: 'math', name: 'Counting 1-5', status: 'practicing' },
   { id: 's17', childId: 'c-seraiah', track: 'math', name: 'Shapes', status: 'learning' },
   { id: 's18', childId: 'c-amelia', track: 'literacy', name: 'Letter Exposure', status: 'practicing' },
   { id: 's19', childId: 'c-amelia', track: 'literacy', name: 'Phonological Awareness', status: 'learning' },
-  { id: 's20', childId: 'c-amelia', track: 'math', name: 'Counting 1–5', status: 'learning' },
+  { id: 's20', childId: 'c-amelia', track: 'math', name: 'Counting 1-5', status: 'learning' },
   { id: 's21', childId: 'c-amelia', track: 'math', name: 'Sorting', status: 'learning' },
 ]
 
 // ---------------------------------------------------------------------------
-// Real printable packets — Weeks 1–5 worksheet PDFs shipped in /public/worksheets.
+// Real printable packets - Weeks 1-5 worksheet PDFs shipped in /public/worksheets.
 // Each child gets a personalized Mon/Tue/Thu/Fri packet; Amelia's packets are
 // Seraiah's content relabeled with her name (same Pre-K plan, both girls).
 // ---------------------------------------------------------------------------
@@ -1322,7 +1471,7 @@ function buildPacketResources(): Resource[] {
         if (!fileUrl) continue
         out.push({
           id: nextId(),
-          title: `Week ${weekNumber} · ${dayTitle(day)} Packet — ${child.name}`,
+          title: `Week ${weekNumber} · ${dayTitle(day)} Packet - ${child.name}`,
           type: 'Daily Packet',
           subject: 'review',
           skill: 'Bible, math & literacy practice',
