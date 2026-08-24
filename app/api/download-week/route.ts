@@ -43,8 +43,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Collect the PDF URLs for all three days
-    const days = ['Mon', 'Tue', 'Thu']
+    // Collect the PDF URLs for all four days
+    const days = ['Mon', 'Tue', 'Thu', 'Fri']
     const pdfs: string[] = []
 
     days.forEach((day) => {
