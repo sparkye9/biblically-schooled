@@ -14,6 +14,7 @@ export default function PrintCenterPage() {
   const store = useStore()
   const inView = childrenInView(store.children, store.currentView)
   const [picked, setPicked] = useState<Set<string>>(new Set())
+  const [pickedPackets, setPickedPackets] = useState<Set<string>>(new Set())
 
   const inViewIds = new Set(inView.map((c) => c.id))
   const printableResources = store.resources.filter((r) => {
@@ -51,8 +52,22 @@ export default function PrintCenterPage() {
     })
   }
 
+  const togglePacket = (id: string) => {
+    setPickedPackets((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
   const selectAll = () => setPicked(new Set(all.map((a) => a.id)))
   const clearAll = () => setPicked(new Set())
+  const selectAllPackets = () => {
+    const allPacketIds = dailyPackets.map((p) => p.id)
+    setPickedPackets(new Set(allPacketIds))
+  }
+  const clearAllPackets = () => setPickedPackets(new Set())
 
   const DAY_LABEL: Record<string, string> = { Mon: 'Monday', Tue: 'Tuesday', Thu: 'Thursday', Fri: 'Friday' }
   const DAY_ORDER = ['Mon', 'Tue', 'Thu', 'Fri']
@@ -163,17 +178,22 @@ export default function PrintCenterPage() {
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {packets.map((packet) => {
                   const code = dayCode(packet.fileUrl!)
+                  const isPicked = pickedPackets.has(packet.id)
                   return (
-                    <a
+                    <button
                       key={packet.id}
-                      href={packet.fileUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex flex-col items-center gap-1 rounded-xl border border-border bg-muted/40 px-3 py-3 text-center text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                      onClick={() => togglePacket(packet.id)}
+                      className={cn(
+                        'flex flex-col items-center gap-1 rounded-xl border px-3 py-3 text-center text-sm font-semibold transition-colors',
+                        isPicked
+                          ? 'border-primary bg-primary/10 text-foreground'
+                          : 'border-border bg-muted/40 text-foreground hover:bg-muted'
+                      )}
                     >
                       <Download className="size-4 text-muted-foreground" />
                       {DAY_LABEL[code] ?? code}
-                    </a>
+                      {isPicked && <Check className="size-3" />}
+                    </button>
                   )
                 })}
               </div>
@@ -182,12 +202,23 @@ export default function PrintCenterPage() {
         </section>
       )}
 
+      {packetsByChild.length > 0 && (
+        <div className="mb-5 flex flex-wrap gap-2">
+          <Button variant="outline" onClick={selectAllPackets} className="gap-1.5">
+            <Check className="size-4" /> Select all packets
+          </Button>
+          <Button variant="ghost" onClick={clearAllPackets}>
+            Clear packets
+          </Button>
+        </div>
+      )}
+
       <div className="mb-5 flex flex-wrap gap-2">
         <Button variant="outline" onClick={selectAll} className="gap-1.5">
-          <Check className="size-4" /> Select all
+          <Check className="size-4" /> Select all resources
         </Button>
         <Button variant="ghost" onClick={clearAll}>
-          Clear
+          Clear resources
         </Button>
       </div>
 
@@ -242,22 +273,37 @@ export default function PrintCenterPage() {
         </div>
       )}
 
-      {picked.size > 0 && (
+      {(picked.size > 0 || pickedPackets.size > 0) && (
         <div className="sticky bottom-20 mt-6 lg:bottom-4">
           <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-lg sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-semibold text-foreground">
-              {picked.size} page{picked.size === 1 ? '' : 's'} ready
+              {picked.size + pickedPackets.size} item{picked.size + pickedPackets.size === 1 ? '' : 's'} ready
             </p>
             <Button
               onClick={() => {
-                const selected = all.filter((item) => picked.has(item.id))
-                const withFiles = selected.filter((item) => item.fileUrl)
-                if (withFiles.length > 0) {
-                  openAllPdfs(withFiles.map((item) => item.fileUrl!))
+                const urlsToOpen: string[] = []
+
+                // Add selected packets
+                if (pickedPackets.size > 0) {
+                  const selectedPackets = dailyPackets.filter((p) => pickedPackets.has(p.id))
+                  selectedPackets.forEach((p) => {
+                    if (p.fileUrl) urlsToOpen.push(p.fileUrl)
+                  })
                 }
-                if (withFiles.length < selected.length) {
-                  window.print()
+
+                // Add selected resources
+                if (picked.size > 0) {
+                  const selected = all.filter((item) => picked.has(item.id))
+                  const withFiles = selected.filter((item) => item.fileUrl)
+                  withFiles.forEach((item) => {
+                    if (item.fileUrl) urlsToOpen.push(item.fileUrl)
+                  })
                 }
+
+                if (urlsToOpen.length > 0) {
+                  openAllPdfs(urlsToOpen)
+                }
+                window.print()
               }}
               className="gap-1.5"
             >
