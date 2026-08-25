@@ -12,6 +12,7 @@ __v0_jsx-dev-runtime.ts
 # Common ignores
 node_modules
 .next/
-.DS_Storepackage-lock.json
+.DS_Store
+next-env.d.ts
 
 package-lock.json
