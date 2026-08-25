@@ -25,6 +25,7 @@ import type {
   SkillStatus,
   SupplyItem,
 } from './types'
+import type { BackupData } from './data-export'
 
 // Bumped: corrected seed lesson data (math/science lessons pointed at the
 // wrong interactive activity) needs to reach everyone, not just new saves.
@@ -113,6 +114,7 @@ interface StoreContext extends State {
   assignLesson: (lessonId: string, childId: string) => void
   setViewPin: (pin: string | null) => void
   reset: () => void
+  restoreFromBackup: (backup: BackupData) => void
 }
 
 const Ctx = createContext<StoreContext | null>(null)
@@ -425,6 +427,27 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       reset: () => {
         localStorage.removeItem(STORAGE_KEY)
         setState(initialState)
+      },
+      restoreFromBackup: (backup) => {
+        const restored: State = {
+          households: backup.households,
+          children: backup.children,
+          weeks: backup.weeks,
+          lessons: backup.lessons,
+          assignments: backup.assignments,
+          skills: backup.skills,
+          resources: backup.resources,
+          readAloud: backup.readAloud,
+          supplies: backup.supplies,
+          parentNotes: backup.parentNotes,
+          pausedWeeks: backup.pausedWeeks,
+          schoolYearStartDate: backup.schoolYearStartDate,
+          currentView: state.currentView,
+          activeMomHouseholdId: state.activeMomHouseholdId,
+          viewPin: state.viewPin,
+          deletedIds: [],
+        }
+        setState(restored)
       },
     }
   }, [state, now])

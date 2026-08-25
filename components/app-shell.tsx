@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { registerServiceWorker } from '@/lib/service-worker'
 import {
   Home,
   CalendarDays,
@@ -35,6 +36,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { OfflineIndicator } from '@/components/offline-indicator'
 
 const nav = [
   { href: '/', label: 'Home', Icon: Home },
@@ -65,8 +67,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [moreOpen, setMoreOpen] = useState(false)
 
+  useEffect(() => {
+    registerServiceWorker()
+  }, [])
+
   return (
     <div className="min-h-dvh bg-background">
+      <OfflineIndicator />
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 print:hidden lg:flex">
         <Brand />
