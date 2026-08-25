@@ -75,3 +75,41 @@ export function filterByDayLength(
 export function childrenInView(children: Child[], view: string) {
   return view === 'shared' ? children : children.filter((c) => c.householdId === view)
 }
+
+export interface MomTimeSession {
+  childName: string
+  childId: string
+  lesson: Lesson
+  minutes: number
+}
+
+export function calculateMomTime(
+  children: Child[],
+  assignments: Assignment[],
+  lessons: Lesson[],
+  week: number,
+  day: string,
+): MomTimeSession[] {
+  const sessions: MomTimeSession[] = []
+  children.forEach((child) => {
+    const momTimeLessons = assignedLessonsFor(child.id, assignments, lessons, {
+      week,
+      day,
+    }).filter((i) => i.lesson.activityType === 'mom-time')
+
+    momTimeLessons.forEach((item) => {
+      sessions.push({
+        childName: child.name,
+        childId: child.id,
+        lesson: item.lesson,
+        minutes: item.lesson.minutes,
+      })
+    })
+  })
+
+  return sessions
+}
+
+export function totalMomTimeMinutes(sessions: MomTimeSession[]): number {
+  return sessions.reduce((sum, s) => sum + s.minutes, 0)
+}
