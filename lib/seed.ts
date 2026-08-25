@@ -1310,7 +1310,7 @@ function buildLessons(): Lesson[] {
       youNeed: ['A Bible', 'Crayons for a coloring page'],
       teach: [
         `Read ${week.bibleRef} together.`,
-        'Talk about this week's big idea.',
+        "Talk about this week's big idea.",
         `Practice the memory verse: ${week.memoryVerseRef}.`,
       ],
       ask: ['What did you learn about God this week?', 'How can we thank God today?'],
