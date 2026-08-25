@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Plus, RotateCcw, Home, User, Users, Lock, CalendarDays, CalendarOff, Trash2 } from 'lucide-react'
 import { AddProfileDialog, AddChildDialog } from '@/components/profile-dialogs'
+import { DataBackup } from '@/components/data-backup'
 import { capitalize, formatISODate as formatDate } from '@/lib/school-calendar'
 
 export default function SettingsPage() {
@@ -293,6 +294,12 @@ export default function SettingsPage() {
             })}
           </div>
         </Card>
+      </section>
+
+      {/* Backup & restore */}
+      <section>
+        <h2 className="mb-3 font-serif text-xl font-semibold">Backup & Restore</h2>
+        <DataBackup />
       </section>
 
       {/* Danger zone */}
