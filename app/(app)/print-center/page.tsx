@@ -7,13 +7,17 @@ import { accentBg } from '@/lib/ui'
 import { PageHeader } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Printer, Check, FileText, BookOpen, Download } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Printer, Check, FileText, BookOpen, Download, Trash2 } from 'lucide-react'
+import { PrintPreview } from '@/components/print-preview'
 import { cn } from '@/lib/utils'
+import type { PrintItem } from '@/lib/print-batch'
 
 export default function PrintCenterPage() {
   const store = useStore()
   const inView = childrenInView(store.children, store.currentView)
   const [picked, setPicked] = useState<Set<string>>(new Set())
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   const inViewIds = new Set(inView.map((c) => c.id))
   const printableResources = store.resources.filter((r) => {
@@ -39,6 +43,7 @@ export default function PrintCenterPage() {
       sub: `${r.type} · Week ${r.weekNumber}`,
       subject: r.subject,
       fileUrl: r.fileUrl,
+      fileSize: r.fileSize,
     }))
   const total = all.length
 
@@ -53,6 +58,16 @@ export default function PrintCenterPage() {
 
   const selectAll = () => setPicked(new Set(all.map((a) => a.id)))
   const clearAll = () => setPicked(new Set())
+
+  const previewItems: PrintItem[] = all
+    .filter((a) => picked.has(a.id))
+    .map((a) => ({
+      id: a.id,
+      title: a.title,
+      url: a.fileUrl || '',
+      fileSize: a.fileSize,
+      type: a.sub,
+    }))
 
   const DAY_LABEL: Record<string, string> = { Mon: 'Monday', Tue: 'Tuesday', Thu: 'Thursday', Fri: 'Friday' }
   const DAY_ORDER = ['Mon', 'Tue', 'Thu', 'Fri']
@@ -74,6 +89,10 @@ export default function PrintCenterPage() {
 
   return (
     <div>
+      {previewOpen && previewItems.length > 0 && (
+        <PrintPreview items={previewItems} onClose={() => setPreviewOpen(false)} />
+      )}
+
       <PageHeader
         eyebrow="Grab-and-Go"
         title="Print Center"
@@ -83,6 +102,38 @@ export default function PrintCenterPage() {
           {picked.size}/{total} selected
         </span>
       </PageHeader>
+
+      {total > 0 && (
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-border bg-card p-3">
+          <div className="flex flex-wrap gap-1">
+            <Button
+              size="sm"
+              variant={picked.size === 0 ? 'outline' : 'secondary'}
+              onClick={selectAll}
+            >
+              Select all
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={clearAll}
+              disabled={picked.size === 0}
+            >
+              Clear
+            </Button>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              disabled={picked.size === 0}
+              onClick={() => setPreviewOpen(true)}
+            >
+              <FileText className="size-4" />
+              Preview ({picked.size})
+            </Button>
+          </div>
+        </div>
+      )}
 
       {(packetsByChild.length > 0 || parentChecklists.length > 0) && (
         <section className="mb-6 space-y-4">
@@ -153,15 +204,6 @@ export default function PrintCenterPage() {
           ))}
         </section>
       )}
-
-      <div className="mb-5 flex flex-wrap gap-2">
-        <Button variant="outline" onClick={selectAll} className="gap-1.5">
-          <Check className="size-4" /> Select all
-        </Button>
-        <Button variant="ghost" onClick={clearAll}>
-          Clear
-        </Button>
-      </div>
 
       {all.length === 0 ? (
         <Card className="p-8 text-center">
