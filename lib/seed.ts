@@ -1354,7 +1354,7 @@ function buildLessons(): Lesson[] {
             id: nextId(),
             title: s.title,
             subject,
-            activityType: isLiteracy && phonicsContent ? phonicsContent.activityType : (subject === 'math' ? 'mom-time' : 'mom-time'),
+            activityType: isLiteracy && phonicsContent ? phonicsContent.activityType : 'mom-time',
             weekNumber: week.number,
             day,
             gradeBand,
