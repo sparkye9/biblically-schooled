@@ -4,10 +4,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import {
-  Home,
   CalendarDays,
-  CalendarRange,
   Users,
+  Users2,
   Printer,
   FolderOpen,
   TrendingUp,
@@ -15,50 +14,79 @@ import {
   Library,
   Package,
   Settings,
-  BookOpen,
-  Users2,
-  ChevronDown,
-  Check,
   MoreHorizontal,
   HeartHandshake,
-  NotebookPen,
-  GraduationCap,
+  ChevronDown,
+  Check,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useStore } from '@/lib/store'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-const nav = [
-  { href: '/', label: 'Home', Icon: Home },
-  { href: '/today', label: 'Today', Icon: CalendarDays },
-  { href: '/teaching-guide', label: 'Teaching Guide', Icon: NotebookPen },
-  { href: '/bible', label: 'Bible & Theme', Icon: BookOpen },
-  { href: '/children', label: 'Children', Icon: Users },
-  { href: '/progress', label: 'Progress', Icon: TrendingUp },
-  { href: '/portfolio', label: 'Portfolio', Icon: GraduationCap },
-  { href: '/planner', label: 'Weekly Planner', Icon: LayoutGrid },
-  { href: '/shared', label: 'Shared Planning', Icon: Users2 },
-  { href: '/printables', label: 'Printables', Icon: FolderOpen },
-  { href: '/print-center', label: 'Print Center', Icon: Printer },
-  { href: '/library', label: 'Read-Aloud Library', Icon: Library },
-  { href: '/supplies', label: 'Supplies', Icon: Package },
-  { href: '/sunday-prep', label: 'Sunday Prep', Icon: CalendarRange },
-  { href: '/settings', label: 'Settings', Icon: Settings },
+type NavLink = { type: 'link'; href: string; label: string; Icon: LucideIcon }
+type NavGroup = { type: 'group'; label: string; Icon: LucideIcon; items: NavLink[] }
+type NavItem = NavLink | NavGroup
+
+const nav: NavItem[] = [
+  {
+    type: 'group',
+    label: 'Today',
+    Icon: CalendarDays,
+    items: [
+      { type: 'link', href: '/today', label: 'Schedule', Icon: CalendarDays },
+      { type: 'link', href: '/teaching-guide', label: 'Teaching Guide', Icon: CalendarDays },
+      { type: 'link', href: '/bible', label: 'Bible & Memory Verse', Icon: CalendarDays },
+    ],
+  },
+  {
+    type: 'group',
+    label: 'Plan',
+    Icon: LayoutGrid,
+    items: [
+      { type: 'link', href: '/planner', label: 'Weekly Planner', Icon: LayoutGrid },
+      { type: 'link', href: '/sunday-prep', label: 'Sunday Prep', Icon: LayoutGrid },
+      { type: 'link', href: '/week', label: 'Week Overview', Icon: LayoutGrid },
+      { type: 'link', href: '/shared', label: 'Shared Planning', Icon: LayoutGrid },
+    ],
+  },
+  { type: 'link', href: '/children', label: 'Children', Icon: Users },
+  {
+    type: 'group',
+    label: 'Resources',
+    Icon: FolderOpen,
+    items: [
+      { type: 'link', href: '/library', label: 'Read-Aloud Library', Icon: Library },
+      { type: 'link', href: '/printables', label: 'Printables', Icon: FolderOpen },
+      { type: 'link', href: '/print-center', label: 'Print Center', Icon: Printer },
+      { type: 'link', href: '/supplies', label: 'Supplies', Icon: Package },
+    ],
+  },
+  {
+    type: 'group',
+    label: 'Progress',
+    Icon: TrendingUp,
+    items: [
+      { type: 'link', href: '/progress', label: 'Skill Progress', Icon: TrendingUp },
+      { type: 'link', href: '/portfolio', label: 'Portfolios', Icon: TrendingUp },
+    ],
+  },
+  { type: 'link', href: '/settings', label: 'Settings', Icon: Settings },
 ]
 
-const mobileNav = [
-  { href: '/', label: 'Home', Icon: Home },
-  { href: '/today', label: 'Today', Icon: CalendarDays },
-  { href: '/children', label: 'Children', Icon: Users },
-  { href: '/library', label: 'Library', Icon: Library },
+const mobileNav: NavLink[] = [
+  { type: 'link', href: '/today', label: 'Today', Icon: CalendarDays },
+  { type: 'link', href: '/children', label: 'Children', Icon: Users },
+  { type: 'link', href: '/progress', label: 'Progress', Icon: TrendingUp },
+  { type: 'link', href: '/settings', label: 'Settings', Icon: Settings },
 ]
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -71,23 +99,54 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 print:hidden lg:flex">
         <Brand />
         <nav className="mt-6 flex flex-1 flex-col gap-1 overflow-y-auto">
-          {nav.map(({ href, label, Icon }) => {
-            const active = href === '/' ? pathname === '/' : pathname.startsWith(href)
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors',
-                  active
-                    ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent',
-                )}
-              >
-                <Icon className="size-[18px] shrink-0" />
-                {label}
-              </Link>
-            )
+          {nav.map((item) => {
+            if (item.type === 'link') {
+              const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors',
+                    active
+                      ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent',
+                  )}
+                >
+                  <item.Icon className="size-[18px] shrink-0" />
+                  {item.label}
+                </Link>
+              )
+            } else {
+              return (
+                <div key={item.label} className="space-y-1">
+                  <div className="flex items-center gap-3 px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/60">
+                    <item.Icon className="size-[18px] shrink-0" />
+                    {item.label}
+                  </div>
+                  <div className="space-y-1 pl-2">
+                    {item.items.map((subitem) => {
+                      const active = subitem.href === '/' ? pathname === '/' : pathname.startsWith(subitem.href)
+                      return (
+                        <Link
+                          key={subitem.href}
+                          href={subitem.href}
+                          className={cn(
+                            'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+                            active
+                              ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm'
+                              : 'text-sidebar-foreground hover:bg-sidebar-accent',
+                          )}
+                        >
+                          <subitem.Icon className="size-[16px] shrink-0" />
+                          {subitem.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            }
           })}
         </nav>
       </aside>
@@ -124,16 +183,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             More
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" side="top" className="mb-2 w-52">
-            {nav
-              .filter((n) => !mobileNav.some((m) => m.href === n.href))
-              .map(({ href, label, Icon }) => (
-                <DropdownMenuItem key={href}>
-                  <Link href={href} className="flex items-center gap-2">
-                    <Icon className="size-4" />
-                    {label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
+            {nav.map((item) => {
+              if (item.type === 'link') {
+                const isInMobileNav = mobileNav.some((m) => m.href === item.href)
+                if (isInMobileNav) return null
+                return (
+                  <DropdownMenuItem key={item.href}>
+                    <Link href={item.href} className="flex items-center gap-2">
+                      <item.Icon className="size-4" />
+                      {item.label}
+                    </Link>
+                  </DropdownMenuItem>
+                )
+              } else {
+                return (
+                  <div key={item.label}>
+                    {item.items.map((subitem) => (
+                      <DropdownMenuItem key={subitem.href}>
+                        <Link href={subitem.href} className="flex items-center gap-2">
+                          <subitem.Icon className="size-4" />
+                          {subitem.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </div>
+                )
+              }
+            })}
           </DropdownMenuContent>
         </DropdownMenu>
       </nav>

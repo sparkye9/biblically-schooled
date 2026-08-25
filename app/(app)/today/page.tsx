@@ -28,6 +28,7 @@ import {
 import { PageHeader, ChildAvatar, ActivityBadge } from '@/components/primitives'
 import { ActivityCard, interactiveHref } from '@/components/activity-card'
 import { RotationAssistant } from '@/components/rotation-assistant'
+import { MomTimeSummary } from '@/components/mom-time-summary'
 import { Button } from '@/components/ui/button'
 import { LessonEditor } from '@/components/lesson-editor'
 import { cn } from '@/lib/utils'
@@ -128,6 +129,8 @@ export default function TodayPage() {
           &ldquo;If we have time.&rdquo;
         </p>
       )}
+
+      <MomTimeSummary />
 
       {workMode ? (
         <WorkModeView
