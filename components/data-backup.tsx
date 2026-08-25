@@ -6,6 +6,8 @@ import { createBackup, downloadBackup, importBackup, getBackupStats, getBackupSi
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download, Upload, AlertCircle } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { transitions } from '@/lib/animations'
 
 export function DataBackup() {
   const store = useStore()
@@ -119,7 +121,7 @@ export function DataBackup() {
 
       {/* Restore confirmation */}
       {confirmRestore && restoreFile && (
-        <Card className="flex flex-col gap-3 border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950 sm:flex-row sm:items-center sm:justify-between">
+        <Card className={cn('flex flex-col gap-3 border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950 sm:flex-row sm:items-center sm:justify-between animate-in slide-in-from-top duration-300', transitions.normal)}>
           <div className="flex gap-3">
             <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-200 text-amber-700 dark:bg-amber-900 dark:text-amber-200">
               <AlertCircle className="size-4" />

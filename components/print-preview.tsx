@@ -5,6 +5,7 @@ import { Download, Printer, X, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { transitions } from '@/lib/animations'
 import type { PrintItem } from '@/lib/print-batch'
 import { downloadMultiplePDFs, openMultiplePDFs, formatFileName, estimateTotalSize } from '@/lib/print-batch'
 
@@ -18,8 +19,8 @@ export function PrintPreview({ items, onClose }: PrintPreviewProps) {
   const totalSize = estimateTotalSize(items)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto">
+    <div className={cn('fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-300', transitions.fast)}>
+      <Card className={cn('max-h-[90vh] w-full max-w-2xl overflow-y-auto animate-in zoom-in-95 duration-300', transitions.normal)}>
         <div className="sticky top-0 flex items-center justify-between border-b border-border bg-card p-4">
           <div>
             <h2 className="font-serif text-xl font-semibold">Print Preview</h2>
