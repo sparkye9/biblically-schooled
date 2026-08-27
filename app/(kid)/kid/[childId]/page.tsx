@@ -47,7 +47,7 @@ export default function KidPage({
 
   function complete(assignmentId: string, wasDone: boolean) {
     store.toggleAssignment(assignmentId)
-    if (!wasDone && !lowDistraction) {
+    if (!wasDone) {
       setCelebrate(true)
       setTimeout(() => setCelebrate(false), 1400)
     }
@@ -79,7 +79,7 @@ export default function KidPage({
             </div>
           </div>
           <Link
-            href="/children"
+            href="/"
             aria-label="Exit kid mode"
             className="flex size-11 items-center justify-center rounded-full bg-card text-muted-foreground shadow-sm"
           >
@@ -105,7 +105,7 @@ export default function KidPage({
           <>
             {/* Star tracker */}
             <div className="mb-6 flex items-center justify-center gap-2 rounded-3xl bg-card p-4 shadow-sm">
-              {items.map((i) => (
+              {(lowDistraction ? visibleItems : items).map((i) => (
                 <Star
                   key={i.assignment.id}
                   className="size-8 transition-all"
@@ -159,7 +159,7 @@ export default function KidPage({
                     <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
                       {label}
                     </p>
-                    <p className="truncate font-serif text-xl font-bold text-foreground">
+                    <p className="font-serif text-xl font-bold text-foreground">
                       {i.lesson.title}
                     </p>
                   </div>

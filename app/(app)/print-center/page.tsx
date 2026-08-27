@@ -21,7 +21,6 @@ export default function PrintCenterPage() {
 
   const inViewIds = new Set(inView.map((c) => c.id))
   const printableResources = store.resources.filter((r) => {
-    if (r.weekNumber !== store.currentWeek) return false
     if (r.childId) return inViewIds.has(r.childId)
     return store.currentView === 'shared' || r.owner === 'shared' || r.owner === store.currentView
   })
@@ -96,7 +95,7 @@ export default function PrintCenterPage() {
       <PageHeader
         eyebrow="Grab-and-Go"
         title="Print Center"
-        description="Everything worth printing this week, in one place. Pick what you need, then hit Print."
+        description="Browse and print resources from any week. Pick what you need, then hit Print."
       >
         <span className="rounded-full bg-muted px-3 py-1.5 text-sm font-semibold text-foreground">
           {picked.size}/{total} selected
@@ -212,7 +211,7 @@ export default function PrintCenterPage() {
           </span>
           <p className="mt-3 font-semibold text-foreground">Nothing to print this week</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            No printable lessons or resources are tagged for Week {store.currentWeek}.
+            No printable lessons or resources available for your current view.
           </p>
         </Card>
       ) : (
