@@ -130,6 +130,19 @@ export type ResourceType =
   | 'Daily Packet'
   | 'Parent Checklist'
 
+export interface Worksheet {
+  id: string
+  title: string
+  subject: Subject
+  skill: string
+  weekNumber: number
+  day: DayName
+  gradeBand: GradeBand
+  isChallenge: boolean
+  fileUrl: string  // Path to printable (PDF or HTML)
+  description?: string
+}
+
 export interface Resource {
   id: string
   title: string

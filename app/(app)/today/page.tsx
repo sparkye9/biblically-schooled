@@ -3,18 +3,14 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
-  Briefcase,
-  Coffee,
-  Users,
-  Zap,
-  ListChecks,
-  Play,
-  Printer,
-  Clock,
-  AlertCircle,
-  CheckCircle2,
-  Plus,
   Sun,
+  BookOpen,
+  GraduationCap,
+  Zap,
+  Printer,
+  CheckCircle2,
+  Clock,
+  Star,
 } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import {
@@ -26,8 +22,6 @@ import {
   type AssignedLesson,
 } from '@/lib/selectors'
 import { PageHeader, ChildAvatar, ActivityBadge } from '@/components/primitives'
-import { ActivityCard, interactiveHref } from '@/components/activity-card'
-import { RotationAssistant } from '@/components/rotation-assistant'
 import { Button } from '@/components/ui/button'
 import { LessonEditor } from '@/components/lesson-editor'
 import { cn } from '@/lib/utils'
@@ -39,10 +33,10 @@ import type { DayName } from '@/lib/types'
 type DayMode = 'essential' | '30' | '60' | 'full'
 
 const modes: { id: DayMode; label: string }[] = [
-  { id: 'essential', label: 'Essential only' },
-  { id: '30', label: '30-min day' },
-  { id: '60', label: '60-min day' },
-  { id: 'full', label: 'Full day' },
+  { id: 'essential', label: 'Essential' },
+  { id: '30', label: '30 min' },
+  { id: '60', label: '60 min' },
+  { id: 'full', label: 'Full' },
 ]
 
 export default function TodayPage() {
@@ -55,10 +49,9 @@ export default function TodayPage() {
     currentDay,
     schoolStatus,
     schoolYearStartDate,
+    weeks,
   } = useStore()
   const [mode, setMode] = useState<DayMode>('full')
-  const [workMode, setWorkMode] = useState(false)
-  const [pulled, setPulled] = useState(false)
 
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get('mode')
@@ -66,328 +59,327 @@ export default function TodayPage() {
   }, [])
 
   const inView = childrenInView(children, currentView)
+  const weekData = weeks.find((w) => w.number === currentWeek)
 
   if (isNoSchoolToday(schoolStatus)) {
     const title = schoolStatus.isWeekend
-      ? `${capitalize(schoolStatus.actualDayName)} \u00b7 Rest Day`
+      ? `${capitalize(schoolStatus.actualDayName)} · Rest Day`
       : schoolStatus.onBreak
         ? schoolStatus.pause?.label
-          ? `On Break \u2014 ${schoolStatus.pause.label}`
+          ? `On Break — ${schoolStatus.pause.label}`
           : 'On Break'
         : `School starts ${formatISODate(schoolYearStartDate)}`
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-        <span className="flex size-14 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+        <span className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <Sun className="size-7" />
         </span>
-        <p className="mt-4 font-serif text-2xl font-semibold">{title}</p>
+        <p className="mt-4 font-serif text-2xl font-semibold text-foreground">{title}</p>
         <p className="mt-1 text-muted-foreground">No lessons today. Enjoy the margin.</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow={`${dayLabels[currentDay]} \u00b7 Week ${currentWeek}`}
-        title="Today's plan"
-        description="Everything on deck today, grouped by child. Tighten the day when you're short on time."
-      />
-
-      {/* Day length + work mode controls */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-1.5">
-          {modes.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => setMode(m.id)}
-              className={cn(
-                'rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors',
-                mode === m.id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-accent',
-              )}
-            >
-              {m.label}
-            </button>
-          ))}
+    <div className="space-y-6 pb-8">
+      {/* Week Context Header */}
+      <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/5 to-secondary/5 p-6">
+        <div className="flex items-start justify-between mb-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-primary">
+              {dayLabels[currentDay]} · Week {currentWeek}
+            </p>
+            <h1 className="mt-1 font-serif text-3xl font-semibold text-foreground">
+              Today's Learning
+            </h1>
+          </div>
         </div>
-        <Button
-          variant={workMode ? 'default' : 'outline'}
-          onClick={() => setWorkMode((w) => !w)}
-        >
-          <Briefcase className="size-4" />
-          {workMode ? "I'm working — on" : "I'm working right now"}
-        </Button>
+        {weekData && (
+          <div className="mt-4 space-y-2 border-t border-border/30 pt-4">
+            <p className="text-sm font-medium text-foreground">
+              <span className="font-bold">Theme:</span> {weekData.theme}
+            </p>
+            {weekData.memoryVerse && (
+              <div className="rounded-lg bg-primary/5 p-3">
+                <p className="text-sm italic text-foreground">
+                  <span className="font-bold">Memory Verse:</span> "{weekData.memoryVerse}"
+                </p>
+                <p className="text-xs text-muted-foreground">{weekData.memoryVerseRef}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Day Mode Selector */}
+      <div className="flex flex-wrap gap-2">
+        {modes.map((m) => (
+          <button
+            key={m.id}
+            onClick={() => setMode(m.id)}
+            className={cn(
+              'rounded-full px-4 py-2 text-sm font-semibold transition-all',
+              mode === m.id
+                ? 'bg-primary text-primary-foreground shadow-md'
+                : 'bg-muted text-muted-foreground hover:bg-primary/20',
+            )}
+          >
+            {m.label}
+          </button>
+        ))}
       </div>
 
       {mode !== 'full' && (
-        <p className="flex items-center gap-2 rounded-xl bg-secondary/50 px-4 py-2.5 text-sm font-medium text-secondary-foreground">
-          <Zap className="size-4" />
-          Prioritizing Math, Literacy and Bible. Enrichment moved to
-          &ldquo;If we have time.&rdquo;
-        </p>
+        <div className="flex items-center gap-2 rounded-lg border-l-4 border-secondary bg-secondary/8 px-4 py-3">
+          <Zap className="size-4 text-secondary" />
+          <p className="text-sm font-medium text-foreground">
+            Focusing on Bible, Math & Literacy. Enrichment in "If time allows."
+          </p>
+        </div>
       )}
 
-      {workMode ? (
-        <WorkModeView
-          inView={inView}
-          pulled={pulled}
-          setPulled={setPulled}
-        />
-      ) : (
-        <>
-          <RotationAssistant />
-          <div className="space-y-6">
-            {inView.map((child) => {
-              const all = assignedLessonsFor(child.id, assignments, lessons, {
-                week: currentWeek,
-                day: currentDay,
-              })
-              const { keep, laterOn } = filterByDayLength(all, mode)
-              const { done, total } = countDone(all)
-              const coreDone = all
-                .filter((i) =>
-                  ['math', 'literacy', 'bible'].includes(i.lesson.subject),
-                )
-                .every((i) => i.assignment.status === 'done')
-              return (
-                <section key={child.id}>
-                  <div className="mb-3 flex items-center gap-3">
-                    <ChildAvatar child={child} />
-                    <div className="flex-1">
-                      <p className="font-bold text-foreground">{child.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {child.grade} &middot; {done}/{total} complete
-                      </p>
-                    </div>
-                    {total > 0 && coreDone && (
-                      <span className="flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-bold uppercase text-secondary-foreground">
-                        <CheckCircle2 className="size-3.5" /> Core day complete
-                      </span>
-                    )}
-                    <LessonEditor
-                      weekNumber={currentWeek}
-                      defaultDay={currentDay as DayName}
-                      defaultChildId={child.id}
-                      onSaved={() => {}}
-                      trigger={
-                        <Button size="sm" variant="outline">
-                          <Plus className="size-4" /> Add lesson
-                        </Button>
-                      }
-                    />
+      {/* Children's Daily Plans */}
+      <div className="space-y-8">
+        {inView.map((child) => {
+          const all = assignedLessonsFor(child.id, assignments, lessons, {
+            week: currentWeek,
+            day: currentDay,
+          })
+          const { keep, laterOn } = filterByDayLength(all, mode)
+          const { done, total } = countDone(all)
+          const momTimeLessons = keep.filter((i) => i.lesson.activityType === 'mom-time')
+          const independentLessons = keep.filter(
+            (i) => i.lesson.activityType === 'independent' || i.lesson.activityType === 'hands-on',
+          )
+
+          return (
+            <section
+              key={child.id}
+              className="rounded-2xl border-2 border-border bg-white p-6"
+              style={{
+                borderColor: `color-mix(in oklch, var(--${child.color}) 40%, transparent)`,
+                backgroundColor: `color-mix(in oklch, var(--${child.color}) 3%, white)`,
+              }}
+            >
+              {/* Child Header */}
+              <div className="mb-6 flex items-center justify-between pb-4 border-b border-border/30">
+                <div className="flex items-center gap-3">
+                  <ChildAvatar child={child} />
+                  <div>
+                    <h2 className="font-bold text-lg text-foreground">{child.name}</h2>
+                    <p className="text-sm text-muted-foreground">{child.grade}</p>
                   </div>
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {sortByActivity(keep).map((item) => (
-                      <ActivityCard key={item.assignment.id} item={item} />
+                </div>
+                <div className="flex items-center gap-2">
+                  {total > 0 && (
+                    <span className="text-sm font-semibold text-muted-foreground">
+                      {done}/{total}
+                    </span>
+                  )}
+                  {done === total && total > 0 && (
+                    <CheckCircle2 className="size-5 text-secondary" />
+                  )}
+                </div>
+              </div>
+
+              {/* No Lessons Message */}
+              {all.length === 0 && (
+                <div className="rounded-lg border border-dashed border-border bg-muted/20 p-6 text-center">
+                  <p className="text-sm text-muted-foreground">No lessons scheduled today.</p>
+                </div>
+              )}
+
+              {/* Mom Time Lessons (Priority) */}
+              {momTimeLessons.length > 0 && (
+                <div className="mb-6">
+                  <div className="mb-3 flex items-center gap-2">
+                    <div className="flex size-6 items-center justify-center rounded-lg bg-momtime text-momtime-foreground text-xs font-bold">
+                      👩
+                    </div>
+                    <h3 className="font-bold text-foreground">Mom Time (5-10 min)</h3>
+                  </div>
+                  <div className="space-y-3">
+                    {momTimeLessons.map((item) => (
+                      <LessonCard key={item.assignment.id} item={item} childColor={child.color} />
                     ))}
                   </div>
-                  {laterOn.length > 0 && (
-                    <div className="mt-3">
-                      <p className="mb-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                        If we have time
-                      </p>
-                      <div className="grid gap-3 md:grid-cols-2">
-                        {sortByActivity(laterOn).map((item) => (
-                          <ActivityCard key={item.assignment.id} item={item} />
-                        ))}
-                      </div>
+                </div>
+              )}
+
+              {/* Independent & Hands-On */}
+              {independentLessons.length > 0 && (
+                <div className="mb-6">
+                  <div className="mb-3 flex items-center gap-2">
+                    <div className="flex size-6 items-center justify-center rounded-lg bg-independent text-independent-foreground text-xs font-bold">
+                      ✓
                     </div>
-                  )}
-                  {all.length === 0 && (
-                    <p className="rounded-2xl border border-dashed border-border p-4 text-sm text-muted-foreground">
-                      Nothing scheduled today. Enjoy the margin.
-                    </p>
-                  )}
-                </section>
-              )
-            })}
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
+                    <h3 className="font-bold text-foreground">Independent Work</h3>
+                  </div>
+                  <div className="space-y-3">
+                    {independentLessons.map((item) => (
+                      <LessonCard key={item.assignment.id} item={item} childColor={child.color} />
+                    ))}
+                  </div>
+                </div>
+              )}
 
-function WorkModeView({
-  inView,
-  pulled,
-  setPulled,
-}: {
-  inView: ReturnType<typeof childrenInView>
-  pulled: boolean
-  setPulled: (v: boolean) => void
-}) {
-  const { assignments, lessons, currentWeek, currentDay } = useStore()
-  const [breakTime, setBreakTime] = useState('10:30 AM')
+              {/* If Time Allows */}
+              {laterOn.length > 0 && (
+                <div>
+                  <p className="mb-3 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                    If time allows
+                  </p>
+                  <div className="space-y-3 opacity-75">
+                    {laterOn.map((item) => (
+                      <LessonCard
+                        key={item.assignment.id}
+                        item={item}
+                        childColor={child.color}
+                        optional
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
-  const all: AssignedLesson[] = inView.flatMap((c) =>
-    assignedLessonsFor(c.id, assignments, lessons, {
-      week: currentWeek,
-      day: currentDay,
-    }).map((i) => ({ ...i })),
-  )
-  const nameFor = (childId: string) =>
-    inView.find((c) => c.id === childId)?.name ?? ''
+              {/* Add Lesson Button */}
+              {all.length > 0 && (
+                <div className="mt-6 border-t border-border/30 pt-4">
+                  <LessonEditor
+                    weekNumber={currentWeek}
+                    defaultDay={currentDay as DayName}
+                    defaultChildId={child.id}
+                    onSaved={() => {}}
+                    trigger={
+                      <Button size="sm" variant="outline" className="w-full">
+                        <span>+ Add lesson</span>
+                      </Button>
+                    }
+                  />
+                </div>
+              )}
+            </section>
+          )
+        })}
+      </div>
 
-  const kidsCanDo = all.filter(
-    (i) => i.lesson.activityType === 'independent' || i.lesson.activityType === 'hands-on',
-  )
-  const forBreak = all.filter((i) => i.lesson.activityType === 'mom-time')
-  const together = all.filter((i) => i.lesson.activityType === 'optional')
-
-  return (
-    <div className="space-y-5">
-      <div className="flex flex-col gap-3 rounded-2xl border border-primary/30 bg-primary/8 p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 text-sm">
-          <Clock className="size-4 text-primary" />
-          <span className="font-semibold">My next break is</span>
-          <input
-            value={breakTime}
-            onChange={(e) => setBreakTime(e.target.value)}
-            className="w-28 rounded-lg border border-border bg-card px-2 py-1 font-semibold"
-          />
-        </div>
-        <Button
-          variant={pulled ? 'default' : 'outline'}
-          onClick={() => setPulled(!pulled)}
-        >
-          <AlertCircle className="size-4" />
-          {pulled ? 'Resume school' : 'I got pulled into work'}
+      {/* Print Today Button */}
+      <div className="sticky bottom-0 left-0 right-0 flex gap-3 rounded-t-2xl border-t border-border bg-gradient-to-t from-primary/10 to-transparent p-4 shadow-lg">
+        <Button className="flex-1" size="lg" render={<Link href="/printables" />}>
+          <Printer className="size-4" />
+          Print Today
         </Button>
       </div>
-
-      {pulled && (
-        <div className="rounded-2xl border border-accent bg-accent/40 p-4">
-          <p className="font-bold text-foreground">
-            Quick independent picks while you step away
-          </p>
-          <ul className="mt-2 space-y-1.5 text-sm">
-            {kidsCanDo.slice(0, 5).map((i) => (
-              <li key={i.assignment.id} className="flex items-center gap-2">
-                <span className="size-1.5 rounded-full bg-primary" />
-                <span className="font-semibold">{nameFor(i.assignment.childId)}:</span>{' '}
-                {i.lesson.title}
-              </li>
-            ))}
-            {kidsCanDo.length === 0 && (
-              <li className="text-muted-foreground">
-                Try an Activity Bin: playdough letters, counting bin, or fine-motor tray.
-              </li>
-            )}
-          </ul>
-        </div>
-      )}
-
-      <WorkColumn
-        Icon={ListChecks}
-        title="Kids can do now"
-        subtitle="Little or no help needed"
-        items={kidsCanDo}
-        nameFor={nameFor}
-        tone="independent"
-      />
-      <WorkColumn
-        Icon={Coffee}
-        title={`Save for my break (${breakTime})`}
-        subtitle="5\u201310 minute parent-led lessons"
-        items={forBreak}
-        nameFor={nameFor}
-        tone="momtime"
-      />
-      <WorkColumn
-        Icon={Users}
-        title="Do together later"
-        subtitle="Bible, science, art, read-alouds"
-        items={together}
-        nameFor={nameFor}
-        tone="optional"
-      />
     </div>
   )
 }
 
-function WorkColumn({
-  Icon,
-  title,
-  subtitle,
-  items,
-  nameFor,
-  tone,
+/** Individual lesson card with action buttons */
+function LessonCard({
+  item,
+  childColor,
+  optional = false,
 }: {
-  Icon: typeof Coffee
-  title: string
-  subtitle: string
-  items: AssignedLesson[]
-  nameFor: (id: string) => string
-  tone: string
+  item: AssignedLesson
+  childColor: string
+  optional?: boolean
 }) {
+  const { assignments } = useStore()
+  const [isComplete, setIsComplete] = useState(item.assignment.status === 'done')
+
+  const packetUrl = packetUrlFor(
+    item.assignment.childId,
+    item.lesson.weekNumber,
+    item.lesson.day,
+  )
+
   return (
-    <section className="rounded-2xl border border-border bg-card p-4">
-      <div className="mb-3 flex items-center gap-2">
-        <span
-          className="flex size-8 items-center justify-center rounded-lg"
-          style={{
-            backgroundColor: `color-mix(in oklch, var(--${tone}) 16%, transparent)`,
-            color: `var(--${tone})`,
-          }}
-        >
-          <Icon className="size-4" />
-        </span>
-        <div>
-          <p className="font-bold leading-tight text-foreground">{title}</p>
-          <p className="text-xs text-muted-foreground">{subtitle}</p>
-        </div>
-      </div>
-      {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Nothing here right now.</p>
-      ) : (
-        <ul className="space-y-2">
-          {items.map((i) => (
-            <li
-              key={i.assignment.id}
-              className="flex items-center justify-between gap-3 rounded-xl bg-muted/50 px-3 py-2.5"
-            >
-              <span className="text-sm">
-                <span className="font-semibold">{nameFor(i.assignment.childId)}:</span>{' '}
-                {i.lesson.title}
-              </span>
-              <div className="flex items-center gap-2">
-                <ActivityBadge type={i.lesson.activityType} />
-                {i.lesson.interactive && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    nativeButton={false}
-                    render={<Link href={interactiveHref[i.lesson.interactive]} />}
-                  >
-                    <Play className="size-3.5" />
-                  </Button>
-                )}
-                {i.lesson.printable &&
-                  (() => {
-                    const packetUrl = packetUrlFor(
-                      i.assignment.childId,
-                      i.lesson.weekNumber,
-                      i.lesson.day,
-                    )
-                    return packetUrl ? (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        nativeButton={false}
-                        render={<a href={packetUrl} target="_blank" rel="noreferrer" />}
-                      >
-                        <Printer className="size-3.5" />
-                      </Button>
-                    ) : null
-                  })()}
-              </div>
-            </li>
-          ))}
-        </ul>
+    <div
+      className={cn(
+        'flex items-start justify-between gap-4 rounded-lg border border-border p-4 transition-all',
+        isComplete
+          ? 'bg-secondary/10 opacity-60'
+          : 'bg-card hover:bg-muted/40',
       )}
-    </section>
+    >
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <ActivityBadge type={item.lesson.activityType} />
+          {isComplete && (
+            <CheckCircle2 className="size-4 text-secondary flex-shrink-0" />
+          )}
+        </div>
+        <h4 className={cn(
+          'font-semibold text-foreground break-words',
+          isComplete && 'line-through text-muted-foreground',
+        )}>
+          {item.lesson.title}
+        </h4>
+        {item.lesson.minutes && (
+          <p className="text-xs text-muted-foreground mt-1">
+            <Clock className="size-3 inline mr-1" />
+            {item.lesson.minutes} min
+          </p>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-2 flex-shrink-0">
+        {/* Teach Button (for Mom Time) */}
+        {item.lesson.activityType === 'mom-time' && (
+          <button
+            title="Start Mom Time lesson"
+            className="flex size-10 items-center justify-center rounded-lg bg-momtime text-momtime-foreground hover:opacity-90 transition-opacity flex-shrink-0"
+          >
+            <BookOpen className="size-4" />
+          </button>
+        )}
+
+        {/* Open Activity Button */}
+        {item.lesson.activityType !== 'mom-time' && (
+          <button
+            title="Open activity"
+            className="flex size-10 items-center justify-center rounded-lg bg-independent text-independent-foreground hover:opacity-90 transition-opacity flex-shrink-0"
+          >
+            <GraduationCap className="size-4" />
+          </button>
+        )}
+
+        {/* Print Button */}
+        {packetUrl && (
+          <a
+            href={packetUrl}
+            target="_blank"
+            rel="noreferrer"
+            title="Print worksheet"
+            className="flex size-10 items-center justify-center rounded-lg bg-handson text-handson-foreground hover:opacity-90 transition-opacity flex-shrink-0"
+          >
+            <Printer className="size-4" />
+          </a>
+        )}
+
+        {/* Challenge Button */}
+        <button
+          title="Optional challenge worksheet"
+          className="flex size-10 items-center justify-center rounded-lg bg-optional text-optional-foreground hover:opacity-90 transition-opacity flex-shrink-0"
+        >
+          <Star className="size-4" />
+        </button>
+
+        {/* Mark Complete Button */}
+        <button
+          onClick={() => setIsComplete(!isComplete)}
+          title={isComplete ? 'Mark incomplete' : 'Mark complete'}
+          className={cn(
+            'flex size-10 items-center justify-center rounded-lg transition-all flex-shrink-0',
+            isComplete
+              ? 'bg-secondary/20 text-secondary'
+              : 'bg-muted text-muted-foreground hover:bg-secondary/20',
+          )}
+        >
+          <CheckCircle2 className="size-5" />
+        </button>
+      </div>
+    </div>
   )
 }
