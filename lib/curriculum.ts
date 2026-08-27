@@ -577,10 +577,304 @@ const week2Lessons: Lesson[] = [
   },
 ]
 
+// ==================== WEEK 3: God's Care ====================
+
+const week3Lessons: Lesson[] = [
+  // Monday Pre-K: Literacy
+  {
+    id: 'l-w3-mon-pre-k-lit',
+    title: 'God Cares for Me (Letter C)',
+    subject: 'literacy',
+    activityType: 'mom-time',
+    weekNumber: 3,
+    day: 'monday',
+    gradeBand: 'pre-k',
+    minutes: 8,
+    essential: true,
+    owner: 'shared',
+    learningObjective: 'Recognize letter C; identify /k/ sound; understand God cares',
+    biblicalConnection: 'God cares for us like a shepherd cares for sheep (Psalm 23:1)',
+    materials: ['Picture cards of caring (hugging, holding, comforting)', 'Letter C card', 'Crayons', 'Worksheet'],
+    momTime: {
+      duration: 8,
+      script: `Today we're learning about CARE. God cares for YOU. What does care look like? When Mom hugs you, that's care. When Dad listens to you, that's care. When someone holds your hand, that's care. Now we're learning the letter C. C is for CARE and CAT and CUDDLE. Let's make the /k/ sound together. /K/. The letter C makes the /k/ sound. C is for CARING!`,
+      steps: [
+        'Ask: "How does someone show you they care?"',
+        'Show pictures of caring actions (hug, hold, comfort)',
+        'Introduce letter C with /k/ sound',
+        'Say words: care, cat, cuddle, come',
+        'Trace C in air; draw yourself being cared for',
+      ],
+    },
+    guidedPractice: {
+      description: 'Teacher shows caring picture. Child names the action.',
+      example: 'Teacher shows hug picture. Child: "Hug! That\'s care!"',
+    },
+    independentActivity: {
+      description: 'Match caring actions to pictures; trace letter C',
+      isHandsOn: false,
+    },
+    requiredWorksheet: {
+      title: 'God Cares for Me (Letter C & Caring)',
+      fileUrl: '/worksheets/week-03/pre-k/Monday_Literacy_Care.pdf',
+    },
+    challengeWorksheet: {
+      title: '⭐ Challenge Me! Care Hunt',
+      fileUrl: '/worksheets/week-03/pre-k/Challenge_Care_Words.pdf',
+      description: 'Find and circle words that start with C sound in pictures',
+    },
+    answerKey: 'Matched: hug-hug, hold-hold, comfort-comfort. C traced correctly.',
+    ifStruggling: 'Focus on matching action pictures only; skip C letter for now',
+    ifAdvanced: 'Find objects around house that start with /k/ sound (cup, car, coat)',
+  },
+
+  // Monday Pre-K: Math
+  {
+    id: 'l-w3-mon-pre-k-math',
+    title: 'Comparing Groups: More & Less',
+    subject: 'math',
+    activityType: 'hands-on',
+    weekNumber: 3,
+    day: 'monday',
+    gradeBand: 'pre-k',
+    minutes: 10,
+    essential: true,
+    owner: 'shared',
+    learningObjective: 'Compare groups by quantity; use "more" and "less" accurately',
+    biblicalConnection: 'God gives us what we need; gratitude for what we have',
+    materials: ['Counters or blocks', 'Picture cards with groups', 'Worksheet'],
+    momTime: {
+      duration: 10,
+      script: `Today we're learning to COMPARE groups. I have 3 blocks here (show 3). And I have 1 block here (show 1). Which group has MORE? The one with 3 has MORE! Which has LESS? The one with 1 has LESS. MORE blocks are on this side. LESS blocks are on this side. Let's count: 1, 2, 3. More! Now count this: 1. Less! More means a bigger group. Less means a smaller group.`,
+      steps: [
+        'Create two groups (3 blocks and 1 block)',
+        'Compare visually: "Which has more?"',
+        'Count the larger group: "1, 2, 3—More!"',
+        'Count the smaller group: "1—Less!"',
+        'Repeat with different quantities (4 vs 2, 5 vs 1)',
+      ],
+    },
+    guidedPractice: {
+      description: 'Adult shows two groups. Child points to the one with more.',
+      example: 'Adult shows 4 counters and 2 counters. Child: "This one has more!" (pointing to 4)',
+    },
+    independentActivity: {
+      description: 'Compare picture groups; mark which has more/less',
+      isHandsOn: false,
+    },
+    requiredWorksheet: {
+      title: 'Comparing Groups: More & Less',
+      fileUrl: '/worksheets/week-03/pre-k/Math_More_Less.pdf',
+    },
+    challengeWorksheet: {
+      title: '⭐ Challenge Me! Group Comparisons',
+      fileUrl: '/worksheets/week-03/pre-k/Challenge_Compare_Groups.pdf',
+      description: 'Compare three groups; order by quantity',
+    },
+    answerKey: 'Group 1 has more: 4>2, 5>3. Group 2 has less: 2<4, 3<5',
+    ifStruggling: 'Use only 2 vs 1. Repeat daily with concrete objects.',
+    ifAdvanced: 'Compare three groups; order from least to most',
+  },
+
+  // Monday Kindergarten: Literacy
+  {
+    id: 'l-w3-mon-k-lit',
+    title: 'Beginning Sound /C/: Care, Can, Cat',
+    subject: 'literacy',
+    activityType: 'mom-time',
+    weekNumber: 3,
+    day: 'monday',
+    gradeBand: 'k',
+    minutes: 10,
+    essential: true,
+    owner: 'shared',
+    learningObjective: 'Identify /k/ sound and letter C; read beginning C words',
+    biblicalConnection: 'God calls us by name and cares for us personally (Isaiah 43:1)',
+    materials: ['Picture cards (car, cat, can, cake, cap)', 'Letter C card', 'Worksheet'],
+    momTime: {
+      duration: 10,
+      script: `Today we learn about the /K/ sound. Watch my mouth: /K/. This sound starts lots of words. The letter C makes this sound. Here are words that start with /K/: CAR, CAT, CAN, CAKE, CAP. Listen for /K/ at the beginning: /K/-ar. /K/-at. /K/-an. Now YOU say: CAR. CAT. CAN. Say /K/ with me. Now let's read: "The CAT can CAN." The C sound is special.`,
+      steps: [
+        'Model /k/ sound: /K/ (mouth open)',
+        'Show picture cards: car, cat, can, cake, cap',
+        'Say each word emphasizing /k/ beginning',
+        'Child repeats each word',
+        'Read sentence: "The cat can..." with /k/ words',
+      ],
+    },
+    guidedPractice: {
+      description: 'Adult shows picture. Child says the /C/ word.',
+      example: 'Adult shows car picture. Child: "Car! /K/-ar."',
+    },
+    independentActivity: {
+      description: 'Circle C words in pictures; read simple C sentences',
+      isHandsOn: false,
+    },
+    requiredWorksheet: {
+      title: 'Beginning Sound /C/: Pictures & Words',
+      fileUrl: '/worksheets/week-03/k/Monday_Literacy_C_Sound.pdf',
+    },
+    challengeWorksheet: {
+      title: '⭐ Challenge Me! /C/ Word Sentences',
+      fileUrl: '/worksheets/week-03/k/Challenge_C_Sentences.pdf',
+      description: 'Read and illustrate sentences with /C/ words',
+    },
+    answerKey: 'Circled C words: car, cat, can, cake, cap. Sentences read correctly.',
+    ifStruggling: 'Practice /k/ sound isolation daily. Use only car, cat, can.',
+    ifAdvanced: 'Introduce C sometimes sounds like /s/ (city, circle—optional for K)',
+  },
+
+  // Monday Kindergarten: Math
+  {
+    id: 'l-w3-mon-k-math',
+    title: 'Comparison: Equal, More, & Less',
+    subject: 'math',
+    activityType: 'hands-on',
+    weekNumber: 3,
+    day: 'monday',
+    gradeBand: 'k',
+    minutes: 12,
+    essential: true,
+    owner: 'shared',
+    learningObjective: 'Compare groups using equal, more, and less; use comparison symbols understanding',
+    biblicalConnection: 'Fair and equal sharing is important (1 Corinthians 10:24)',
+    materials: ['Counters, blocks, or manipulatives', 'Number comparison cards', 'Worksheet'],
+    momTime: {
+      duration: 12,
+      script: `We're learning to COMPARE. Watch: I have 3 blocks here (show 3). I have 3 blocks here (show 3). Are they the SAME? YES! They're EQUAL. 3 equals 3. Now look: 4 blocks here (show 4). 2 blocks here (show 2). Which has MORE? The 4 has more! 4 is more than 2. Now: 2 blocks here. 5 blocks here. Which is LESS? The 2 is less! 2 is less than 5. Equal means the same. More means bigger. Less means smaller.`,
+      steps: [
+        'Show two equal groups (3 and 3)',
+        'Count both: "Are they equal?"',
+        'Show unequal groups (4 and 2)',
+        'Identify which has more',
+        'Create different comparisons together',
+      ],
+    },
+    guidedPractice: {
+      description: 'Adult shows two groups. Child says if equal, more, or less.',
+      example: 'Adult shows 5 vs 3. Child: "Five is more than three."',
+    },
+    independentActivity: {
+      description: 'Compare groups on worksheet; write or circle more/less/equal',
+      isHandsOn: true,
+    },
+    requiredWorksheet: {
+      title: 'Comparing Numbers: Equal, More, Less',
+      fileUrl: '/worksheets/week-03/k/Math_Comparison.pdf',
+    },
+    challengeWorksheet: {
+      title: '⭐ Challenge Me! Number Comparisons',
+      fileUrl: '/worksheets/week-03/k/Challenge_Comparisons.pdf',
+      description: 'Compare within 10; use comparison symbols',
+    },
+    answerKey: '3=3 (equal), 4>2 (more), 2<5 (less). All comparisons accurate.',
+    ifStruggling: 'Use only concrete objects (blocks). Compare only 2 vs 1 first.',
+    ifAdvanced: 'Introduce comparison symbols (>, <, =); compare within 10',
+  },
+
+  // Monday 1st Grade: Literacy
+  {
+    id: 'l-w3-mon-1st-lit',
+    title: 'Sight Words & /C/ Blending: "I Care"',
+    subject: 'literacy',
+    activityType: 'mom-time',
+    weekNumber: 3,
+    day: 'monday',
+    gradeBand: '1st',
+    minutes: 10,
+    essential: true,
+    owner: 'shared',
+    learningObjective: 'Read sight words (I, care, can) and /C/ blended words',
+    biblicalConnection: 'Jesus teaches us to care for others (1 John 3:17-18)',
+    materials: ['Word cards (I, care, can)', 'Picture cards of caring', 'Worksheet'],
+    momTime: {
+      duration: 10,
+      script: `We're reading words about CARE. First, a sight word: I. You see this everywhere. I. The letter I all by itself says "I." Now a word you can blend: CARE. Watch: /K/-ah-r. CARE. And CAN: /K/-ah-n. CAN. Now read these sentences: "I care." "I can." "I can care." You're reading! These are sentences about caring for others.`,
+      steps: [
+        'Show I card: "Sight word: I"',
+        'Blend CARE: "/K/-ah-r... CARE"',
+        'Blend CAN: "/K/-ah-n... CAN"',
+        'Read sentence: "I care."',
+        'Read sentence: "I can care."',
+      ],
+    },
+    guidedPractice: {
+      description: 'Adult says sight word or blend. Child reads it.',
+      example: 'Adult points to CAN. Child: "/K/-ah-n... CAN"',
+    },
+    independentActivity: {
+      description: 'Read I/care/can sentences; match to pictures of caring',
+      isHandsOn: false,
+    },
+    requiredWorksheet: {
+      title: 'Sight Words & Blending: I Care',
+      fileUrl: '/worksheets/week-03/1st/Monday_Literacy_I_Care.pdf',
+    },
+    challengeWorksheet: {
+      title: '⭐ Challenge Me! Care Sentences',
+      fileUrl: '/worksheets/week-03/1st/Challenge_Care_Reading.pdf',
+      description: 'Read and write sentences using I, can, care, and /C/ words',
+    },
+    answerKey: 'Sight words: I (correct). Blended words: care, can (correct blending). Sentences read accurately.',
+    ifStruggling: 'Focus on I (sight word) and CARE (blend). Skip CAN for now.',
+    ifAdvanced: 'Write own sentences: "I care..." and "I can..."',
+  },
+
+  // Monday 1st Grade: Math
+  {
+    id: 'l-w3-mon-1st-math',
+    title: 'Word Problems: Sharing & Caring',
+    subject: 'math',
+    activityType: 'hands-on',
+    weekNumber: 3,
+    day: 'monday',
+    gradeBand: '1st',
+    minutes: 12,
+    essential: true,
+    owner: 'shared',
+    learningObjective: 'Solve addition/subtraction word problems with real-world context (sharing)',
+    biblicalConnection: 'Generosity and sharing show God\'s love (2 Corinthians 9:7)',
+    materials: ['Counters', 'Picture cards showing sharing', 'Worksheet'],
+    momTime: {
+      duration: 12,
+      script: `We're solving REAL problems today. Listen: Sarah has 5 apples. She wants to share with her sister. She gives 2 apples. How many apples does Sarah have now? Let's solve it together. Start with 5 (show 5 counters). Take away 2 (remove 2). Count what's left: 1, 2, 3. Sarah has 3 apples left. This is a REAL problem about caring and sharing! Let's try another: Tom has 4 toys. His friend gives him 3 more toys. How many does Tom have now? Start with 4. Add 3. Count: 1, 2, 3, 4, 5, 6, 7. Tom has 7 toys!`,
+      steps: [
+        'Read story problem aloud',
+        'Act out with counters',
+        'Identify: add or subtract?',
+        'Solve with manipulatives',
+        'Write number sentence: 5 - 2 = 3',
+        'Check answer',
+      ],
+    },
+    guidedPractice: {
+      description: 'Teacher reads problem. Child solves with counters.',
+      example: 'Teacher: "Maria has 3 crayons. She gets 2 more. How many?" Child shows 5 counters.',
+    },
+    independentActivity: {
+      description: 'Solve 3-4 word problems with pictures; write number sentences',
+      isHandsOn: true,
+    },
+    requiredWorksheet: {
+      title: 'Word Problems: Sharing & Caring',
+      fileUrl: '/worksheets/week-03/1st/Math_Word_Problems_Sharing.pdf',
+    },
+    challengeWorksheet: {
+      title: '⭐ Challenge Me! Multi-Step Sharing Problems',
+      fileUrl: '/worksheets/week-03/1st/Challenge_Word_Problems.pdf',
+      description: 'Solve 2-step word problems; write own sharing story',
+    },
+    answerKey: 'Sharing problems: 5-2=3, 4+3=7, 6-1=5. All number sentences correct.',
+    ifStruggling: 'Use only addition (giving/sharing). Start with small numbers (within 5).',
+    ifAdvanced: 'Two-step problems: "Maria has 3 apples. She gets 2 more. She shares 1. How many now?" (3+2-1=4)',
+  },
+]
+
 export const curriculumLessons: Lesson[] = [
   ...week1Lessons,
   ...week2Lessons,
-  // Weeks 3-36: Template structure (skeleton pattern shown below)
+  ...week3Lessons,
+  // Weeks 4-36: Template structure (skeleton pattern shown below)
   // Continue systematically...
 ]
 
