@@ -7,8 +7,7 @@ import { accentBg } from '@/lib/ui'
 import { PageHeader } from '@/components/primitives'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Printer, Check, FileText, BookOpen, Download, Trash2 } from 'lucide-react'
+import { Printer, Check, FileText, BookOpen, Download, ChevronLeft, ChevronRight } from 'lucide-react'
 import { PrintPreview } from '@/components/print-preview'
 import { cn } from '@/lib/utils'
 import type { PrintItem } from '@/lib/print-batch'
@@ -18,9 +17,17 @@ export default function PrintCenterPage() {
   const inView = childrenInView(store.children, store.currentView)
   const [picked, setPicked] = useState<Set<string>>(new Set())
   const [previewOpen, setPreviewOpen] = useState(false)
+  const [weekNum, setWeekNum] = useState(store.currentWeek)
+  const totalWeeks = store.weeks.length
+
+  const changeWeek = (next: number) => {
+    setWeekNum(Math.min(Math.max(1, next), totalWeeks))
+    setPicked(new Set())
+  }
 
   const inViewIds = new Set(inView.map((c) => c.id))
   const printableResources = store.resources.filter((r) => {
+    if (r.weekNumber !== weekNum) return false
     if (r.childId) return inViewIds.has(r.childId)
     return store.currentView === 'shared' || r.owner === 'shared' || r.owner === store.currentView
   })
@@ -102,6 +109,38 @@ export default function PrintCenterPage() {
         </span>
       </PageHeader>
 
+      {/* Week switcher — one week's packets at a time, any week reachable */}
+      <div className="mb-4 flex items-center justify-between rounded-2xl border border-border bg-card p-2">
+        <button
+          onClick={() => changeWeek(weekNum - 1)}
+          disabled={weekNum === 1}
+          className="flex size-10 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted disabled:opacity-40"
+          aria-label="Previous week"
+        >
+          <ChevronLeft className="size-5" />
+        </button>
+        <div className="flex items-center gap-2 text-center">
+          <p className="font-serif text-lg font-semibold text-foreground">Week {weekNum}</p>
+          {weekNum === store.currentWeek ? (
+            <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-primary">
+              This week
+            </span>
+          ) : (
+            <Button size="sm" variant="ghost" onClick={() => changeWeek(store.currentWeek)}>
+              Back to this week
+            </Button>
+          )}
+        </div>
+        <button
+          onClick={() => changeWeek(weekNum + 1)}
+          disabled={weekNum === totalWeeks}
+          className="flex size-10 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-muted disabled:opacity-40"
+          aria-label="Next week"
+        >
+          <ChevronRight className="size-5" />
+        </button>
+      </div>
+
       {total > 0 && (
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-border bg-card p-3">
           <div className="flex flex-wrap gap-1">
@@ -169,7 +208,7 @@ export default function PrintCenterPage() {
                     <FileText className="size-4" style={{ color: `var(--${child.color})` }} />
                   </span>
                   <div>
-                    <p className="font-bold text-foreground">{child.name}'s Week {store.currentWeek} packets</p>
+                    <p className="font-bold text-foreground">{child.name}'s Week {weekNum} packets</p>
                     <p className="text-xs text-muted-foreground">Bible, math & literacy — 4 ready-to-print days</p>
                   </div>
                 </div>
@@ -209,9 +248,9 @@ export default function PrintCenterPage() {
           <span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
             <Printer className="size-6" />
           </span>
-          <p className="mt-3 font-semibold text-foreground">Nothing to print this week</p>
+          <p className="mt-3 font-semibold text-foreground">Nothing extra to print for Week {weekNum}</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            No printable lessons or resources available for your current view.
+            No separate printable resources are tagged for this week — the daily packets above cover it.
           </p>
         </Card>
       ) : (

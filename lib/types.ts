@@ -5,6 +5,7 @@ export type Subject =
   | 'math'
   | 'literacy'
   | 'science'
+  | 'history'
   | 'art'
   | 'library'
   | 'review'

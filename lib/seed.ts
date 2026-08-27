@@ -490,6 +490,7 @@ interface GradePlans {
   math: SubjectPlan
   literacy: SubjectPlan
   science: SubjectPlan
+  history: SubjectPlan
 }
 
 type GradeBandKey = 'prek' | 'k' | '1st'
@@ -1351,6 +1352,31 @@ function buildLessons(): Lesson[] {
         ask: ['What was easy?', 'What did you notice?'],
         watchFor: 'Stop while they’re still enjoying it.',
         printable: science.printable,
+      })
+
+      // History & Geography — Thursday only ("Deepen" day), matching the
+      // weekly worksheet, which lists it alongside Thursday's math & literacy.
+      const history = plan.history
+      out.push({
+        id: nextId(),
+        title: history.title,
+        subject: 'history',
+        activityType: 'hands-on',
+        weekNumber: week.number,
+        day: 'thursday',
+        gradeBand,
+        minutes: history.minutes,
+        essential: history.essential,
+        owner: 'shared',
+        youNeed: ['A map or globe', 'Crayons or colored pencils'],
+        teach: [
+          `Explore ${history.title} together.`,
+          `Connect it back to this week's Bible story: ${week.theme}.`,
+          'Find the place on a map, then talk about who lived there.',
+        ],
+        ask: ['What would it be like to live there?', 'What did you notice about this place?'],
+        watchFor: 'Keep it conversational — curiosity matters more than facts.',
+        printable: history.printable,
       })
     }
   }
