@@ -1395,8 +1395,7 @@ function buildAssignments(lessons: Lesson[]): Assignment[] {
         id: nextId(),
         lessonId: lesson.id,
         childId: child.id,
-        status: lesson.weekNumber === 1 ? 'done' : 'todo',
-        completedAt: lesson.weekNumber === 1 ? '2026-07-17' : undefined,
+        status: 'todo',
       })
     }
   }
@@ -1410,27 +1409,27 @@ export const lessons: Lesson[] = buildLessons()
 export const assignments: Assignment[] = buildAssignments(lessons)
 
 export const skills: Skill[] = [
-  { id: 's1', childId: 'c-alijah', track: 'literacy', name: 'CVC Blending', status: 'mastered' },
-  { id: 's2', childId: 'c-alijah', track: 'literacy', name: 'Short A', status: 'mastered' },
-  { id: 's3', childId: 'c-alijah', track: 'literacy', name: 'Short E', status: 'practicing' },
-  { id: 's4', childId: 'c-alijah', track: 'literacy', name: 'Digraph SH', status: 'learning' },
-  { id: 's5', childId: 'c-alijah', track: 'literacy', name: 'Fluency', status: 'practicing' },
-  { id: 's6', childId: 'c-alijah', track: 'math', name: 'Number Bonds', status: 'practicing' },
-  { id: 's7', childId: 'c-alijah', track: 'math', name: 'Addition within 10', status: 'practicing' },
-  { id: 's8', childId: 'c-alijah', track: 'math', name: 'Word Problems', status: 'learning' },
-  { id: 's9', childId: 'c-olori', track: 'literacy', name: 'Phonemic Awareness', status: 'practicing' },
-  { id: 's10', childId: 'c-olori', track: 'literacy', name: 'Letter Sounds', status: 'learning' },
-  { id: 's11', childId: 'c-olori', track: 'literacy', name: 'Oral Blending', status: 'learning' },
-  { id: 's12', childId: 'c-olori', track: 'math', name: 'Counting to 10', status: 'practicing' },
-  { id: 's13', childId: 'c-olori', track: 'math', name: 'Number Sense', status: 'learning' },
-  { id: 's14', childId: 'c-seraiah', track: 'literacy', name: 'Letter Exposure', status: 'learning' },
-  { id: 's15', childId: 'c-seraiah', track: 'literacy', name: 'Phonological Awareness', status: 'learning' },
-  { id: 's16', childId: 'c-seraiah', track: 'math', name: 'Counting 1–5', status: 'practicing' },
-  { id: 's17', childId: 'c-seraiah', track: 'math', name: 'Shapes', status: 'learning' },
-  { id: 's18', childId: 'c-amelia', track: 'literacy', name: 'Letter Exposure', status: 'practicing' },
-  { id: 's19', childId: 'c-amelia', track: 'literacy', name: 'Phonological Awareness', status: 'learning' },
-  { id: 's20', childId: 'c-amelia', track: 'math', name: 'Counting 1–5', status: 'learning' },
-  { id: 's21', childId: 'c-amelia', track: 'math', name: 'Sorting', status: 'learning' },
+  { id: 's1', childId: 'c-alijah', track: 'literacy', name: 'CVC Blending', status: 'not-introduced' },
+  { id: 's2', childId: 'c-alijah', track: 'literacy', name: 'Short A', status: 'not-introduced' },
+  { id: 's3', childId: 'c-alijah', track: 'literacy', name: 'Short E', status: 'not-introduced' },
+  { id: 's4', childId: 'c-alijah', track: 'literacy', name: 'Digraph SH', status: 'not-introduced' },
+  { id: 's5', childId: 'c-alijah', track: 'literacy', name: 'Fluency', status: 'not-introduced' },
+  { id: 's6', childId: 'c-alijah', track: 'math', name: 'Number Bonds', status: 'not-introduced' },
+  { id: 's7', childId: 'c-alijah', track: 'math', name: 'Addition within 10', status: 'not-introduced' },
+  { id: 's8', childId: 'c-alijah', track: 'math', name: 'Word Problems', status: 'not-introduced' },
+  { id: 's9', childId: 'c-olori', track: 'literacy', name: 'Phonemic Awareness', status: 'not-introduced' },
+  { id: 's10', childId: 'c-olori', track: 'literacy', name: 'Letter Sounds', status: 'not-introduced' },
+  { id: 's11', childId: 'c-olori', track: 'literacy', name: 'Oral Blending', status: 'not-introduced' },
+  { id: 's12', childId: 'c-olori', track: 'math', name: 'Counting to 10', status: 'not-introduced' },
+  { id: 's13', childId: 'c-olori', track: 'math', name: 'Number Sense', status: 'not-introduced' },
+  { id: 's14', childId: 'c-seraiah', track: 'literacy', name: 'Letter Exposure', status: 'not-introduced' },
+  { id: 's15', childId: 'c-seraiah', track: 'literacy', name: 'Phonological Awareness', status: 'not-introduced' },
+  { id: 's16', childId: 'c-seraiah', track: 'math', name: 'Counting 1–5', status: 'not-introduced' },
+  { id: 's17', childId: 'c-seraiah', track: 'math', name: 'Shapes', status: 'not-introduced' },
+  { id: 's18', childId: 'c-amelia', track: 'literacy', name: 'Letter Exposure', status: 'not-introduced' },
+  { id: 's19', childId: 'c-amelia', track: 'literacy', name: 'Phonological Awareness', status: 'not-introduced' },
+  { id: 's20', childId: 'c-amelia', track: 'math', name: 'Counting 1–5', status: 'not-introduced' },
+  { id: 's21', childId: 'c-amelia', track: 'math', name: 'Sorting', status: 'not-introduced' },
 ]
 
 // ---------------------------------------------------------------------------
@@ -1498,18 +1497,14 @@ function dayTitle(day: 'monday' | 'tuesday' | 'thursday' | 'friday') {
 
 export const resources: Resource[] = buildPacketResources()
 
-export const readAloud: ReadAloudBook[] = [
-  { id: 'b1', title: 'The Berenstain Bears and the Spooky Old Tree', status: 'currently-reading', householdId: 'h-venessa' },
-  { id: 'b2', title: 'Blueberries for Sal', status: 'favorite', householdId: 'h-venessa' },
-  { id: 'b3', title: 'The Big Book of Weather', status: 'library', householdId: 'h-venessa' },
-  { id: 'b4', title: 'God Made the World', status: 'finished', householdId: 'h-lola' },
-]
+// Your own read-aloud list — add books as you read them.
+export const readAloud: ReadAloudBook[] = []
 
 export const supplies: SupplyItem[] = [
   { id: 'sp1', label: 'Print Monday & Tuesday packets', section: 'print', have: false },
-  { id: 'sp2', label: '7 counters (or LEGO / beans)', section: 'household', have: true, substitute: 'LEGO, beans, buttons, or snacks' },
-  { id: 'sp3', label: 'Construction paper', section: 'craft', have: true },
-  { id: 'sp4', label: 'Glue & crayons', section: 'craft', have: true },
+  { id: 'sp2', label: '7 counters (or LEGO / beans)', section: 'household', have: false, substitute: 'LEGO, beans, buttons, or snacks' },
+  { id: 'sp3', label: 'Construction paper', section: 'craft', have: false },
+  { id: 'sp4', label: 'Glue & crayons', section: 'craft', have: false },
   { id: 'sp5', label: 'Small objects for living/nonliving sort', section: 'science', have: false },
   { id: 'sp6', label: 'Sand or salt tray', section: 'optional', have: false, substitute: 'Shaving cream or a textured tracing card' },
 ]
