@@ -93,35 +93,6 @@ export default function TodayPage() {
               Today's Learning
             </h1>
           </div>
-          {/* Day Navigation */}
-          <div className="flex gap-2 ml-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const days: DayName[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
-                const currentIndex = days.indexOf(currentDay as DayName)
-                if (currentIndex > 0) {
-                  useStore.setState({ currentDay: days[currentIndex - 1] })
-                }
-              }}
-            >
-              ← Prev
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const days: DayName[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
-                const currentIndex = days.indexOf(currentDay as DayName)
-                if (currentIndex < days.length - 1) {
-                  useStore.setState({ currentDay: days[currentIndex + 1] })
-                }
-              }}
-            >
-              Next →
-            </Button>
-          </div>
         </div>
         {weekData && (
           <div className="mt-4 space-y-2 border-t border-border/30 pt-4">
