@@ -82,16 +82,45 @@ export default function TodayPage() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Week Context Header */}
+      {/* Week Context Header with Day Navigation */}
       <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/5 to-secondary/5 p-6">
         <div className="flex items-start justify-between mb-3">
-          <div>
+          <div className="flex-1">
             <p className="text-xs font-bold uppercase tracking-widest text-primary">
               {dayLabels[currentDay]} · Week {currentWeek}
             </p>
             <h1 className="mt-1 font-serif text-3xl font-semibold text-foreground">
               Today's Learning
             </h1>
+          </div>
+          {/* Day Navigation */}
+          <div className="flex gap-2 ml-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const days: DayName[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+                const currentIndex = days.indexOf(currentDay as DayName)
+                if (currentIndex > 0) {
+                  useStore.setState({ currentDay: days[currentIndex - 1] })
+                }
+              }}
+            >
+              ← Prev
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const days: DayName[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+                const currentIndex = days.indexOf(currentDay as DayName)
+                if (currentIndex < days.length - 1) {
+                  useStore.setState({ currentDay: days[currentIndex + 1] })
+                }
+              }}
+            >
+              Next →
+            </Button>
           </div>
         </div>
         {weekData && (
@@ -320,6 +349,17 @@ function LessonCard({
             <Clock className="size-3 inline mr-1" />
             {item.lesson.minutes} min
           </p>
+        )}
+        {/* Teaching Guide Preview */}
+        {item.lesson.momTime?.script && (
+          <details className="mt-2 cursor-pointer">
+            <summary className="text-xs font-semibold text-primary hover:text-primary/80">
+              📖 How to teach
+            </summary>
+            <p className="mt-2 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">
+              {item.lesson.momTime.script.substring(0, 200)}...
+            </p>
+          </details>
         )}
       </div>
 

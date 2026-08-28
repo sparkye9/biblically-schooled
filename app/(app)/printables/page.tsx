@@ -394,11 +394,20 @@ function WorksheetGroup({
   return (
     <div
       className={cn(
-        'rounded-lg border border-border bg-card p-4',
+        'rounded-lg border-2 p-4',
         !compact && 'space-y-4',
       )}
+      style={{
+        borderColor: `color-mix(in oklch, var(--${child.color}) 40%, transparent)`,
+        backgroundColor: `color-mix(in oklch, var(--${child.color}) 3%, white)`,
+      }}
     >
-      {!compact && <h4 className="font-bold text-foreground">{title}</h4>}
+      {!compact && (
+        <div className="flex items-center gap-2 pb-2 border-b border-border/30">
+          <ChildAvatar child={child} />
+          <h4 className="font-bold text-foreground">{title}</h4>
+        </div>
+      )}
 
       {/* Required Worksheets */}
       {worksheets.length > 0 && (
