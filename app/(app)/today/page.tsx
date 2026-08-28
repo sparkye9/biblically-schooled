@@ -357,7 +357,7 @@ function LessonCard({
               📖 How to teach
             </summary>
             <p className="mt-2 text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">
-              {item.lesson.momTime.script.substring(0, 200)}...
+              {item.lesson.momTime.script.substring(0, 200)}{item.lesson.momTime.script.length > 200 ? '...' : ''}
             </p>
           </details>
         )}
