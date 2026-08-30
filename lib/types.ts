@@ -88,15 +88,40 @@ export interface Lesson {
   gradeBand: GradeBand
   minutes: number
   essential: boolean
-  /** parent-facing teaching card */
-  youNeed?: string[]
-  teach?: string[]
-  ask?: string[]
-  watchFor?: string
   /** who authored / owns it — householdId or 'shared' */
   owner: string
   interactive?: 'phonics' | 'math-manipulatives' | 'word-building' | 'memory-verse'
   printable?: boolean
+
+  // New structure fields
+  learningObjective?: string
+  biblicalConnection?: string
+  materials?: string[]
+  momTime?: {
+    duration: number
+    script: string
+    steps: string[]
+  }
+  guidedPractice?: {
+    description: string
+    example: string
+  }
+  independentActivity?: {
+    description: string
+    isHandsOn?: boolean
+  }
+  requiredWorksheet?: {
+    title: string
+    fileUrl?: string
+  }
+  challengeWorksheet?: {
+    title: string
+    fileUrl?: string
+    description?: string
+  }
+  answerKey?: string
+  ifStruggling?: string
+  ifAdvanced?: string
 }
 
 export interface Assignment {
@@ -129,6 +154,19 @@ export type ResourceType =
   | 'Bible'
   | 'Daily Packet'
   | 'Parent Checklist'
+
+export interface Worksheet {
+  id: string
+  title: string
+  subject: Subject
+  skill: string
+  weekNumber: number
+  day: DayName
+  gradeBand: GradeBand
+  isChallenge: boolean
+  fileUrl: string  // Path to printable (PDF or HTML)
+  description?: string
+}
 
 export interface Resource {
   id: string
