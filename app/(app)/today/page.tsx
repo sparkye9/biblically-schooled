@@ -338,22 +338,13 @@ function LessonCard({
       <div className="flex gap-2 flex-shrink-0">
         {/* Teach Button (for Mom Time) */}
         {item.lesson.activityType === 'mom-time' && (
-          <button
+          <Link
+            href={`/today?mode=full#${item.assignment.id}`}
             title="Start Mom Time lesson"
             className="flex size-10 items-center justify-center rounded-lg bg-momtime text-momtime-foreground hover:opacity-90 transition-opacity flex-shrink-0"
           >
             <BookOpen className="size-4" />
-          </button>
-        )}
-
-        {/* Open Activity Button */}
-        {item.lesson.activityType !== 'mom-time' && (
-          <button
-            title="Open activity"
-            className="flex size-10 items-center justify-center rounded-lg bg-independent text-independent-foreground hover:opacity-90 transition-opacity flex-shrink-0"
-          >
-            <GraduationCap className="size-4" />
-          </button>
+          </Link>
         )}
 
         {/* Print Button */}
@@ -372,7 +363,7 @@ function LessonCard({
         {/* Challenge Button */}
         <button
           title="Optional challenge worksheet"
-          className="flex size-10 items-center justify-center rounded-lg bg-optional text-optional-foreground hover:opacity-90 transition-opacity flex-shrink-0"
+          className="flex size-10 items-center justify-center rounded-lg bg-optional text-optional-foreground hover:opacity-90 transition-opacity flex-shrink-0 cursor-default"
         >
           <Star className="size-4" />
         </button>
