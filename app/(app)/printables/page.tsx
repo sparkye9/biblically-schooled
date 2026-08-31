@@ -14,6 +14,7 @@ import {
   getWeeklyWorksheets,
   getChallengeWorksheets,
 } from '@/lib/worksheets'
+import { packetUrlFor, parentChecklistUrlFor } from '@/lib/worksheet-packets'
 import { PageHeader, ChildAvatar } from '@/components/primitives'
 import { cn } from '@/lib/utils'
 import { dayLabels } from '@/lib/ui'
@@ -418,7 +419,7 @@ function WorksheetGroup({
             </p>
           )}
           {worksheets.map((ws) => (
-            <WorksheetLink key={ws.id} worksheet={ws} isDual={child.gradeBand === 'pre-k'} />
+            <WorksheetLink key={ws.id} worksheet={ws} childId={child.id} isDual={child.gradeBand === 'pre-k'} />
           ))}
         </div>
       )}
@@ -432,7 +433,7 @@ function WorksheetGroup({
             </p>
           )}
           {challenges.map((ws) => (
-            <WorksheetLink key={ws.id} worksheet={ws} isChallenge isDual={child.gradeBand === 'pre-k'} />
+            <WorksheetLink key={ws.id} worksheet={ws} childId={child.id} isChallenge isDual={child.gradeBand === 'pre-k'} />
           ))}
         </div>
       )}
@@ -474,16 +475,21 @@ function ArchiveWeekCard({
 
 function WorksheetLink({
   worksheet,
+  childId,
   isChallenge = false,
   isDual = false,
 }: {
   worksheet: ReturnType<typeof getWeeklyWorksheets>[0]
+  childId: string
   isChallenge?: boolean
   isDual?: boolean
 }) {
+  const pdfUrl = packetUrlFor(childId, worksheet.weekNumber, worksheet.day)
+  if (!pdfUrl) return null
+
   return (
     <a
-      href={worksheet.fileUrl}
+      href={pdfUrl}
       target="_blank"
       rel="noreferrer"
       className="flex items-center justify-between gap-2 rounded-lg border border-border/50 bg-muted/20 p-3 hover:bg-muted/40 transition-colors"
