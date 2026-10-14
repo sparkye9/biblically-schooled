@@ -30,8 +30,18 @@ export function modeFor(state: FamilyState, todayIso: string): { mode: DayMode; 
 
 export function chooseMode(state: FamilyState, todayIso: string, mode: DayMode, easy: boolean): FamilyState {
   // Switching modes never touches completions or the pointer.
-  return { ...state, todayChoice: { date: todayIso, mode, easy } }
+  const anyway = state.todayChoice?.date === todayIso ? state.todayChoice.anyway : undefined
+  return { ...state, todayChoice: { date: todayIso, mode, easy, anyway } }
 }
+
+/** Teach on a co-op, weekend, or break day after all. */
+export function teachAnyway(state: FamilyState, todayIso: string): FamilyState {
+  const { mode, easy } = modeFor(state, todayIso)
+  return { ...state, todayChoice: { date: todayIso, mode, easy, anyway: true } }
+}
+
+/** Completion keys on a welcome-back review day use a `wb-` subject so they never overwrite the original day. */
+export const WELCOME_BACK_PREFIX = 'wb-'
 
 /**
  * Called whenever the app opens on a (possibly new) date. If the lesson day at
@@ -60,7 +70,7 @@ export function toggleCompletion(state: FamilyState, key: string, todayIso: stri
     // Gentle nudge: finishing an Introduce lesson marks its skills "introduced"
     // (never higher — mastery is only ever set by the parent).
     const child = state.children.find((ch) => ch.id === childId)
-    if (child && (subject === 'literacy' || subject === 'math')) {
+    if (child && (subject === 'literacy' || subject === 'math') && !state.welcomeBackPending) {
       const pos = positionOf(index)
       const lesson = lessonsFor(learnerOf(child), pos.week, pos.day).find((l) => l.subject === subject)
       if (lesson?.introduces.length) {
@@ -72,8 +82,12 @@ export function toggleCompletion(state: FamilyState, key: string, todayIso: stri
       }
     }
   }
+  if (subject.startsWith(WELCOME_BACK_PREFIX)) return { ...state, completions }
   const dayLog = { ...state.dayLog }
-  const anyForIndex = Object.keys(completions).some((k) => parseKey(k).index === index)
+  const anyForIndex = Object.keys(completions).some((k) => {
+    const p = parseKey(k)
+    return p.index === index && !p.subject.startsWith(WELCOME_BACK_PREFIX)
+  })
   if (anyForIndex && !dayLog[index]) dayLog[index] = { date: todayIso, mode, easy }
   if (!anyForIndex && dayLog[index] && !dayLog[index].finished) delete dayLog[index]
   return { ...state, completions, dayLog, skillStatus }

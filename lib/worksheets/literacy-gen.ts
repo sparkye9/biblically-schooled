@@ -374,17 +374,19 @@ export function literacyBlocks(grade: Grade, week: number, day: number, r: Rng):
 export function bibleBlocks(grade: Grade, week: number): GenOut {
   const b = getBibleWeek(week)
   const verse = grade === '1st' ? b.verse.text : b.verse.short
+  // Long verses to trace leave less room for the drawing box.
+  const traceLines = Math.ceil(b.verse.short.length / 22)
   const blocks: Block[] =
     grade === 'pre-k'
       ? [
           { type: 'verse', ref: b.verse.ref, text: b.verse.short, mode: 'trace' },
-          { type: 'draw', label: `Draw the story: ${b.title}`, height: 'lg' },
+          { type: 'draw', label: `Draw the story: ${b.title}`, height: traceLines > 2 ? 'md' : 'lg' },
           { type: 'talk', questions: b.questions.slice(0, 2) },
         ]
       : grade === 'k'
         ? [
             { type: 'verse', ref: b.verse.ref, text: b.verse.short, mode: 'trace' },
-            { type: 'draw', label: `Draw the story: ${b.title}`, height: 'md' },
+            { type: 'draw', label: `Draw the story: ${b.title}`, height: traceLines > 2 ? 'sm' : 'md' },
             { type: 'lines', count: 1, label: b.questions[0] },
           ]
         : [

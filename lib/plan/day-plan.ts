@@ -121,6 +121,8 @@ export interface PlanOptions {
   date: Date
   /** Use the seasonal Bible lesson instead of the unit lesson. */
   useSeasonal?: boolean
+  /** Prefix for completion-key subjects (welcome-back review days use 'wb-'). */
+  keyPrefix?: string
 }
 
 export function buildDayPlan(opts: PlanOptions): DayPlan {
@@ -141,7 +143,7 @@ export function buildDayPlan(opts: PlanOptions): DayPlan {
     const items: PlanItem[] = lessons.map((lesson) => {
       const useSeason = lesson.subject === 'bible' && opts.useSeasonal && season
       return {
-        key: `${position.index}|${learner.id}|${lesson.subject}`,
+        key: `${position.index}|${learner.id}|${opts.keyPrefix ?? ''}${lesson.subject}`,
         subject: lesson.subject,
         title: useSeason ? season!.title : lesson.title,
         childTask: lesson.childTask,
@@ -157,7 +159,7 @@ export function buildDayPlan(opts: PlanOptions): DayPlan {
     })
     if (enrichment && activity) {
       items.push({
-        key: `${position.index}|${learner.id}|enrichment`,
+        key: `${position.index}|${learner.id}|${opts.keyPrefix ?? ''}enrichment`,
         subject: 'enrichment',
         title: `${enrichment.label}: ${activity.title}`,
         childTask: enrichment.label,
@@ -169,7 +171,7 @@ export function buildDayPlan(opts: PlanOptions): DayPlan {
     }
     if (mode === 'full') {
       items.push({
-        key: `${position.index}|${learner.id}|read-aloud`,
+        key: `${position.index}|${learner.id}|${opts.keyPrefix ?? ''}read-aloud`,
         subject: 'read-aloud',
         title: 'Read-aloud',
         childTask: 'Story time',

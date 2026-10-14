@@ -610,6 +610,7 @@ export const BIBLE_WEEKS: BibleWeek[] = [
     verse: v(
       'Luke 2:11',
       'For unto you is born this day in the city of David a Saviour, which is Christ the Lord.',
+      'For unto you is born this day in the city of David a Saviour',
     ),
     activity: 'Set up a simple nativity with toys; children retell the story with it.',
     prayer: 'Thank You, God, for sending Jesus to be our Savior. Amen.',

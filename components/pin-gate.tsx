@@ -9,20 +9,21 @@ import { Lock } from 'lucide-react'
 const SESSION_KEY = 'biblically-schooled-unlocked'
 
 export function PinGate({ children }: { children: React.ReactNode }) {
-  const { viewPin } = useStore()
+  const { viewPin, hydrated } = useStore()
   const [checked, setChecked] = useState(false)
   const [unlocked, setUnlocked] = useState(false)
   const [entry, setEntry] = useState('')
   const [error, setError] = useState(false)
 
   useEffect(() => {
+    if (!hydrated) return
     if (!viewPin) {
       setUnlocked(true)
     } else {
       setUnlocked(sessionStorage.getItem(SESSION_KEY) === viewPin)
     }
     setChecked(true)
-  }, [viewPin])
+  }, [viewPin, hydrated])
 
   // Avoid flashing protected content before we've checked the PIN.
   if (!checked) return null

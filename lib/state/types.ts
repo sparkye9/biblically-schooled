@@ -41,7 +41,19 @@ export interface DayLogEntry {
 /** A child as stored, with optional individual adjustments. */
 export interface StoredChild extends Child {
   adjust?: LearnerAdjustments
+  /** Learning supports the parent wants reminders for on Today. */
+  supports?: string[]
 }
+
+export const SUPPORT_OPTIONS = [
+  'One task at a time',
+  'Movement break between subjects',
+  'Read instructions aloud',
+  'Show a visual example first',
+  'Use a visual timer',
+  'Quiet, low-clutter space',
+  'Offer the challenge when ready',
+]
 
 /** Custom activities the family adds themselves (includes lessons migrated from the old planner). */
 export interface CustomActivity {
@@ -86,7 +98,7 @@ export interface FamilyState {
   completions: Record<string, Completion>
   defaultMode: DayMode
   /** Today's chosen mode, remembered only for that date. */
-  todayChoice?: { date: string; mode: DayMode; easy: boolean }
+  todayChoice?: { date: string; mode: DayMode; easy: boolean; anyway?: boolean }
   /** When set, Today shows a welcome-back review before continuing at `pointer`. */
   welcomeBackPending?: boolean
   skillStatus: Record<string, Record<string, SkillRecord>>

@@ -1,331 +1,290 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { Download, Trash2, Upload } from 'lucide-react'
+import type { DayMode, EnrichmentKind } from '@/lib/curriculum/types'
+import { MODE_INFO } from '@/lib/plan/day-plan'
+import { DEFAULT_SCHEDULE, ENRICHMENT_LABELS, WEEKDAY_LABELS, type DayKind, type WeeklySchedule } from '@/lib/plan/schedule'
 import { useStore } from '@/lib/store'
-import { accentBg, dayLabels } from '@/lib/ui'
-import { PageHeader, ChildAvatar } from '@/components/primitives'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { Plus, RotateCcw, Home, User, Users, Lock, CalendarDays, CalendarOff, Trash2 } from 'lucide-react'
-import { AddProfileDialog, AddChildDialog } from '@/components/profile-dialogs'
-import { DataBackup } from '@/components/data-backup'
-import { capitalize, formatISODate as formatDate } from '@/lib/school-calendar'
+import { Card, PageHeader, Section } from '@/components/primitives'
+
+const input = 'rounded-lg border border-border bg-card px-3 py-2 text-sm'
 
 export default function SettingsPage() {
   const store = useStore()
-  const [confirmReset, setConfirmReset] = useState(false)
-  const [pinInput, setPinInput] = useState('')
-  const [startDateInput, setStartDateInput] = useState(store.schoolYearStartDate)
-  const [breakLabel, setBreakLabel] = useState('')
-  const [breakStart, setBreakStart] = useState('')
-  const [breakEnd, setBreakEnd] = useState('')
-
-  const { schoolStatus } = store
-  const statusText = schoolStatus.isWeekend
-    ? `${capitalize(schoolStatus.actualDayName)} · Rest day.`
-    : schoolStatus.notStarted
-      ? `School starts ${formatDate(store.schoolYearStartDate)}.`
-      : schoolStatus.onBreak
-        ? `On break${schoolStatus.pause?.label ? ` — ${schoolStatus.pause.label}` : ''}. Back to Week ${store.currentWeek}, ${dayLabels[store.currentDay]} when it ends.`
-        : schoolStatus.isUpcoming
-          ? `Next school day: Week ${store.currentWeek}, ${dayLabels[store.currentDay]}.`
-          : `Today: Week ${store.currentWeek}, ${dayLabels[store.currentDay]}.`
-
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="Manage your homeschool"
-        title="Settings"
-        description="Add family profiles and learners, or start fresh with the demo data."
-      />
-
-      {/* School calendar */}
-      <section>
-        <h2 className="mb-3 font-serif text-xl font-semibold">School Calendar</h2>
-        <Card className="space-y-5 p-5">
-          <div className="flex items-start gap-3 rounded-2xl bg-muted/50 p-4">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
-              <CalendarDays className="size-4" />
-            </span>
-            <p className="text-sm font-semibold text-foreground">{statusText}</p>
+      <PageHeader eyebrow="Set it once" title="Settings" />
+      <ScheduleSettings />
+      <CalendarSettings />
+      <Section title="Default school day">
+        <Card>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {(['full', 'standard', 'minimum'] as DayMode[]).map((m) => (
+              <button key={m} type="button" aria-pressed={store.defaultMode === m} onClick={() => store.setDefaultMode(m)} className={`rounded-xl border-2 p-3 text-left ${store.defaultMode === m ? 'border-primary bg-sage-soft/50' : 'border-border'}`}>
+                <p className="font-bold">{MODE_INFO[m].label}</p>
+                <p className="text-xs text-muted-foreground">{MODE_INFO[m].blurb}</p>
+              </button>
+            ))}
           </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex-1">
-              <Label htmlFor="school-start" className="mb-2">
-                School year start date
-              </Label>
-              <Input
-                id="school-start"
-                type="date"
-                value={startDateInput}
-                onChange={(event) => setStartDateInput(event.target.value)}
-                className="sm:max-w-56"
-              />
-              <p className="mt-1.5 text-xs text-muted-foreground">
-                Week 1, Monday begins here. Everything else — today&apos;s week and day —
-                tracks forward from this date automatically.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              disabled={!startDateInput || startDateInput === store.schoolYearStartDate}
-              onClick={() => store.setSchoolYearStartDate(startDateInput)}
-            >
-              Save
-            </Button>
-          </div>
-
-          <div className="border-t border-border pt-5">
-            <div className="mb-3 flex items-center gap-2">
-              <CalendarOff className="size-4 text-primary" />
-              <h3 className="font-serif text-lg font-semibold">Pause weeks (breaks)</h3>
-            </div>
-            <p className="mb-3 text-sm text-muted-foreground">
-              Add a break — a holiday, a sick week, anything — and the schedule skips
-              those days without losing your place. Weeks after the break shift forward
-              to match.
-            </p>
-
-            {store.pausedWeeks.length > 0 && (
-              <div className="mb-4 space-y-2">
-                {store.pausedWeeks
-                  .slice()
-                  .sort((a, b) => a.startDate.localeCompare(b.startDate))
-                  .map((p) => (
-                    <div
-                      key={p.id}
-                      className="flex items-center justify-between gap-3 rounded-xl border border-border p-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="font-bold text-foreground">{p.label || 'Break'}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(p.startDate)} &ndash; {formatDate(p.endDate)}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={`Remove ${p.label || 'break'}`}
-                        onClick={() => store.removePausedWeek(p.id)}
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
-                  ))}
-              </div>
-            )}
-
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto_auto]">
-              <div>
-                <Label htmlFor="break-label" className="mb-2">Label</Label>
-                <Input
-                  id="break-label"
-                  placeholder="Christmas Break"
-                  value={breakLabel}
-                  onChange={(event) => setBreakLabel(event.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="break-start" className="mb-2">Start</Label>
-                <Input
-                  id="break-start"
-                  type="date"
-                  value={breakStart}
-                  onChange={(event) => setBreakStart(event.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="break-end" className="mb-2">End</Label>
-                <Input
-                  id="break-end"
-                  type="date"
-                  value={breakEnd}
-                  onChange={(event) => setBreakEnd(event.target.value)}
-                />
-              </div>
-              <div className="flex items-end">
-                <Button
-                  variant="outline"
-                  disabled={!breakStart || !breakEnd || breakEnd < breakStart}
-                  onClick={() => {
-                    store.addPausedWeek({
-                      startDate: breakStart,
-                      endDate: breakEnd,
-                      label: breakLabel || undefined,
-                    })
-                    setBreakLabel('')
-                    setBreakStart('')
-                    setBreakEnd('')
-                  }}
-                >
-                  <Plus className="size-4" /> Add
-                </Button>
-              </div>
-            </div>
-          </div>
+          <label className="mt-4 flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={store.preferSeasonal} onChange={(e) => store.setPrefs({ preferSeasonal: e.target.checked })} className="size-5" />
+            Use seasonal Bible lessons (Thanksgiving, Advent, Holy Week) when they’re in season
+          </label>
         </Card>
-      </section>
-
-      <section>
-        <h2 className="mb-3 font-serif text-xl font-semibold">App lock</h2>
-        <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
-              <Lock className="size-5" />
-            </span>
-            <div>
-              <p className="font-bold text-foreground">
-                {store.viewPin ? 'PIN is set' : 'No PIN set'}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Optional — require a PIN to view this homeschool on this device.
-              </p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              inputMode="numeric"
-              placeholder={store.viewPin ? 'New PIN' : 'Set a PIN'}
-              value={pinInput}
-              onChange={(event) => setPinInput(event.target.value)}
-              className="w-32"
-              maxLength={12}
-            />
-            <Button
-              variant="outline"
-              disabled={!pinInput}
-              onClick={() => {
-                store.setViewPin(pinInput)
-                setPinInput('')
-              }}
-            >
-              Save
-            </Button>
-            {store.viewPin && (
-              <Button variant="ghost" onClick={() => store.setViewPin(null)}>
-                Remove
-              </Button>
-            )}
-          </div>
-        </Card>
-      </section>
-
-      {/* Families */}
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-serif text-xl font-semibold">Family profiles</h2>
-          <AddProfileDialog trigger={<Button variant="outline"><Plus className="size-4" /> Add profile</Button>} />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {store.households.map((h) => (
-            <Card key={h.id} className="p-5">
-              <div className="flex items-center gap-3">
-                <span
-                  className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-lg font-bold text-primary"
-                >
-                  {h.momInitial}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-serif text-lg font-semibold text-foreground">{h.name}</h3>
-                  <p className="text-sm text-muted-foreground">{h.momName}&apos;s household</p>
-                </div>
-              </div>
-              <div className="mt-4 space-y-2">
-                {store.children.filter((c) => c.householdId === h.id).map((c) => (
-                  <div key={c.id} className="flex items-center gap-2 text-sm text-foreground">
-                    <ChildAvatar child={c} size="sm" />
-                    {c.name} <span className="text-muted-foreground">· {c.grade}</span>
-                  </div>
-                ))}
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Users className="size-4" />
-                  {store.children.filter((c) => c.householdId === h.id).length} learners
-                </div>
-              </div>
-            </Card>
-          ))}
-          {store.households.length === 0 && (
-            <p className="text-muted-foreground">No family profiles yet.</p>
-          )}
-        </div>
-      </section>
-
-      {/* Learners */}
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-serif text-xl font-semibold">Learners</h2>
-          <AddChildDialog trigger={<Button variant="outline"><Plus className="h-4 w-4" /> Add child</Button>} />
-        </div>
-        <Card className="p-5">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {store.children.map((c) => {
-              const h = store.households.find((x) => x.id === c.householdId)
-              return (
-                <div key={c.id} className="flex items-center gap-3 rounded-xl border border-border p-3">
-                  <ChildAvatar child={c} />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold text-foreground">{c.name}</p>
-                    <p className="text-xs text-muted-foreground">{c.grade} · {h?.name}</p>
-                  </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    <label className="flex items-center gap-1.5">
-                      <Switch
-                        checked={c.childMode}
-                        onCheckedChange={(on) => store.setChildMode(c.id, on)}
-                      />
-                      Child
-                    </label>
-                    <label className="flex items-center gap-1.5">
-                      <Checkbox
-                        checked={c.lowDistraction}
-                        onCheckedChange={(on) => store.setLowDistraction(c.id, !!on)}
-                      />
-                      Calm
-                    </label>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </Card>
-      </section>
-
-      {/* Backup & restore */}
-      <section>
-        <h2 className="mb-3 font-serif text-xl font-semibold">Backup & Restore</h2>
-        <DataBackup />
-      </section>
-
-      {/* Danger zone */}
-      <section>
-        <h2 className="mb-3 font-serif text-xl font-semibold">Data</h2>
-        <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-bold text-foreground">Reset demo data</p>
-            <p className="text-sm text-muted-foreground">
-              Clears local progress and restores the sample household, learners, and lessons.
-            </p>
-          </div>
-          {confirmReset ? (
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setConfirmReset(false)}>Cancel</Button>
-              <Button variant="destructive" onClick={() => { store.reset(); setConfirmReset(false); }}>
-                <RotateCcw className="h-4 w-4" /> Reset now
-              </Button>
-            </div>
-          ) : (
-            <Button variant="outline" onClick={() => setConfirmReset(true)}>
-              <RotateCcw className="h-4 w-4" /> Reset
-            </Button>
-          )}
-        </Card>
-      </section>
+      </Section>
+      <HouseholdSettings />
+      <PinSettings />
+      <BackupSettings />
     </div>
+  )
+}
+
+function ScheduleSettings() {
+  const store = useStore()
+  const set = (i: number, patch: Partial<WeeklySchedule[number]>) => {
+    const next = store.schedule.map((d, j) => (j === i ? { ...d, ...patch } : d)) as WeeklySchedule
+    store.setSchedule(next)
+  }
+  const order = [1, 2, 3, 4, 5, 6, 0]
+  const schoolDays = store.schedule.filter((d) => d.kind === 'school').length
+  return (
+    <Section title="Our weekly rhythm">
+      <Card>
+        <p className="text-sm text-muted-foreground">Each school day teaches the next lesson. Co-op and rest days never use up a lesson.</p>
+        <div className="mt-3 divide-y divide-border">
+          {order.map((i) => {
+            const d = store.schedule[i]
+            return (
+              <div key={i} className="flex flex-wrap items-center gap-2 py-2 text-sm">
+                <span className="w-24 font-semibold">{WEEKDAY_LABELS[i]}</span>
+                <select aria-label={`${WEEKDAY_LABELS[i]} type`} value={d.kind} onChange={(e) => set(i, { kind: e.target.value as DayKind, enrichment: e.target.value === 'school' ? d.enrichment : null })} className={input}>
+                  <option value="school">Core learning</option>
+                  <option value="coop">Co-op</option>
+                  <option value="off">No school</option>
+                </select>
+                {d.kind === 'school' && (
+                  <select aria-label={`${WEEKDAY_LABELS[i]} enrichment`} value={d.enrichment ?? ''} onChange={(e) => set(i, { enrichment: (e.target.value || null) as EnrichmentKind | null })} className={input}>
+                    <option value="">+ nothing extra</option>
+                    {(Object.keys(ENRICHMENT_LABELS) as EnrichmentKind[]).map((k) => (
+                      <option key={k} value={k}>
+                        + {ENRICHMENT_LABELS[k]}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            )
+          })}
+        </div>
+        {schoolDays !== 4 && <p className="mt-2 text-xs text-muted-foreground">You have {schoolDays} school days a week. Each curriculum week has 4 lesson days, so weeks will simply take {schoolDays > 4 ? 'less' : 'more'} than a calendar week.</p>}
+        <button type="button" onClick={() => store.setSchedule(DEFAULT_SCHEDULE)} className="mt-3 text-xs font-semibold text-primary underline">
+          Reset to Mon science · Tue library · Wed co-op · Thu art · Fri review
+        </button>
+      </Card>
+    </Section>
+  )
+}
+
+function CalendarSettings() {
+  const store = useStore()
+  const [start, setStart] = useState(store.schoolYearStartDate)
+  const [b, setB] = useState({ startDate: '', endDate: '', label: '' })
+  return (
+    <Section title="School year and breaks">
+      <Card className="space-y-4">
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="grid gap-1 text-sm">
+            <span className="text-xs font-bold text-muted-foreground">First day of school</span>
+            <input type="date" value={start} onChange={(e) => setStart(e.target.value)} className={input} />
+          </label>
+          <button type="button" disabled={!start || start === store.schoolYearStartDate} onClick={() => store.setStartDate(start)} className="rounded-full border border-border px-4 py-2 text-sm font-bold disabled:opacity-40">
+            Save
+          </button>
+        </div>
+        <p className="text-xs text-muted-foreground">Used only for the pace indicator and projected finish date. Your lessons move with you, not the calendar.</p>
+        <form
+          className="flex flex-wrap items-end gap-2"
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (!b.startDate) return
+            store.addBreak({ startDate: b.startDate, endDate: b.endDate || b.startDate, label: b.label || undefined })
+            setB({ startDate: '', endDate: '', label: '' })
+          }}
+        >
+          <label className="grid gap-1 text-sm">
+            <span className="text-xs font-bold text-muted-foreground">Break starts</span>
+            <input type="date" value={b.startDate} onChange={(e) => setB({ ...b, startDate: e.target.value })} className={input} />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-xs font-bold text-muted-foreground">Ends</span>
+            <input type="date" value={b.endDate} onChange={(e) => setB({ ...b, endDate: e.target.value })} className={input} />
+          </label>
+          <label className="grid flex-1 gap-1 text-sm">
+            <span className="text-xs font-bold text-muted-foreground">Name (optional)</span>
+            <input value={b.label} onChange={(e) => setB({ ...b, label: e.target.value })} placeholder="Christmas break" className={input} />
+          </label>
+          <button type="submit" className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
+            Add break
+          </button>
+        </form>
+        {store.breaks.length > 0 && (
+          <ul className="divide-y divide-border text-sm">
+            {store.breaks.map((br) => (
+              <li key={br.id} className="flex items-center gap-2 py-2">
+                <span className="flex-1">
+                  {br.label ?? 'Break'}: {br.startDate} → {br.endDate}
+                </span>
+                <button type="button" aria-label="Remove break" onClick={() => store.removeBreak(br.id)} className="p-1 text-muted-foreground hover:text-destructive">
+                  <Trash2 className="size-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </Section>
+  )
+}
+
+function HouseholdSettings() {
+  const store = useStore()
+  const [mom, setMom] = useState('')
+  return (
+    <Section title="Households">
+      <Card>
+        <ul className="text-sm">
+          {store.households.map((h) => (
+            <li key={h.id} className="py-1">
+              <b>{h.momName}</b> — {store.children.filter((c) => c.householdId === h.id).map((c) => c.name).join(', ') || 'no learners yet'}
+            </li>
+          ))}
+        </ul>
+        <form
+          className="mt-3 flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (!mom.trim()) return
+            store.addHousehold('', mom.trim())
+            setMom('')
+          }}
+        >
+          <input value={mom} onChange={(e) => setMom(e.target.value)} placeholder="Parent’s first name" aria-label="Parent name" className={`${input} flex-1`} />
+          <button type="submit" className="rounded-full border border-border px-4 py-2 text-sm font-bold">
+            Add household
+          </button>
+        </form>
+      </Card>
+    </Section>
+  )
+}
+
+function PinSettings() {
+  const store = useStore()
+  const [view, setView] = useState('')
+  const [parent, setParent] = useState('')
+  return (
+    <Section title="Locks">
+      <Card className="space-y-4 text-sm">
+        <div>
+          <p className="font-semibold">App PIN {store.viewPin ? '(on)' : '(off)'}</p>
+          <p className="text-xs text-muted-foreground">Asks for a PIN when the app opens on this device.</p>
+          <div className="mt-2 flex gap-2">
+            <input inputMode="numeric" value={view} onChange={(e) => setView(e.target.value.replace(/\D/g, ''))} placeholder="New PIN" aria-label="App PIN" className={input} />
+            <button type="button" disabled={view.length < 4} onClick={() => { store.setPrefs({ viewPin: view }); setView('') }} className="rounded-full border border-border px-4 py-2 font-bold disabled:opacity-40">
+              Set
+            </button>
+            {store.viewPin && (
+              <button type="button" onClick={() => store.setPrefs({ viewPin: undefined })} className="rounded-full px-3 py-2 text-destructive">
+                Turn off
+              </button>
+            )}
+          </div>
+        </div>
+        <div>
+          <p className="font-semibold">Grown-up PIN for leaving kid view {store.parentPin ? '(on)' : '(off)'}</p>
+          <p className="text-xs text-muted-foreground">Without a PIN, leaving kid view asks a grown-up math question.</p>
+          <div className="mt-2 flex gap-2">
+            <input inputMode="numeric" value={parent} onChange={(e) => setParent(e.target.value.replace(/\D/g, ''))} placeholder="New PIN" aria-label="Grown-up PIN" className={input} />
+            <button type="button" disabled={parent.length < 4} onClick={() => { store.setPrefs({ parentPin: parent }); setParent('') }} className="rounded-full border border-border px-4 py-2 font-bold disabled:opacity-40">
+              Set
+            </button>
+            {store.parentPin && (
+              <button type="button" onClick={() => store.setPrefs({ parentPin: undefined })} className="rounded-full px-3 py-2 text-destructive">
+                Turn off
+              </button>
+            )}
+          </div>
+        </div>
+      </Card>
+    </Section>
+  )
+}
+
+function BackupSettings() {
+  const store = useStore()
+  const file = useRef<HTMLInputElement>(null)
+  const [msg, setMsg] = useState('')
+  const [confirmReset, setConfirmReset] = useState(false)
+  return (
+    <Section title="Backup">
+      <Card className="space-y-3 text-sm">
+        <p className="text-muted-foreground">Everything is saved on this device. Download a backup now and then, or to move to a new device. Backups from the previous version of the app can be restored too.</p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              const blob = new Blob([JSON.stringify(store.exportBackup(), null, 2)], { type: 'application/json' })
+              const a = document.createElement('a')
+              a.href = URL.createObjectURL(blob)
+              a.download = `biblically-schooled-backup-${store.todayIso}.json`
+              a.click()
+              URL.revokeObjectURL(a.href)
+            }}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 font-bold text-primary-foreground"
+          >
+            <Download className="size-4" /> Download backup
+          </button>
+          <button type="button" onClick={() => file.current?.click()} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 font-bold">
+            <Upload className="size-4" /> Restore from file
+          </button>
+          <input
+            ref={file}
+            type="file"
+            accept="application/json"
+            className="sr-only"
+            onChange={async (e) => {
+              const f = e.target.files?.[0]
+              if (!f) return
+              try {
+                store.importBackup(JSON.parse(await f.text()))
+                setMsg('Restored. Welcome back!')
+              } catch (err) {
+                setMsg(err instanceof Error ? err.message : 'That file could not be read.')
+              }
+              e.target.value = ''
+            }}
+          />
+        </div>
+        {msg && <p role="status" className="font-semibold">{msg}</p>}
+        <div className="border-t border-border pt-3">
+          {confirmReset ? (
+            <p className="flex flex-wrap items-center gap-2">
+              Erase everything on this device and start fresh? Download a backup first.
+              <button type="button" onClick={() => { store.reset(); setConfirmReset(false) }} className="rounded-full bg-destructive/10 px-3 py-1 font-bold text-destructive">
+                Erase
+              </button>
+              <button type="button" onClick={() => setConfirmReset(false)} className="rounded-full border border-border px-3 py-1">
+                Cancel
+              </button>
+            </p>
+          ) : (
+            <button type="button" onClick={() => setConfirmReset(true)} className="text-xs text-muted-foreground underline">
+              Start fresh…
+            </button>
+          )}
+        </div>
+      </Card>
+    </Section>
   )
 }

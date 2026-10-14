@@ -45,7 +45,7 @@ export function WorksheetPage({
       <header className="flex items-end justify-between gap-4 border-b-2 pb-2" style={{ borderColor: accent ?? '#000' }}>
         <div className="min-w-0">
           <p className="text-[11px] font-bold uppercase tracking-wider">
-            {SUBJECT_LABEL[spec.subject]} · {GRADE_LABEL[spec.grade]} · Week {spec.week} · {DAY_LABEL[spec.day] ?? ''}
+            {SUBJECT_LABEL[spec.subject]} · {GRADE_LABEL[spec.grade]}{spec.week > 0 && ` · Week ${spec.week} · ${DAY_LABEL[spec.day] ?? ''}`}
           </p>
           <h1 className="text-[22px] font-extrabold leading-tight" style={{ fontFamily: 'var(--font-fraunces), Georgia, serif' }}>
             {spec.title}
@@ -116,6 +116,7 @@ function TraceRow({ text, size }: { text: string; size: 'xl' | 'lg' | 'md' }) {
         letterSpacing={size === 'md' ? 2 : 6}
         textLength={text.length > 22 ? 700 : undefined}
         lengthAdjust="spacingAndGlyphs"
+        style={{ whiteSpace: 'pre' }}
       >
         {text}
       </text>

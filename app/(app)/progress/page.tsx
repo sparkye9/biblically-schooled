@@ -1,198 +1,195 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
+import { skillsForGrade } from '@/lib/curriculum/skills'
+import type { SkillTrack } from '@/lib/curriculum/types'
+import { positionOf } from '@/lib/plan/schedule'
+import * as logic from '@/lib/state/logic'
+import { SKILL_STATUSES, type SkillStatus } from '@/lib/state/types'
 import { useStore } from '@/lib/store'
-import { childrenInView } from '@/lib/selectors'
-import { skillStatusMeta, accent, accentBg } from '@/lib/ui'
-import type { SkillStatus } from '@/lib/types'
-import { PageHeader, ChildAvatar } from '@/components/primitives'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Feather, Calculator, Check, RotateCcw, GraduationCap } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Card, ChildAvatar, PageHeader, Pill, ProgressBar } from '@/components/primitives'
 
-const STATUS_ORDER: SkillStatus[] = [
-  'not-introduced',
-  'learning',
-  'practicing',
-  'almost',
-  'mastered',
-]
+const TONE: Record<SkillStatus, string> = {
+  'not-introduced': 'bg-muted text-muted-foreground',
+  introduced: 'bg-gold/25',
+  practicing: 'bg-sage-soft text-primary',
+  independent: 'bg-primary text-primary-foreground',
+  'needs-review': 'bg-terracotta-soft',
+}
 
 export default function ProgressPage() {
   const store = useStore()
-  const kids = childrenInView(store.children, store.currentView)
-  const [selectedId, setSelectedId] = useState(kids[0]?.id ?? '')
-  const child = kids.find((c) => c.id === selectedId) ?? kids[0]
-
-  if (!child) return null
-
-  const literacy = store.skills.filter(
-    (s) => s.childId === child.id && s.track === 'literacy',
-  )
-  const math = store.skills.filter((s) => s.childId === child.id && s.track === 'math')
+  const [childId, setChildId] = useState(store.childrenInView[0]?.id ?? '')
+  const child = store.children.find((c) => c.id === childId) ?? store.childrenInView[0]
+  const [week, setWeek] = useState(positionOf(store.pointer).week)
+  const [track, setTrack] = useState<SkillTrack>('literacy')
+  if (!child) return <PageHeader title="Progress" description="Add a learner on the Students page." />
+  const learner = logic.learnerOf(child)
+  const gradeFor = track === 'literacy' ? (child.adjust?.literacyGrade ?? learner.grade) : (child.adjust?.mathGrade ?? learner.grade)
+  const skills = skillsForGrade(gradeFor).filter((s) => s.track === track && s.week <= Math.max(week, positionOf(store.pointer).week) + 1)
+  const summary = logic.weeklySummary(store, child.id, week)
+  const counts = SKILL_STATUSES.map((st) => ({ ...st, n: skills.filter((s) => logic.skillStatusOf(store, child.id, s.id) === st.id).length }))
+  const legacy = store.legacySkills.filter((s) => s.childId === child.id)
 
   return (
-    <div>
+    <div className="space-y-5">
       <PageHeader
-        eyebrow="Skill Journey"
+        eyebrow="By skill, not by worksheet"
         title="Progress"
-        description="Growth over grades. Tap a skill to move it forward as your child shows what they know — no red marks, ever."
-      >
-        <Button
-          variant="outline"
-          nativeButton={false}
-          render={<Link href={`/portfolio?child=${child.id}`} />}
-        >
-          <GraduationCap className="size-4" /> View portfolio
-        </Button>
-      </PageHeader>
-
-      <div className="mb-6 flex flex-wrap gap-2">
-        {kids.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => setSelectedId(c.id)}
-            className="flex items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-4 text-sm font-semibold transition-colors"
-            style={
-              c.id === child.id
-                ? { ...accentBg(c.color, 0.18), borderColor: `var(--${c.color})` }
-                : { borderColor: 'var(--border)', color: 'var(--muted-foreground)' }
-            }
-          >
-            <ChildAvatar child={c} size="sm" />
-            {c.name}
+        description="You decide each skill’s status. Finishing a lesson only ever marks a skill “Introduced” — never mastered."
+      />
+      <div className="flex flex-wrap gap-2">
+        {store.childrenInView.map((c) => (
+          <button key={c.id} type="button" aria-pressed={c.id === child.id} onClick={() => setChildId(c.id)} className={cn('flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-bold', c.id === child.id ? 'border-primary bg-sage-soft' : 'border-border')}>
+            <ChildAvatar child={c} size="sm" /> {c.name}
           </button>
         ))}
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
-        <SkillTrack
-          label="Literacy"
-          Icon={Feather}
-          skills={literacy}
-          color={child.color}
-          onAdvance={(id, cur) =>
-            store.setSkillStatus(id, nextStatus(cur))
-          }
-          onRewind={(id, cur) =>
-            store.setSkillStatus(id, prevStatus(cur))
-          }
-        />
-        <SkillTrack
-          label="Math"
-          Icon={Calculator}
-          skills={math}
-          color={child.color}
-          onAdvance={(id, cur) =>
-            store.setSkillStatus(id, nextStatus(cur))
-          }
-          onRewind={(id, cur) =>
-            store.setSkillStatus(id, prevStatus(cur))
-          }
-        />
-      </div>
+      <Card>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-serif text-lg font-semibold">Weekly summary</h2>
+          <select value={week} onChange={(e) => setWeek(Number(e.target.value))} aria-label="Week" className="rounded-lg border border-border bg-card px-2 py-1 text-sm">
+            {Array.from({ length: 36 }, (_, i) => (
+              <option key={i + 1} value={i + 1}>
+                Week {i + 1}
+              </option>
+            ))}
+          </select>
+        </div>
+        <p className="text-sm text-muted-foreground">{summary.daysTaught} of 4 lesson days taught.</p>
+        <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+          <Line label="Skills introduced" items={summary.introduced} />
+          <Line label="Skills practiced" items={summary.practiced} />
+          <Line label="Demonstrated independently" items={summary.demonstrated} />
+          <Line label="Needing review" items={summary.needsReview} />
+          {summary.lightlyCovered.length > 0 && <Line label="Covered on a short day" items={summary.lightlyCovered} />}
+        </div>
+        <div className="mt-3 rounded-xl bg-sage-soft/50 p-3 text-sm">
+          <p className="font-bold">Suggested next steps</p>
+          <ul className="mt-1 list-disc pl-5">
+            {summary.nextSteps.map((s) => (
+              <li key={s}>{s}</li>
+            ))}
+          </ul>
+        </div>
+      </Card>
+
+      <Card>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="font-serif text-lg font-semibold">Skills</h2>
+          <div className="flex gap-1">
+            {(['literacy', 'math'] as SkillTrack[]).map((t) => (
+              <button key={t} type="button" aria-pressed={track === t} onClick={() => setTrack(t)} className={cn('rounded-full border px-3 py-1 text-xs font-bold capitalize', track === t ? 'border-primary bg-sage-soft text-primary' : 'border-border')}>
+                {t}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {counts.map((c) => (
+            <span key={c.id} className={cn('rounded-full px-2.5 py-0.5 text-xs font-semibold', TONE[c.id])}>
+              {c.label}: {c.n}
+            </span>
+          ))}
+        </div>
+        <div className="mt-2">
+          <ProgressBar value={counts.find((c) => c.id === 'independent')!.n} total={skills.length} color={child.color} />
+        </div>
+        <ul className="mt-3 divide-y divide-border">
+          {skills.map((s) => {
+            const status = logic.skillStatusOf(store, child.id, s.id)
+            const rec = store.skillStatus[child.id]?.[s.id]
+            return (
+              <li key={s.id} className="flex flex-wrap items-center gap-2 py-2.5">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold">{s.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Week {s.week} · {s.strand}
+                    {rec?.by === 'auto' && ' · set to Introduced after the lesson'}
+                  </p>
+                </div>
+                <select
+                  aria-label={`Status for ${s.name}`}
+                  value={status}
+                  onChange={(e) => store.setSkill(child.id, s.id, e.target.value as SkillStatus)}
+                  className={cn('rounded-full border-0 px-3 py-1.5 text-xs font-bold', TONE[status])}
+                >
+                  {SKILL_STATUSES.map((st) => (
+                    <option key={st.id} value={st.id}>
+                      {st.label}
+                    </option>
+                  ))}
+                </select>
+              </li>
+            )
+          })}
+        </ul>
+      </Card>
+
+      {legacy.length > 0 && (
+        <Card>
+          <h2 className="font-serif text-lg font-semibold">From your earlier tracker</h2>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {legacy.map((s) => (
+              <Pill key={s.id}>
+                {s.name}: {SKILL_STATUSES.find((x) => x.id === s.status)?.label}
+              </Pill>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      <Notes childId={child.id} week={week} />
     </div>
   )
 }
 
-function nextStatus(cur: SkillStatus): SkillStatus {
-  const i = STATUS_ORDER.indexOf(cur)
-  return STATUS_ORDER[Math.min(i + 1, STATUS_ORDER.length - 1)]
-}
-
-function prevStatus(cur: SkillStatus): SkillStatus {
-  const i = STATUS_ORDER.indexOf(cur)
-  return STATUS_ORDER[Math.max(i - 1, 0)]
-}
-
-function SkillTrack({
-  label,
-  Icon,
-  skills,
-  color,
-  onAdvance,
-  onRewind,
-}: {
-  label: string
-  Icon: typeof Feather
-  skills: { id: string; name: string; status: SkillStatus }[]
-  color: string
-  onAdvance: (id: string, cur: SkillStatus) => void
-  onRewind: (id: string, cur: SkillStatus) => void
-}) {
+function Line({ label, items }: { label: string; items: string[] }) {
   return (
-    <Card className="p-5">
-      <div className="mb-4 flex items-center gap-2">
-        <span
-          className="flex size-9 items-center justify-center rounded-xl"
-          style={accentBg(color, 0.18)}
-        >
-          <Icon className="size-5" style={accent(color)} />
-        </span>
-        <h2 className="font-serif text-lg font-semibold text-foreground">{label}</h2>
-      </div>
+    <p>
+      <b>{label}:</b> {items.length ? items.join(', ') : <span className="text-muted-foreground">none</span>}
+    </p>
+  )
+}
 
-      <div className="space-y-3">
-        {skills.map((s) => {
-          const meta = skillStatusMeta[s.status]
-          const mastered = s.status === 'mastered'
-          const atStart = s.status === 'not-introduced'
-          return (
-            <div
-              key={s.id}
-              className="group flex items-center gap-2 rounded-2xl border border-border p-3.5 transition-colors hover:bg-muted/50"
-            >
-              <button
-                type="button"
-                onClick={() => onAdvance(s.id, s.status)}
-                className="min-w-0 flex-1 text-left"
-              >
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="flex items-center gap-2 font-medium text-foreground">
-                    {mastered && (
-                      <Check className="size-4" style={accent(color)} />
-                    )}
-                    {s.name}
-                  </span>
-                  <span
-                    className="rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide"
-                    style={accentBg(meta.token, 0.18)}
-                  >
-                    {meta.label}
-                  </span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${meta.pct}%`,
-                      backgroundColor: `var(--${color})`,
-                    }}
-                  />
-                </div>
-                {!mastered && (
-                  <p className="mt-1.5 text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                    Tap to move forward →
-                  </p>
-                )}
-              </button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                disabled={atStart}
-                onClick={() => onRewind(s.id, s.status)}
-                aria-label={`Move ${s.name} back a step`}
-                title="Undo — move back a step"
-                className="shrink-0 text-muted-foreground disabled:opacity-30"
-              >
-                <RotateCcw className="size-4" />
-              </Button>
-            </div>
-          )
-        })}
-      </div>
+function Notes({ childId, week }: { childId: string; week: number }) {
+  const store = useStore()
+  const [worked, setWorked] = useState('')
+  const [needs, setNeeds] = useState('')
+  const [enjoyed, setEnjoyed] = useState('')
+  const notes = store.parentNotes.filter((n) => n.childId === childId)
+  return (
+    <Card>
+      <h2 className="font-serif text-lg font-semibold">Parent notes</h2>
+      <form
+        className="mt-2 grid gap-2 text-sm sm:grid-cols-3"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!worked && !needs && !enjoyed) return
+          store.saveNote({ childId, weekNumber: week, worked, needsPractice: needs, enjoyed })
+          setWorked('')
+          setNeeds('')
+          setEnjoyed('')
+        }}
+      >
+        <input value={worked} onChange={(e) => setWorked(e.target.value)} placeholder="What worked" className="rounded-lg border border-border bg-card px-3 py-2" />
+        <input value={needs} onChange={(e) => setNeeds(e.target.value)} placeholder="Needs practice" className="rounded-lg border border-border bg-card px-3 py-2" />
+        <input value={enjoyed} onChange={(e) => setEnjoyed(e.target.value)} placeholder="Enjoyed" className="rounded-lg border border-border bg-card px-3 py-2" />
+        <button type="submit" className="rounded-full bg-primary px-4 py-2 font-bold text-primary-foreground sm:col-span-3 sm:justify-self-start">
+          Save note for week {week}
+        </button>
+      </form>
+      <ul className="mt-3 space-y-2 text-sm">
+        {notes.map((n) => (
+          <li key={n.id} className="rounded-xl bg-muted/50 p-2">
+            <b>Week {n.weekNumber}:</b> {n.worked && `Worked: ${n.worked}. `}
+            {n.needsPractice && `Practice: ${n.needsPractice}. `}
+            {n.enjoyed && `Enjoyed: ${n.enjoyed}.`}
+          </li>
+        ))}
+      </ul>
     </Card>
   )
 }

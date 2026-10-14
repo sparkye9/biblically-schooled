@@ -64,7 +64,8 @@ const ROWS: Partial<Record<Block['type'], (b: any) => number>> = {
   'word-sort': (b) => Math.ceil(b.words.length / 2) * 1.8 + 3,
   sentences: (b) => b.items.length * 2.8 + 1,
   passage: (b) => Math.ceil(b.text.length / 70) * 1.4 + b.questions.length * 3 + 2,
-  verse: (b) => Math.ceil(b.text.length / 40) * 2.4 + 1.5,
+  // traced verses wrap at ~22 characters per large line; copied verses at ~40
+  verse: (b) => (b.mode === 'trace' ? Math.ceil(b.text.length / 22) * 2.6 : Math.ceil(b.text.length / 40) * 2.4) + 1.5,
   talk: (b) => b.questions.length * 1.2 + 1,
   feelings: (b) => b.prompts.length * 4,
   syllables: (b) => b.items.length * 2.8,

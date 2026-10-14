@@ -1,69 +1,47 @@
-const CACHE_NAME = 'biblically-schooled-v1'
-const RUNTIME_CACHE = 'biblically-schooled-runtime'
-
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/offline.html',
-]
+// Biblically Schooled service worker.
+// Pages and app code are NETWORK-FIRST so updates always arrive; the cached
+// copy is only used when offline. (The previous worker served pages and
+// scripts cache-first, which could keep an old version on a device forever.)
+const VERSION = 'bs-v2'
+const RUNTIME = `${VERSION}-runtime`
+const OFFLINE_URL = '/offline.html'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting())
+    caches
+      .open(RUNTIME)
+      .then((cache) => cache.add(OFFLINE_URL))
+      .then(() => self.skipWaiting()),
   )
 })
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
-            return caches.delete(cacheName)
-          }
-        })
-      )
-    }).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((names) => Promise.all(names.filter((n) => !n.startsWith(VERSION)).map((n) => caches.delete(n))))
+      .then(() => self.clients.claim()),
   )
 })
 
 self.addEventListener('fetch', (event) => {
   const { request } = event
-
-  if (request.method !== 'GET') {
-    return
-  }
+  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return
 
   event.respondWith(
-    caches.match(request)
+    fetch(request)
       .then((response) => {
-        if (response) return response
-
-        return fetch(request).then((response) => {
-          if (!response || response.status !== 200 || response.type === 'error') {
-            return response
-          }
-
-          const responseToCache = response.clone()
-
-          if (request.destination === '' ||
-              request.destination === 'document' ||
-              request.destination === 'style' ||
-              request.destination === 'script') {
-            caches.open(RUNTIME_CACHE).then((cache) => {
-              cache.put(request, responseToCache)
-            })
-          }
-
-          return response
-        })
-      })
-      .catch(() => {
-        if (request.destination === 'document') {
-          return caches.match('/offline.html')
+        if (response && response.status === 200 && response.type === 'basic') {
+          const copy = response.clone()
+          caches.open(RUNTIME).then((cache) => cache.put(request, copy))
         }
+        return response
       })
+      .catch(async () => {
+        const cached = await caches.match(request)
+        if (cached) return cached
+        if (request.mode === 'navigate') return caches.match(OFFLINE_URL)
+        return Response.error()
+      }),
   )
 })

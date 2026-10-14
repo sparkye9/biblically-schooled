@@ -532,7 +532,7 @@ function buildFirst(): LiteracyWeek[] {
     writing:
       f.writing ??
       (f.week <= 9
-        ? 'Write one complete sentence about the passage'
+        ? 'Write one complete sentence about this week’s story'
         : f.week <= 18
           ? 'Write two sentences: one that tells and one that asks'
           : f.week <= 27

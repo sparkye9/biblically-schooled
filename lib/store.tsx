@@ -29,6 +29,7 @@ interface Actions {
   toggle: (key: string) => void
   finishDay: () => void
   chooseMode: (mode: DayMode, easy?: boolean) => void
+  teachAnyway: () => void
   setDefaultMode: (mode: DayMode) => void
   restart: (choice: RestartEvent['choice']) => void
   setPointer: (index: number) => void
@@ -114,6 +115,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       toggle: (key) => update((s) => logic.toggleCompletion(s, key, todayIso)),
       finishDay: () => update((s) => logic.finishDay(s, todayIso)),
       chooseMode: (mode, easy = false) => update((s) => logic.chooseMode(s, todayIso, mode, easy)),
+      teachAnyway: () => update((s) => logic.teachAnyway(s, todayIso)),
       setDefaultMode: (mode) => update((s) => ({ ...s, defaultMode: mode })),
       restart: (choice) => update((s) => logic.restart(s, choice, todayIso)),
       setPointer: (index) => update((s) => logic.setPointer(s, index)),
