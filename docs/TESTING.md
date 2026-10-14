@@ -8,8 +8,8 @@ Run everything: `npm run typecheck && npm test && npm run test:e2e`
 |---|---|
 | TypeScript (`tsc --noEmit`, whole repo) | ✅ 0 errors (was 50+, previously hidden by `ignoreBuildErrors`) |
 | Production build (`next build`) | ✅ 14 routes |
-| Unit tests (Vitest) | ✅ 51 / 51 |
-| Browser tests (Playwright, Chromium desktop + Pixel 7) | ✅ 11 / 11, three consecutive runs |
+| Unit tests (Vitest) | ✅ 56 / 56 |
+| Browser tests (Playwright, Chromium desktop + Pixel 7) | ✅ 12 / 12 |
 
 ## What is covered
 

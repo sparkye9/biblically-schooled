@@ -191,3 +191,13 @@ test('whole year: no worksheet page is clipped or missing a picture (36 weeks ×
   }
   expect(problems).toEqual([])
 })
+
+test('Video day lists this week’s videos from the vetted channels', async ({ page }) => {
+  await fresh(page)
+  await page.getByRole('button', { name: 'I need an easy day' }).click()
+  await page.getByRole('link', { name: /Videos for this week/ }).click()
+  await expect(page.getByRole('heading', { name: /Video day — Week 8/ })).toBeVisible()
+  const hrefs = await page.locator('#videos').locator('..').locator('a[href^="https://www.youtube.com"]').evaluateAll((as) => as.map((a) => (a as HTMLAnchorElement).href))
+  expect(hrefs.some((h) => h.includes('@saddlebackkids/search?query=Noah'))).toBe(true)
+  expect(hrefs.every((h) => /youtube\.com\/(@(saddlebackkids|jackhartmann|numberblocks)\/search|results\?search_query=(Suitcase|SciShow))/.test(h))).toBe(true)
+})

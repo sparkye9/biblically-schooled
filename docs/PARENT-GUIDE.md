@@ -14,4 +14,5 @@
 - **Students**: put a child on a different level or pace per subject, and pick learning-support reminders.
 - **Kid view**: big buttons, read-aloud, stars. Leaving it needs a grown-up (PIN or a math question).
 - **Change your weekly rhythm** in Settings (default: Mon science · Tue library · Wed co-op · Thu art · Fri review).
+- **Video day**: on a day you need a break, tap **I need an easy day → Videos for this week** (or This Week → Video day). Each child gets videos matched to that week's Bible story, letters, math, and science from vetted channels (Saddleback Kids, Suitcase Teachers, Jack Hartmann, Numberblocks, SciShow Kids). Preview a minute of anything new and turn off autoplay.
 - **Back up** now and then: Settings → Backup.

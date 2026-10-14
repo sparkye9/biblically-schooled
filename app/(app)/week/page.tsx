@@ -21,6 +21,7 @@ import * as logic from '@/lib/state/logic'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 import { Card, ChildAvatar, PageHeader, Pill, Section } from '@/components/primitives'
+import { VideoDay } from '@/components/video-day'
 
 const DAYS: LessonDay[] = [0, 1, 2, 3]
 
@@ -144,6 +145,8 @@ export default function WeekPage() {
           </ul>
         </Card>
       </div>
+
+      <VideoDay week={week} />
 
       <CustomActivities week={week} />
     </div>
