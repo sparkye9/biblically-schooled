@@ -11,6 +11,7 @@ import {
   Coffee,
   HeartHandshake,
   ListChecks,
+  PlayCircle,
   Printer,
   RotateCcw,
   Scissors,
@@ -235,6 +236,9 @@ function EasyDaySummary() {
         </li>
       </ul>
       <p className="mt-3 font-semibold">Done. No printing, no crafts. Real learning still happened today. 💛</p>
+      <Link href="/week#videos" className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-bold">
+        <PlayCircle className="size-4" /> Need a full break? Videos for this week
+      </Link>
     </Card>
   )
 }
@@ -586,6 +590,9 @@ function NotSchoolToday({ reason }: { reason: string }) {
         </button>
         <Link href="/week" className="rounded-full border border-border px-4 py-2 text-sm font-bold">
           Look at this week
+        </Link>
+        <Link href="/week#videos" className="inline-flex items-center gap-1 rounded-full border border-border px-4 py-2 text-sm font-bold">
+          <PlayCircle className="size-4" /> Video day
         </Link>
       </div>
     </Card>
