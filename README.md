@@ -1,33 +1,21 @@
-# biblically-schooled
+# Biblically Schooled
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+A calm, Christ-centered homeschool app for a family teaching several young
+children at once: open it, see what to do today, teach, and check it off.
 
-## Built with v0
+- **Today** — one screen: shared Bible lesson, each child's literacy & math, materials, a rotation plan, and Full / Standard / Minimum / Easy days
+- **36-week curriculum** — 4 Bible units, Pre-K / K / 1st literacy and math pathways, rotating science, art, social studies, life skills
+- **Flexible calendar** — lessons move only when school happens; "We're starting again" after a break
+- **Print My Week** — validated, duplicate-free worksheets with answer keys; separate Pre-K copies
+- **Progress by skill**, **kid view**, and a **Family Learning** module on autism and sibling understanding
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
-
-[Continue working on v0 →](https://v0.app/chat/projects/prj_f0jya7CepFlaoYoMzRN4RurTPTly)
-
-## Getting Started
-
-First, run the development server:
+Docs: [Parent quick start](docs/PARENT-GUIDE.md) · [Audit](docs/AUDIT.md) · [Architecture](docs/ARCHITECTURE.md) ·
+[Scope & sequence](docs/SCOPE-AND-SEQUENCE.md) · [Testing](docs/TESTING.md) · [Deployment](docs/DEPLOYMENT.md)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+npm ci && npm run dev      # http://localhost:3000
+npm test                   # unit tests
+npm run test:e2e           # build + browser tests
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+This repository is linked to [v0](https://v0.app/chat/projects/prj_f0jya7CepFlaoYoMzRN4RurTPTly); merges to `main` deploy automatically.

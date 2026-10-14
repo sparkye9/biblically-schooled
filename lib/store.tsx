@@ -1,458 +1,188 @@
 'use client'
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react'
-import * as seed from './seed'
-import { getSchoolCalendarStatus, type SchoolCalendarStatus } from './school-calendar'
-import type {
-  Assignment,
-  Child,
-  ChildColor,
-  CurriculumWeek,
-  Household,
-  Lesson,
-  ParentNote,
-  PausedWeek,
-  ReadAloudBook,
-  Resource,
-  Skill,
-  SkillStatus,
-  SupplyItem,
-} from './types'
-import type { BackupData } from './data-export'
-
-// Bumped: corrected seed lesson data (math/science lessons pointed at the
-// wrong interactive activity) needs to reach everyone, not just new saves.
-const STORAGE_KEY = 'biblically-schooled-v5'
-
-interface State {
-  households: Household[]
-  children: Child[]
-  weeks: CurriculumWeek[]
-  lessons: Lesson[]
-  assignments: Assignment[]
-  skills: Skill[]
-  resources: Resource[]
-  readAloud: ReadAloudBook[]
-  supplies: SupplyItem[]
-  parentNotes: ParentNote[]
-  currentView: string // 'shared' | householdId
-  activeMomHouseholdId: string
-  /** ISO yyyy-mm-dd — the first school day of the year; week/day track from here */
-  schoolYearStartDate: string
-  /** scheduled breaks — the calendar skips these days without losing your place */
-  pausedWeeks: PausedWeek[]
-  /** optional PIN required to view the app; unset means no lock */
-  viewPin?: string
-  /** ids the user explicitly deleted, so seed content never resurrects them */
-  deletedIds: string[]
-}
-
-const initialState: State = {
-  households: seed.households,
-  children: seed.children,
-  weeks: seed.weeks,
-  lessons: seed.lessons,
-  assignments: seed.assignments,
-  skills: seed.skills,
-  resources: seed.resources,
-  readAloud: seed.readAloud,
-  supplies: seed.supplies,
-  parentNotes: seed.parentNotes,
-  currentView: 'h-venessa',
-  activeMomHouseholdId: 'h-venessa',
-  schoolYearStartDate: seed.SCHOOL_YEAR_START_DATE,
-  pausedWeeks: seed.pausedWeeks,
-  viewPin: undefined,
-  deletedIds: [],
-}
-
-interface StoreContext extends State {
-  /** today's week number and day name, kept in sync with the real calendar */
-  currentWeek: number
-  currentDay: string
-  /** full detail behind currentWeek/currentDay — break status, upcoming flag, etc. */
-  schoolStatus: SchoolCalendarStatus
-  setView: (view: string) => void
-  setActiveMom: (householdId: string) => void
-  setSchoolYearStartDate: (date: string) => void
-  addPausedWeek: (input: Omit<PausedWeek, 'id'>) => string
-  updatePausedWeek: (id: string, patch: Partial<Omit<PausedWeek, 'id'>>) => void
-  removePausedWeek: (id: string) => void
-  toggleAssignment: (assignmentId: string) => void
-  setChildMode: (childId: string, on: boolean) => void
-  setLowDistraction: (childId: string, on: boolean) => void
-  setSkillStatus: (skillId: string, status: SkillStatus) => void
-  addHousehold: (name: string, momName: string) => string
-  addChild: (input: {
-    name: string
-    grade: string
-    gradeBand: Child['gradeBand']
-    householdId: string
-    color: ChildColor
-  }) => string
-  addWeek: (week: Omit<CurriculumWeek, 'id' | 'number'>) => number
-  updateWeek: (id: string, patch: Partial<CurriculumWeek>) => void
-  addLesson: (lesson: Omit<Lesson, 'id'>) => string
-  updateLesson: (id: string, patch: Partial<Lesson>) => void
-  deleteLesson: (id: string) => void
-  setLessonAssignments: (lessonId: string, childIds: string[]) => void
-  addResource: (input: Omit<Resource, 'id'>) => void
-  toggleResourceSaved: (resourceId: string) => void
-  deleteResource: (resourceId: string) => void
-  toggleSupply: (supplyId: string) => void
-  addReadAloud: (title: string, householdId: string) => void
-  setReadAloudStatus: (bookId: string, status: ReadAloudBook['status']) => void
-  deleteReadAloud: (bookId: string) => void
-  saveNote: (note: Omit<ParentNote, 'id'>) => void
-  assignLesson: (lessonId: string, childId: string) => void
-  setViewPin: (pin: string | null) => void
-  reset: () => void
-  restoreFromBackup: (backup: BackupData) => void
-}
-
-const Ctx = createContext<StoreContext | null>(null)
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import type { DayMode, Grade } from './curriculum/types'
+import type { LearnerAdjustments } from './plan/day-plan'
+import { isoDate, type WeeklySchedule } from './plan/schedule'
+import { initialState } from './state/defaults'
+import * as logic from './state/logic'
+import { STORAGE_KEY, loadState, migrateLegacy, normalize } from './state/migrate'
+import type { CustomActivity, FamilyState, RestartEvent, SkillStatus, StoredChild } from './state/types'
+import type { ChildColor, GradeBand, ParentNote, ReadAloudBook, Resource } from './types'
 
 /**
- * Merge a previously-saved state with the current seed. The user's saved data
- * (edits, added items, progress) is preserved, and any seed items that are
- * missing from the saved copy (e.g. newly added households, lessons, worksheets)
- * are merged in by id so new curriculum content always appears. Seed items the
- * user explicitly deleted are tracked in `deletedIds` so they aren't confused
- * with items merely missing-because-never-saved and silently resurrected.
+ * App store: React glue around the pure functions in lib/state. State lives in
+ * localStorage under `biblically-schooled-v6`; the previous `-v5` copy is read
+ * once, migrated, and left in place untouched as a safety net.
  */
-function mergeState(seed: State, saved: Partial<State>): State {
-  const byId = <T extends { id: string }>(items: T[], ids: Set<string>) =>
-    items.filter((i) => !ids.has(i.id))
-  const savedIds = (arr: { id: string }[] | undefined) =>
-    new Set((arr ?? []).map((i) => i.id))
 
-  const arrays: (keyof State)[] = [
-    'households',
-    'children',
-    'weeks',
-    'lessons',
-    'assignments',
-    'skills',
-    'resources',
-    'readAloud',
-    'supplies',
-    'parentNotes',
-  ]
-
-  const deletedIds = new Set([...(seed.deletedIds ?? []), ...(saved.deletedIds ?? [])])
-
-  const next: State = { ...seed, ...saved, deletedIds: [...deletedIds] }
-  for (const key of arrays) {
-    const seedArr = seed[key] as { id: string }[]
-    const savedArr = (saved[key] as { id: string }[] | undefined) ?? []
-    const have = savedIds(savedArr)
-    const missing = byId(seedArr, new Set([...have, ...deletedIds]))
-    ;(next as unknown as Record<string, unknown>)[key] = [...savedArr, ...missing]
-  }
-  return next
+export interface BackupFile {
+  app: 'biblically-schooled'
+  version: 6
+  exportedAt: string
+  state: FamilyState
 }
 
-function uid(prefix: string) {
-  return `${prefix}-${Math.random().toString(36).slice(2, 9)}`
+interface Actions {
+  setView: (view: string) => void
+  setActiveMom: (householdId: string) => void
+  toggle: (key: string) => void
+  finishDay: () => void
+  chooseMode: (mode: DayMode, easy?: boolean) => void
+  teachAnyway: () => void
+  setDefaultMode: (mode: DayMode) => void
+  restart: (choice: RestartEvent['choice']) => void
+  setPointer: (index: number) => void
+  setSkill: (childId: string, skillId: string, status: SkillStatus) => void
+  setSchedule: (schedule: WeeklySchedule) => void
+  setStartDate: (iso: string) => void
+  addBreak: (b: { startDate: string; endDate: string; label?: string }) => void
+  removeBreak: (id: string) => void
+  updateChild: (id: string, patch: Partial<StoredChild>) => void
+  setAdjust: (childId: string, adjust: LearnerAdjustments) => void
+  addHousehold: (name: string, momName: string) => string
+  addChild: (input: { name: string; grade: string; gradeBand: GradeBand; householdId: string; color: ChildColor }) => string
+  removeChild: (id: string) => void
+  addCustomActivity: (a: Omit<CustomActivity, 'id' | 'done'>) => void
+  toggleCustomActivity: (id: string, childId: string) => void
+  removeCustomActivity: (id: string) => void
+  addReadAloud: (title: string) => void
+  setReadAloudStatus: (id: string, status: ReadAloudBook['status']) => void
+  removeReadAloud: (id: string) => void
+  saveNote: (note: Omit<ParentNote, 'id'>) => void
+  addResource: (r: Omit<Resource, 'id'>) => void
+  removeResource: (id: string) => void
+  toggleFamilyLesson: (id: string) => void
+  setPrefs: (p: Partial<Pick<FamilyState, 'preferSeasonal' | 'printColor' | 'viewPin' | 'parentPin'>>) => void
+  dismiss: (id: string) => void
+  exportBackup: () => BackupFile
+  importBackup: (json: unknown) => void
+  reset: () => void
 }
+
+export interface StoreValue extends FamilyState, Actions {
+  hydrated: boolean
+  /** Today's local date, kept fresh while the tab is open. */
+  todayIso: string
+  now: Date
+  childrenInView: StoredChild[]
+}
+
+const Ctx = createContext<StoreValue | null>(null)
+
+const uid = (p: string) => `${p}-${Math.random().toString(36).slice(2, 9)}`
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<State>(initialState)
+  const [state, setState] = useState<FamilyState>(() => initialState())
   const [hydrated, setHydrated] = useState(false)
-  // ticks once a minute so a tab left open overnight rolls to the next school day on its own
   const [now, setNow] = useState(() => new Date())
+  const todayIso = isoDate(now)
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        setState((s) => mergeState(s, parsed))
-      }
-    } catch {
-      /* ignore */
-    }
+    setState(loadState(window.localStorage, new Date()))
     setHydrated(true)
-  }, [])
-
-  useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 60_000)
     return () => clearInterval(t)
   }, [])
 
+  // Move past a lesson day that was taught on an earlier date (never past a missed one).
+  useEffect(() => {
+    if (hydrated) setState((s) => logic.rollover(s, todayIso))
+  }, [hydrated, todayIso])
+
   useEffect(() => {
     if (!hydrated) return
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
     } catch {
-      /* ignore */
+      /* storage full or unavailable — the app keeps working in memory */
     }
   }, [state, hydrated])
 
-  const api = useMemo<StoreContext>(() => {
-    const patch = (p: Partial<State>) => setState((s) => ({ ...s, ...p }))
+  const update = useCallback((fn: (s: FamilyState) => FamilyState) => setState(fn), [])
 
-    const rawStatus = getSchoolCalendarStatus(state.schoolYearStartDate, state.pausedWeeks, now)
-    const maxWeek = state.weeks.length ? Math.max(...state.weeks.map((w) => w.number)) : 1
-    const schoolStatus: SchoolCalendarStatus = {
-      ...rawStatus,
-      weekNumber: Math.min(Math.max(rawStatus.weekNumber, 1), maxWeek),
-    }
-
+  const value = useMemo<StoreValue>(() => {
+    const childrenInView =
+      state.currentView === 'shared' ? state.children : state.children.filter((c) => c.householdId === state.currentView)
     return {
       ...state,
-      currentWeek: schoolStatus.weekNumber,
-      currentDay: schoolStatus.day,
-      schoolStatus,
-      setView: (view) => patch({ currentView: view }),
-      setActiveMom: (householdId) =>
-        setState((s) => ({
-          ...s,
-          activeMomHouseholdId: householdId,
-          currentView: householdId,
-        })),
-      setSchoolYearStartDate: (date) => patch({ schoolYearStartDate: date }),
-      addPausedWeek: (input) => {
-        const id = uid('pw')
-        setState((s) => ({
-          ...s,
-          pausedWeeks: [...s.pausedWeeks, { ...input, id }],
-        }))
-        return id
-      },
-      updatePausedWeek: (id, changes) =>
-        setState((s) => ({
-          ...s,
-          pausedWeeks: s.pausedWeeks.map((p) => (p.id === id ? { ...p, ...changes } : p)),
-        })),
-      removePausedWeek: (id) =>
-        setState((s) => ({
-          ...s,
-          pausedWeeks: s.pausedWeeks.filter((p) => p.id !== id),
-        })),
-      toggleAssignment: (assignmentId) =>
-        setState((s) => ({
-          ...s,
-          assignments: s.assignments.map((a) =>
-            a.id === assignmentId
-              ? {
-                  ...a,
-                  status: a.status === 'done' ? 'todo' : 'done',
-                  completedAt:
-                    a.status === 'done' ? undefined : new Date().toISOString(),
-                }
-              : a,
-          ),
-        })),
-      setChildMode: (childId, on) =>
-        setState((s) => ({
-          ...s,
-          children: s.children.map((c) =>
-            c.id === childId ? { ...c, childMode: on } : c,
-          ),
-        })),
-      setLowDistraction: (childId, on) =>
-        setState((s) => ({
-          ...s,
-          children: s.children.map((c) =>
-            c.id === childId ? { ...c, lowDistraction: on } : c,
-          ),
-        })),
-      setSkillStatus: (skillId, status) =>
-        setState((s) => ({
-          ...s,
-          skills: s.skills.map((sk) =>
-            sk.id === skillId ? { ...sk, status } : sk,
-          ),
-        })),
+      hydrated,
+      todayIso,
+      now,
+      childrenInView,
+      setView: (view) => update((s) => ({ ...s, currentView: view })),
+      setActiveMom: (id) => update((s) => ({ ...s, activeMomHouseholdId: id, currentView: id })),
+      toggle: (key) => update((s) => logic.toggleCompletion(s, key, todayIso)),
+      finishDay: () => update((s) => logic.finishDay(s, todayIso)),
+      chooseMode: (mode, easy = false) => update((s) => logic.chooseMode(s, todayIso, mode, easy)),
+      teachAnyway: () => update((s) => logic.teachAnyway(s, todayIso)),
+      setDefaultMode: (mode) => update((s) => ({ ...s, defaultMode: mode })),
+      restart: (choice) => update((s) => logic.restart(s, choice, todayIso)),
+      setPointer: (index) => update((s) => logic.setPointer(s, index)),
+      setSkill: (childId, skillId, status) => update((s) => logic.setSkill(s, childId, skillId, status)),
+      setSchedule: (schedule) => update((s) => ({ ...s, schedule })),
+      setStartDate: (iso) => update((s) => ({ ...s, schoolYearStartDate: iso })),
+      addBreak: (b) => update((s) => ({ ...s, breaks: [...s.breaks, { ...b, id: uid('br') }] })),
+      removeBreak: (id) => update((s) => ({ ...s, breaks: s.breaks.filter((b) => b.id !== id) })),
+      updateChild: (id, patch) => update((s) => ({ ...s, children: s.children.map((c) => (c.id === id ? { ...c, ...patch } : c)) })),
+      setAdjust: (childId, adjust) =>
+        update((s) => ({ ...s, children: s.children.map((c) => (c.id === childId ? { ...c, adjust } : c)) })),
       addHousehold: (name, momName) => {
         const id = uid('h')
-        setState((s) => ({
+        update((s) => ({
           ...s,
-          households: [
-            ...s.households,
-            {
-              id,
-              name: name || `${momName}'s Homeschool`,
-              momName,
-              momInitial: momName.charAt(0).toUpperCase() || 'M',
-            },
-          ],
+          households: [...s.households, { id, name: name || `${momName}'s Homeschool`, momName, momInitial: momName.charAt(0).toUpperCase() || 'M' }],
         }))
         return id
       },
       addChild: (input) => {
         const id = uid('c')
-        setState((s) => ({
-          ...s,
-          children: [
-            ...s.children,
-            {
-              id,
-              name: input.name,
-              grade: input.grade,
-              gradeBand: input.gradeBand,
-              householdId: input.householdId,
-              color: input.color,
-              childMode: false,
-              lowDistraction: false,
-            },
-          ],
-        }))
+        update((s) => ({ ...s, children: [...s.children, { ...input, id, childMode: false, lowDistraction: false }] }))
         return id
       },
-      addWeek: (week) => {
-        const nextNumber = Math.max(0, ...state.weeks.map((w) => w.number)) + 1
-        const id = uid('w')
-        setState((s) => ({
+      removeChild: (id) => update((s) => ({ ...s, children: s.children.filter((c) => c.id !== id) })),
+      addCustomActivity: (a) => update((s) => ({ ...s, customActivities: [...s.customActivities, { ...a, id: uid('ca'), done: {} }] })),
+      toggleCustomActivity: (id, childId) =>
+        update((s) => ({
           ...s,
-          weeks: [...s.weeks, { ...week, id, number: nextNumber }],
-        }))
-        return nextNumber
-      },
-      updateWeek: (id, patch) =>
-        setState((s) => ({
-          ...s,
-          weeks: s.weeks.map((w) => (w.id === id ? { ...w, ...patch } : w)),
-        })),
-      addLesson: (lesson) => {
-        const id = uid('l')
-        setState((s) => ({
-          ...s,
-          lessons: [...s.lessons, { ...lesson, id }],
-        }))
-        return id
-      },
-      updateLesson: (id, patch) =>
-        setState((s) => ({
-          ...s,
-          lessons: s.lessons.map((l) => (l.id === id ? { ...l, ...patch } : l)),
-        })),
-      deleteLesson: (id) =>
-        setState((s) => ({
-          ...s,
-          lessons: s.lessons.filter((l) => l.id !== id),
-          assignments: s.assignments.filter((a) => a.lessonId !== id),
-          deletedIds: [...s.deletedIds, id],
-        })),
-      setLessonAssignments: (lessonId, childIds) =>
-        setState((s) => ({
-          ...s,
-          assignments: [
-            ...s.assignments.filter((a) => a.lessonId !== lessonId),
-            ...childIds.map((childId) => ({
-              id: uid('a'),
-              lessonId,
-              childId,
-              status: 'todo' as const,
-            })),
-          ],
-        })),
-      addResource: (input) =>
-        setState((s) => ({
-          ...s,
-          resources: [{ ...input, id: uid('r') }, ...s.resources],
-        })),
-      toggleResourceSaved: (resourceId) =>
-        setState((s) => ({
-          ...s,
-          resources: s.resources.map((r) =>
-            r.id === resourceId ? { ...r, saved: !r.saved } : r,
+          customActivities: s.customActivities.map((a) =>
+            a.id === id ? { ...a, done: { ...a.done, [childId]: a.done[childId] ? undefined : todayIso } } : a,
           ),
         })),
-      deleteResource: (resourceId) =>
-        setState((s) => ({
-          ...s,
-          resources: s.resources.filter((r) => r.id !== resourceId),
-          deletedIds: [...s.deletedIds, resourceId],
-        })),
-      toggleSupply: (supplyId) =>
-        setState((s) => ({
-          ...s,
-          supplies: s.supplies.map((sp) =>
-            sp.id === supplyId ? { ...sp, have: !sp.have } : sp,
-          ),
-        })),
-      addReadAloud: (title, householdId) =>
-        setState((s) => ({
-          ...s,
-          readAloud: [
-            {
-              id: uid('b'),
-              title,
-              status: 'currently-reading',
-              householdId,
-            },
-            ...s.readAloud,
-          ],
-        })),
-      setReadAloudStatus: (bookId, status) =>
-        setState((s) => ({
-          ...s,
-          readAloud: s.readAloud.map((b) => (b.id === bookId ? { ...b, status } : b)),
-        })),
-      deleteReadAloud: (bookId) =>
-        setState((s) => ({
-          ...s,
-          readAloud: s.readAloud.filter((b) => b.id !== bookId),
-          deletedIds: [...s.deletedIds, bookId],
-        })),
-      saveNote: (note) =>
-        setState((s) => ({
-          ...s,
-          parentNotes: [{ ...note, id: uid('n') }, ...s.parentNotes],
-        })),
-      assignLesson: (lessonId, childId) =>
-        setState((s) => {
-          const exists = s.assignments.some(
-            (a) => a.lessonId === lessonId && a.childId === childId,
-          )
-          if (exists) return s
-          return {
-            ...s,
-            assignments: [
-              ...s.assignments,
-              { id: uid('a'), lessonId, childId, status: 'todo' },
-            ],
-          }
+      removeCustomActivity: (id) => update((s) => ({ ...s, customActivities: s.customActivities.filter((a) => a.id !== id) })),
+      addReadAloud: (title) =>
+        update((s) => ({ ...s, readAloud: [{ id: uid('b'), title, status: 'currently-reading', householdId: s.activeMomHouseholdId }, ...s.readAloud] })),
+      setReadAloudStatus: (id, status) => update((s) => ({ ...s, readAloud: s.readAloud.map((b) => (b.id === id ? { ...b, status } : b)) })),
+      removeReadAloud: (id) => update((s) => ({ ...s, readAloud: s.readAloud.filter((b) => b.id !== id) })),
+      saveNote: (note) => update((s) => ({ ...s, parentNotes: [{ ...note, id: uid('n') }, ...s.parentNotes] })),
+      addResource: (r) => update((s) => ({ ...s, resources: [{ ...r, id: uid('r') }, ...s.resources] })),
+      removeResource: (id) => update((s) => ({ ...s, resources: s.resources.filter((r) => r.id !== id) })),
+      toggleFamilyLesson: (id) =>
+        update((s) => {
+          const familyModule = { ...s.familyModule }
+          if (familyModule[id]) delete familyModule[id]
+          else familyModule[id] = todayIso
+          return { ...s, familyModule }
         }),
-      setViewPin: (pin) => patch({ viewPin: pin ? pin : undefined }),
-      reset: () => {
-        localStorage.removeItem(STORAGE_KEY)
-        setState(initialState)
-      },
-      restoreFromBackup: (backup) => {
-        const restored: State = {
-          households: backup.households,
-          children: backup.children,
-          weeks: backup.weeks,
-          lessons: backup.lessons,
-          assignments: backup.assignments,
-          skills: backup.skills,
-          resources: backup.resources,
-          readAloud: backup.readAloud,
-          supplies: backup.supplies,
-          parentNotes: backup.parentNotes,
-          pausedWeeks: backup.pausedWeeks,
-          schoolYearStartDate: backup.schoolYearStartDate,
-          currentView: state.currentView,
-          activeMomHouseholdId: state.activeMomHouseholdId,
-          viewPin: state.viewPin,
-          deletedIds: [],
+      setPrefs: (p) => update((s) => ({ ...s, ...p })),
+      dismiss: (id) => update((s) => ({ ...s, dismissed: [...new Set([...s.dismissed, id])] })),
+      exportBackup: () => ({ app: 'biblically-schooled', version: 6, exportedAt: new Date().toISOString(), state }),
+      importBackup: (json) => {
+        const data = json as Record<string, unknown>
+        if (data && data.app === 'biblically-schooled' && data.state) {
+          update(() => normalize(data.state as Partial<FamilyState>))
+        } else if (data && Array.isArray(data.children)) {
+          // A backup file from the previous version of the app.
+          update(() => migrateLegacy(data as Parameters<typeof migrateLegacy>[0]))
+        } else {
+          throw new Error('This file is not a Biblically Schooled backup.')
         }
-        setState(restored)
       },
+      reset: () => update(() => initialState()),
     }
-  }, [state, now])
+  }, [state, hydrated, todayIso, now, update])
 
-  return <Ctx.Provider value={api}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 
 export function useStore() {
@@ -461,10 +191,6 @@ export function useStore() {
   return ctx
 }
 
-// ---- Selectors / helpers ----------------------------------------------------
-
-export function useChildrenInView() {
-  const { children, currentView } = useStore()
-  if (currentView === 'shared') return children
-  return children.filter((c) => c.householdId === currentView)
+export function gradeLabel(g: Grade) {
+  return g === 'pre-k' ? 'Pre-K' : g === 'k' ? 'Kindergarten' : '1st Grade'
 }

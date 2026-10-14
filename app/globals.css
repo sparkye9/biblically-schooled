@@ -39,6 +39,9 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-gold: var(--gold);
+  --color-sage-soft: var(--sage-soft);
+  --color-terracotta-soft: var(--terracotta-soft);
 
   /* Activity type accents */
   --color-momtime: var(--momtime);
@@ -69,66 +72,64 @@
   color-scheme: light;
   --radius: 1rem;
 
-  /* Premium Christian Homeschool Palette */
-  /* Warm cream base */
-  --background: oklch(0.985 0.008 92);        /* Soft cream #F9F7F4 */
-  --foreground: oklch(0.25 0.02 55);          /* Deep charcoal */
-  --card: oklch(0.998 0.001 0);               /* Crisp white */
-  --card-foreground: oklch(0.25 0.02 55);
-  --popover: oklch(0.998 0.001 0);
-  --popover-foreground: oklch(0.25 0.02 55);
+  /* Warm homeschool palette: cream, sage green, warm beige, soft terracotta, muted gold */
+  --background: oklch(0.975 0.014 85);        /* cream */
+  --foreground: oklch(0.27 0.02 60);          /* warm charcoal */
+  --card: oklch(0.993 0.006 85);
+  --card-foreground: oklch(0.27 0.02 60);
+  --popover: oklch(0.993 0.006 85);
+  --popover-foreground: oklch(0.27 0.02 60);
 
-  /* Deep evergreen primary */
-  --primary: oklch(0.35 0.06 160);            /* Deep evergreen #2D4C3E */
-  --primary-foreground: oklch(0.98 0.01 90);
+  --primary: oklch(0.47 0.06 145);            /* deep sage (AA on cream) */
+  --primary-foreground: oklch(0.985 0.01 85);
 
-  /* Muted gold secondary */
-  --secondary: oklch(0.65 0.08 80);           /* Muted gold #B8956A */
-  --secondary-foreground: oklch(0.25 0.02 55);
+  --secondary: oklch(0.92 0.03 85);           /* warm beige */
+  --secondary-foreground: oklch(0.32 0.03 60);
 
-  --muted: oklch(0.92 0.008 84);
-  --muted-foreground: oklch(0.50 0.03 65);
+  --muted: oklch(0.94 0.015 80);
+  --muted-foreground: oklch(0.47 0.025 60);
 
-  /* Warm accent */
-  --accent: oklch(0.68 0.06 25);              /* Warm terracotta */
-  --accent-foreground: oklch(0.98 0.01 90);
+  --accent: oklch(0.66 0.1 40);               /* soft terracotta */
+  --accent-foreground: oklch(0.985 0.01 85);
 
-  --destructive: oklch(0.58 0.16 28);
+  --gold: oklch(0.74 0.1 85);                 /* muted gold */
+  --sage-soft: oklch(0.9 0.04 140);
+  --terracotta-soft: oklch(0.92 0.04 45);
 
-  --border: oklch(0.88 0.01 84);
-  --input: oklch(0.92 0.008 84);
-  --ring: oklch(0.35 0.06 160);
+  --destructive: oklch(0.55 0.15 28);
+  --border: oklch(0.88 0.018 80);
+  --input: oklch(0.9 0.015 80);
+  --ring: oklch(0.47 0.06 145);
 
-  --chart-1: oklch(0.35 0.06 160);   /* evergreen */
-  --chart-2: oklch(0.65 0.08 80);    /* muted gold */
-  --chart-3: oklch(0.68 0.06 25);    /* terracotta */
-  --chart-4: oklch(0.72 0.05 100);   /* sage green */
-  --chart-5: oklch(0.55 0.04 60);    /* warm brown */
+  --chart-1: oklch(0.47 0.06 145);
+  --chart-2: oklch(0.74 0.1 85);
+  --chart-3: oklch(0.66 0.1 40);
+  --chart-4: oklch(0.7 0.05 140);
+  --chart-5: oklch(0.55 0.04 60);
 
-  /* Activity types */
-  --momtime: oklch(0.35 0.06 160);            /* evergreen (focused teaching) */
-  --momtime-foreground: oklch(0.98 0.01 90);
-  --independent: oklch(0.72 0.05 100);        /* sage green */
-  --independent-foreground: oklch(0.25 0.02 55);
-  --handson: oklch(0.65 0.08 80);             /* muted gold */
-  --handson-foreground: oklch(0.25 0.02 55);
-  --optional: oklch(0.75 0.04 84);            /* soft taupe */
-  --optional-foreground: oklch(0.40 0.02 65);
+  --momtime: oklch(0.47 0.06 145);
+  --momtime-foreground: oklch(0.985 0.01 85);
+  --independent: oklch(0.7 0.05 140);
+  --independent-foreground: oklch(0.27 0.02 60);
+  --handson: oklch(0.74 0.1 85);
+  --handson-foreground: oklch(0.27 0.02 60);
+  --optional: oklch(0.82 0.03 80);
+  --optional-foreground: oklch(0.4 0.02 65);
 
-  /* Child accents */
-  --child-alijah: oklch(0.52 0.06 240);       /* muted slate blue */
-  --child-olori: oklch(0.65 0.08 30);         /* warm coral */
-  --child-seraiah: oklch(0.60 0.06 300);      /* soft mauve */
-  --child-amelia: oklch(0.68 0.06 45);        /* warm sienna */
+  /* Child identity accents (unchanged so each child keeps their color) */
+  --child-alijah: oklch(0.52 0.06 240);
+  --child-olori: oklch(0.6 0.1 30);
+  --child-seraiah: oklch(0.55 0.07 300);
+  --child-amelia: oklch(0.6 0.08 60);
 
-  --sidebar: oklch(0.965 0.008 92);
-  --sidebar-foreground: oklch(0.25 0.02 55);
-  --sidebar-primary: oklch(0.35 0.06 160);
-  --sidebar-primary-foreground: oklch(0.98 0.01 90);
-  --sidebar-accent: oklch(0.90 0.008 84);
-  --sidebar-accent-foreground: oklch(0.35 0.06 160);
-  --sidebar-border: oklch(0.88 0.01 84);
-  --sidebar-ring: oklch(0.35 0.06 160);
+  --sidebar: oklch(0.955 0.02 85);
+  --sidebar-foreground: oklch(0.27 0.02 60);
+  --sidebar-primary: oklch(0.47 0.06 145);
+  --sidebar-primary-foreground: oklch(0.985 0.01 85);
+  --sidebar-accent: oklch(0.92 0.03 85);
+  --sidebar-accent-foreground: oklch(0.47 0.06 145);
+  --sidebar-border: oklch(0.88 0.018 80);
+  --sidebar-ring: oklch(0.47 0.06 145);
 }
 
 @layer base {
@@ -138,5 +139,38 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: 'ss01';
+  }
+}
+
+/* ---------- Printing ---------- */
+@page {
+  size: letter;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .ws-page {
+    break-after: page;
+    page-break-after: always;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+  .print-sheet {
+    break-after: page;
+    page-break-after: always;
+  }
+}
+
+@media screen {
+  .ws-page {
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12), 0 8px 24px rgb(0 0 0 / 0.06);
+    margin-bottom: 1.5rem;
   }
 }

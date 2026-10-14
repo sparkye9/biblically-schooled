@@ -5,10 +5,17 @@ import { speak } from '@/lib/speech'
 import { accent, accentBg } from '@/lib/ui'
 import { Volume2, RotateCcw, PartyPopper } from 'lucide-react'
 
-const WORDS = ['cat', 'sat', 'map', 'pan', 'tap']
-const TILES = ['c', 'a', 't', 's', 'm', 'p', 'n']
+const DEFAULT_WORDS = ['cat', 'sat', 'map', 'pan', 'tap']
 
-export function WordBuilder({ color }: { color: string }) {
+/**
+ * Build a word from letter tiles. Tiles are NOT spoken: text-to-speech says
+ * letter names ("tee"), which contradicts building by sound (/t/). Only the
+ * finished whole word is spoken, which speech engines say reliably.
+ */
+export function WordBuilder({ color, words }: { color: string; words?: string[] }) {
+  const usable = (words ?? []).filter((w) => /^[a-z]{2,5}$/.test(w))
+  const WORDS = usable.length >= 2 ? usable.slice(0, 6) : DEFAULT_WORDS
+  const TILES = [...new Set(WORDS.join('').split(''))].sort()
   const [target, setTarget] = useState(WORDS[0])
   const [built, setBuilt] = useState<string[]>([])
   const complete = built.join('') === target
@@ -17,7 +24,6 @@ export function WordBuilder({ color }: { color: string }) {
     if (built.length >= target.length) return
     const next = [...built, letter]
     setBuilt(next)
-    speak(letter)
     if (next.join('') === target) {
       setTimeout(() => speak(target), 350)
     }
