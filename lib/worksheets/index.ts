@@ -1,8 +1,10 @@
 import { getBibleWeek } from '../curriculum/bible'
-import { literacyLesson, mathLesson, bibleLesson, type WorksheetSlot } from '../curriculum/lessons'
+import { bibleLesson, handwritingLesson, literacyLesson, mathLesson, type WorksheetSlot } from '../curriculum/lessons'
 import { getLiteracyWeek } from '../curriculum/literacy'
 import { getMathWeek, type MathGen } from '../curriculum/math'
-import type { CoreSubject, Grade, LessonDay } from '../curriculum/types'
+import { getHandwritingWeek } from '../curriculum/handwriting'
+import type { Grade, LessonDay, PrintSubject } from '../curriculum/types'
+import { handwritingBlocks } from './handwriting-gen'
 import { bibleBlocks, literacyBlocks } from './literacy-gen'
 import { mathBlocks, type GenOut } from './math-gen'
 import { hashString, rng } from './rng'
@@ -16,11 +18,20 @@ import type { WorksheetSpec } from './types'
  */
 
 const GRADES: Grade[] = ['pre-k', 'k', '1st']
-const SUBJECTS: CoreSubject[] = ['bible', 'literacy', 'math']
+const SUBJECTS: PrintSubject[] = ['bible', 'literacy', 'math', 'handwriting']
 const DAYS: LessonDay[] = [0, 1, 2, 3]
 
-function lessonFor(week: number, day: LessonDay, grade: Grade, subject: CoreSubject) {
-  return subject === 'bible' ? bibleLesson(week, day, grade) : subject === 'literacy' ? literacyLesson(week, day, grade) : mathLesson(week, day, grade)
+function slotFor(week: number, day: LessonDay, grade: Grade, subject: PrintSubject): WorksheetSlot | null {
+  switch (subject) {
+    case 'bible':
+      return bibleLesson(week, day, grade).worksheet
+    case 'literacy':
+      return literacyLesson(week, day, grade).worksheet
+    case 'math':
+      return mathLesson(week, day, grade).worksheet
+    case 'handwriting':
+      return handwritingLesson(week, day, grade)?.worksheet ?? null
+  }
 }
 
 /** Content fingerprint used for duplicate detection (ignores titles/headers). */
@@ -56,6 +67,12 @@ function generate(slot: WorksheetSlot, attempt: number): WorksheetSpec {
     title = lw.title
     skill = lw.pattern
     objective = literacyLesson(week, day, grade).guide.objective
+  } else if (subject === 'handwriting') {
+    const hw = getHandwritingWeek(grade as 'pre-k' | 'k', week)
+    out = handwritingBlocks(grade as 'pre-k' | 'k', week, day, r)
+    title = hw.nameFocus ? 'My Name' : `Letters ${hw.letters.join(' ') || hw.review.join(' ')} · Numbers ${hw.numbers.join(' ')}`
+    skill = 'Letter & number formation'
+    objective = handwritingLesson(week, day, grade)!.guide.objective
   } else {
     const b = getBibleWeek(week)
     out = bibleBlocks(grade, week)
@@ -91,7 +108,7 @@ export function allWorksheets(): Map<string, WorksheetSpec> {
     for (let week = 1; week <= 36; week++) {
       for (const day of DAYS) {
         for (const subject of SUBJECTS) {
-          const slot = lessonFor(week, day, grade, subject).worksheet
+          const slot = slotFor(week, day, grade, subject)
           if (!slot) continue
           let spec = generate(slot, 0)
           // Bible pages are intentionally the same layout each week with new content.
@@ -114,11 +131,11 @@ export function getWorksheet(id: string): WorksheetSpec | undefined {
   return allWorksheets().get(id)
 }
 
-export function worksheetsForWeek(week: number, grade: Grade, subjects: CoreSubject[] = SUBJECTS): WorksheetSpec[] {
+export function worksheetsForWeek(week: number, grade: Grade, subjects: PrintSubject[] = SUBJECTS): WorksheetSpec[] {
   const out: WorksheetSpec[] = []
   for (const day of DAYS) {
     for (const subject of subjects) {
-      const slot = lessonFor(week, day, grade, subject).worksheet
+      const slot = slotFor(week, day, grade, subject)
       const ws = slot && getWorksheet(slot.id)
       if (ws) out.push(ws)
     }

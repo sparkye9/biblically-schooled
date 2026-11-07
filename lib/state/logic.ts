@@ -15,8 +15,18 @@ export function parseKey(key: string) {
   return { index: Number(i), childId, subject }
 }
 
-export function learnerOf(c: StoredChild): Learner {
-  return { id: c.id, name: c.name, grade: pathwayFor(c.gradeBand), color: c.color, adjust: c.adjust }
+/** The planner's view of a child. Pass the state to include skill statuses (for the fluency gate). */
+export function learnerOf(c: StoredChild, state?: Pick<FamilyState, 'skillStatus'>): Learner {
+  const statuses = state?.skillStatus[c.id] ?? {}
+  return {
+    id: c.id,
+    name: c.name,
+    grade: pathwayFor(c.gradeBand),
+    color: c.color,
+    adjust: c.adjust,
+    profile: c.profile,
+    demonstrated: Object.keys(statuses).filter((id) => statuses[id]?.status === 'independent'),
+  }
 }
 
 export function todayKind(state: FamilyState, todayIso: string): DayKind {
@@ -70,9 +80,9 @@ export function toggleCompletion(state: FamilyState, key: string, todayIso: stri
     // Gentle nudge: finishing an Introduce lesson marks its skills "introduced"
     // (never higher — mastery is only ever set by the parent).
     const child = state.children.find((ch) => ch.id === childId)
-    if (child && (subject === 'literacy' || subject === 'math') && !state.welcomeBackPending) {
+    if (child && (subject === 'literacy' || subject === 'math' || subject === 'handwriting') && !state.welcomeBackPending) {
       const pos = positionOf(index)
-      const lesson = lessonsFor(learnerOf(child), pos.week, pos.day).find((l) => l.subject === subject)
+      const lesson = lessonsFor(learnerOf(child, state), pos.week, pos.day).find((l) => l.subject === subject)
       if (lesson?.introduces.length) {
         const mine = { ...(skillStatus[childId] ?? {}) }
         for (const id of lesson.introduces) {
@@ -196,7 +206,7 @@ export function weeklySummary(state: FamilyState, childId: string, week: number)
   const child = state.children.find((c) => c.id === childId)
   const empty: WeeklySummary = { introduced: [], practiced: [], demonstrated: [], needsReview: [], lightlyCovered: [], notYetTaught: [], nextSteps: [], daysTaught: 0 }
   if (!child) return empty
-  const learner = learnerOf(child)
+  const learner = learnerOf(child, state)
   const skillIds = new Set<string>()
   const light = new Set<string>()
   let daysTaught = 0

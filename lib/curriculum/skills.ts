@@ -1,3 +1,5 @@
+import { getHandwritingWeek } from './handwriting'
+import { STRANDS, STRAND_LABEL, languageSkillId } from './language'
 import { LITERACY } from './literacy'
 import { MATH } from './math'
 import type { Grade, SkillDef } from './types'
@@ -18,6 +20,9 @@ export function literacySkillId(grade: Grade, week: number) {
 }
 export function mathSkillId(grade: Grade, week: number) {
   return `${grade}-math-w${week}`
+}
+export function handwritingSkillId(grade: Grade, week: number) {
+  return `${grade}-hw-w${week}`
 }
 export function hfwSkillId(grade: Grade, word: string) {
   return `${grade}-hfw-${slug(word)}`
@@ -60,7 +65,24 @@ function build(): SkillDef[] {
         strand: m.strand,
       })
     }
+    if (grade !== '1st') {
+      for (let week = 1; week <= 36; week++) {
+        const hw = getHandwritingWeek(grade, week)
+        out.push({
+          id: handwritingSkillId(grade, week),
+          grade,
+          track: 'handwriting',
+          name: hw.nameFocus ? 'Writes own name' : `Forms ${hw.letters.join(' ')}${hw.numbers.length ? ` and ${hw.numbers.join(', ')}` : ''}`,
+          week,
+          strand: 'Letter & number formation',
+        })
+      }
+    }
   }
+  // Language skills follow the child's profile, not a grade; listed once under 1st grade.
+  STRANDS.forEach((strand, i) =>
+    out.push({ id: languageSkillId(strand), grade: '1st', track: 'language', name: STRAND_LABEL[strand], week: 1 + i, strand: 'Language' }),
+  )
   return out
 }
 

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Plus, Smile, Trash2 } from 'lucide-react'
 import type { Grade } from '@/lib/curriculum/types'
-import { pathwayFor } from '@/lib/plan/day-plan'
+import { pathwayFor, type LearningProfile } from '@/lib/plan/day-plan'
 import { positionOf } from '@/lib/plan/schedule'
 import { SUPPORT_OPTIONS, type StoredChild } from '@/lib/state/types'
 import { gradeLabel, useStore } from '@/lib/store'
@@ -93,6 +93,8 @@ function StudentCard({ child }: { child: StoredChild }) {
           )
         })}
       </div>
+
+      <ProfileToggles child={child} />
 
       <div className="mt-4">
         <p className="text-sm font-bold">Learning supports (reminders on Today and in kid view)</p>
@@ -191,5 +193,40 @@ function AddStudent() {
         </button>
       </form>
     </Card>
+  )
+}
+
+const PROFILE_OPTIONS: { key: keyof LearningProfile; label: string; help: string; grades?: Grade[] }[] = [
+  { key: 'handwriting', label: 'Handwriting & number formation', help: 'A short daily block: sky-writing, a tracing/copying page twice a week, fine-motor play.', grades: ['pre-k', 'k'] },
+  { key: 'languageBuilding', label: 'Language building', help: '5 minutes a day of picture talk, following directions, sentence building, retelling, and “why” questions — mostly games and conversation.' },
+  { key: 'accessSupports', label: 'Access supports in every lesson', help: 'Beginning–middle–end structure, one instruction at a time, a finished example first, movement breaks, picture choices, less copying. Same grade-level lessons.' },
+]
+
+function ProfileToggles({ child }: { child: StoredChild }) {
+  const store = useStore()
+  const base = pathwayFor(child.gradeBand)
+  const profile = child.profile ?? {}
+  const value = (k: keyof LearningProfile) => profile[k] ?? (k === 'handwriting' ? base === 'pre-k' || base === 'k' : false)
+  return (
+    <div className="mt-4">
+      <p className="text-sm font-bold">What the curriculum adds for {child.name}</p>
+      <p className="text-xs text-muted-foreground">These change how lessons are delivered and what is added — never the grade level. (Use the pathway settings above to change level or pace.)</p>
+      <div className="mt-2 grid gap-2 md:grid-cols-3">
+        {PROFILE_OPTIONS.filter((o) => !o.grades || o.grades.includes(base)).map((o) => (
+          <label key={o.key} className="flex gap-2 rounded-xl border border-border p-3 text-sm">
+            <input
+              type="checkbox"
+              checked={value(o.key)}
+              onChange={(e) => store.updateChild(child.id, { profile: { ...profile, [o.key]: e.target.checked } })}
+              className="mt-0.5 size-5 shrink-0 accent-[var(--primary)]"
+            />
+            <span>
+              <span className="font-semibold">{o.label}</span>
+              <span className="block text-xs text-muted-foreground">{o.help}</span>
+            </span>
+          </label>
+        ))}
+      </div>
+    </div>
   )
 }

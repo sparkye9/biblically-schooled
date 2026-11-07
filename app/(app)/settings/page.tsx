@@ -6,6 +6,7 @@ import type { DayMode, EnrichmentKind } from '@/lib/curriculum/types'
 import { MODE_INFO } from '@/lib/plan/day-plan'
 import { DEFAULT_SCHEDULE, ENRICHMENT_LABELS, WEEKDAY_LABELS, type DayKind, type WeeklySchedule } from '@/lib/plan/schedule'
 import { useStore } from '@/lib/store'
+import { cn } from '@/lib/utils'
 import { Card, PageHeader, Section } from '@/components/primitives'
 
 const input = 'rounded-lg border border-border bg-card px-3 py-2 text-sm'
@@ -58,7 +59,7 @@ function ScheduleSettings() {
             return (
               <div key={i} className="flex flex-wrap items-center gap-2 py-2 text-sm">
                 <span className="w-24 font-semibold">{WEEKDAY_LABELS[i]}</span>
-                <select aria-label={`${WEEKDAY_LABELS[i]} type`} value={d.kind} onChange={(e) => set(i, { kind: e.target.value as DayKind, enrichment: e.target.value === 'school' ? d.enrichment : null })} className={input}>
+                <select aria-label={`${WEEKDAY_LABELS[i]} type`} value={d.kind} onChange={(e) => set(i, { kind: e.target.value as DayKind, enrichment: e.target.value === 'school' ? d.enrichment : null, extra: e.target.value === 'school' ? d.extra : null })} className={input}>
                   <option value="school">Core learning</option>
                   <option value="coop">Co-op</option>
                   <option value="off">No school</option>
@@ -73,6 +74,25 @@ function ScheduleSettings() {
                     ))}
                   </select>
                 )}
+                {d.kind === 'school' && d.enrichment && (
+                  <select aria-label={`${WEEKDAY_LABELS[i]} second enrichment`} value={d.extra ?? ''} onChange={(e) => set(i, { extra: (e.target.value || null) as EnrichmentKind | null })} className={input}>
+                    <option value="">+ nothing else</option>
+                    {(Object.keys(ENRICHMENT_LABELS) as EnrichmentKind[])
+                      .filter((k) => k !== d.enrichment)
+                      .map((k) => (
+                        <option key={k} value={k}>
+                          + {ENRICHMENT_LABELS[k]}
+                        </option>
+                      ))}
+                  </select>
+                )}
+                <input
+                  aria-label={`${WEEKDAY_LABELS[i]} note`}
+                  value={d.note ?? ''}
+                  placeholder="Note (e.g. church 9–12)"
+                  onChange={(e) => set(i, { note: e.target.value || undefined })}
+                  className={cn(input, 'min-w-0 flex-1')}
+                />
               </div>
             )
           })}

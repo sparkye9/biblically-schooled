@@ -48,7 +48,7 @@ describe('Simulated family schedule', () => {
     s = L.chooseMode(s, today, 'minimum', true)
     const before = s.pointer
     s = teachDay(s, d(2026, 10, 19))
-    const plan = buildDayPlan({ index: before, mode: 'minimum', easy: true, learners: s.children.map(L.learnerOf), enrichment: 'science', date: d(2026, 10, 19) })
+    const plan = buildDayPlan({ index: before, mode: 'minimum', easy: true, learners: s.children.map((c) => L.learnerOf(c, s)), enrichment: 'science', date: d(2026, 10, 19) })
     expect(plan.estimate.totalMinutes).toBeLessThanOrEqual(25)
     expect(plan.children.every((c) => c.items.every((i) => !i.printToday))).toBe(true)
     // Switching modes later the same day does not erase what was done.
@@ -131,7 +131,7 @@ describe('Simulated family schedule', () => {
 
 describe('Day modes', () => {
   const s = initialState(d(2026, 10, 12))
-  const learners = s.children.map(L.learnerOf)
+  const learners = s.children.map((c) => L.learnerOf(c, s))
   const plan = (mode: 'full' | 'standard' | 'minimum') => buildDayPlan({ index: 40, mode, easy: false, learners, enrichment: 'science', date: d(2026, 10, 12) })
 
   it('minimum ≈ 20 minutes: Bible 5, literacy 7, math 8 per learner', () => {
@@ -140,12 +140,18 @@ describe('Day modes', () => {
     expect(olori.items.map((i) => i.minutes)).toEqual([5, 7, 8])
     expect(p.enrichment).toBeNull()
   })
-  it('standard: Bible 10, literacy 15, math 15, optional enrichment 10', () => {
+  it('standard: Bible 10, literacy 15, math 15, handwriting 5 (K), optional enrichment 10', () => {
     const olori = plan('standard').children.find((c) => c.learner.id === 'c-olori')!
-    expect(olori.items.map((i) => i.minutes)).toEqual([10, 15, 15, 10])
-    expect(olori.items[3].required).toBe(false)
+    expect(olori.items.map((i) => [i.subject, i.minutes])).toEqual([
+      ['bible', 10],
+      ['literacy', 15],
+      ['math', 15],
+      ['handwriting', 5],
+      ['enrichment', 10],
+    ])
+    expect(olori.items[4].required).toBe(false)
     expect(plan('standard').estimate.totalMinutes).toBeGreaterThanOrEqual(40)
-    expect(plan('standard').estimate.totalMinutes).toBeLessThanOrEqual(50)
+    expect(plan('standard').estimate.totalMinutes).toBeLessThanOrEqual(55)
   })
   it('minimum day for all four learners totals about 20 minutes (shared teaching)', () => {
     expect(plan('minimum').estimate.totalMinutes).toBe(20)

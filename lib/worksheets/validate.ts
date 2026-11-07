@@ -1,7 +1,8 @@
 import { PICTURES } from '../curriculum/pictures'
 import { contentHash } from './index'
 import { COUNT_ICONS, checkExpr } from './math-gen'
-import { COIN_VALUE, type Block, type WorksheetSpec } from './types'
+import { hasGlyph, textWidth } from '../curriculum/handwriting-glyphs'
+import { COIN_VALUE, NAME_PLACEHOLDER, type Block, type HandwritingRow, type WorksheetSpec } from './types'
 
 /**
  * Worksheet quality control. Runs in tests (every worksheet of the year) and in
@@ -69,6 +70,16 @@ const ROWS: Partial<Record<Block['type'], (b: any) => number>> = {
   talk: (b) => b.questions.length * 1.2 + 1,
   feelings: (b) => b.prompts.length * 4,
   syllables: (b) => b.items.length * 2.8,
+  vertical: (b) => Math.ceil(b.items.length / 4) * 5.5,
+  'equal-groups': (b) => Math.ceil(b.items.length / 2) * 6,
+  share: (b) => b.items.length * 5.5,
+  // a long copy model (word or sentence) gets a second, empty line underneath
+  handwriting: (b) =>
+    b.rows.reduce((n: number, row: HandwritingRow) => {
+      const one = row.size === 'lg' ? 4.3 : 3.5
+      const long = row.mode === 'copy' && textWidth(row.text.replace(NAME_PLACEHOLDER, 'Olori-Joy')) * (row.size === 'lg' ? 0.78 : 0.52) > 360
+      return n + one + (long ? one - 0.6 : 0)
+    }, 0) + 0.5,
 }
 
 export function estimateRows(spec: WorksheetSpec): number {
@@ -89,6 +100,12 @@ function numbersIn(b: Block): number[] {
       return [b.start + b.count - 1]
     case 'skip-count':
       return b.rows.flatMap((r) => r.values)
+    case 'vertical':
+      return b.items.flatMap((i) => [i.a, i.b, i.answer])
+    case 'equal-groups':
+      return b.items.map((i) => i.groups * i.each)
+    case 'share':
+      return b.items.map((i) => i.total)
     default:
       return []
   }
@@ -241,6 +258,32 @@ export function validateWorksheet(spec: WorksheetSpec): Issue[] {
         break
       case 'ordinal':
         b.icons.forEach((n) => icon(n, 'ordinal'))
+        break
+      case 'vertical':
+        b.items.forEach((it, i) => {
+          if ((it.op === '+' ? it.a + it.b : it.a - it.b) !== it.answer) err(`Column problem ${i + 1} answer is wrong`)
+          if (it.answer < 0) err(`Column problem ${i + 1} is negative`)
+        })
+        if (new Set(b.items.map((i) => `${i.a}${i.op}${i.b}`)).size !== b.items.length) err('Duplicate column problems on one page')
+        break
+      case 'equal-groups':
+        b.items.forEach((it, i) => {
+          icon(it.icon, `equal groups ${i + 1}`)
+          if (it.groups * it.each > 25) err(`Equal groups ${i + 1} has too many pictures`)
+        })
+        break
+      case 'share':
+        b.items.forEach((it, i) => {
+          icon(it.icon, `share ${i + 1}`)
+          if (it.total % it.groups !== 0) err(`Share ${i + 1} does not divide evenly`)
+        })
+        break
+      case 'handwriting':
+        if (!b.rows.length) err('Handwriting block has no rows')
+        b.rows.forEach((row, i) => {
+          if (row.mode !== 'write' && !row.text.trim()) err(`Handwriting row ${i + 1} is empty`)
+          for (const ch of row.text.replace(NAME_PLACEHOLDER, '')) if (ch !== ' ' && !hasGlyph(ch)) err(`No stroke data for "${ch}"`)
+        })
         break
     }
   }

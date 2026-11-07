@@ -5,20 +5,22 @@ import { Suspense, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Archive, CheckCircle2, FileText, Printer, ShieldCheck } from 'lucide-react'
 import { getBibleWeek } from '@/lib/curriculum/bible'
-import type { CoreSubject, LessonDay } from '@/lib/curriculum/types'
+import type { LessonDay, PrintSubject } from '@/lib/curriculum/types'
+import { lessonsFor } from '@/lib/plan/day-plan'
 import { positionOf } from '@/lib/plan/schedule'
 import * as logic from '@/lib/state/logic'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
-import { worksheetsForWeek } from '@/lib/worksheets'
+import { getWorksheet } from '@/lib/worksheets'
 import { validateWorksheet } from '@/lib/worksheets/validate'
 import { MAX_PACKET_WEEK, PACKET_CHILD_FOLDER, packetUrlFor, parentChecklistUrlFor } from '@/lib/worksheet-packets'
 import { Card, PageHeader, Pill } from '@/components/primitives'
 
-const SUBJECTS: { id: CoreSubject; label: string }[] = [
+const SUBJECTS: { id: PrintSubject; label: string }[] = [
   { id: 'bible', label: 'Bible' },
   { id: 'literacy', label: 'Literacy' },
   { id: 'math', label: 'Math' },
+  { id: 'handwriting', label: 'Handwriting' },
 ]
 
 export default function PrintPage() {
@@ -35,7 +37,7 @@ function PrintCenter() {
   const [week, setWeek] = useState(() => Number(params.get('week')) || positionOf(store.pointer).week)
   const [kids, setKids] = useState<string[] | null>(null)
   const chosenKids = kids ?? store.childrenInView.map((c) => c.id)
-  const [subjects, setSubjects] = useState<CoreSubject[]>(['bible', 'literacy', 'math'])
+  const [subjects, setSubjects] = useState<PrintSubject[]>(['bible', 'literacy', 'math', 'handwriting'])
   const [days, setDays] = useState<LessonDay[]>([0, 1, 2, 3])
   const [overview, setOverview] = useState(true)
   const [checklists, setChecklists] = useState(true)
@@ -45,9 +47,13 @@ function PrintCenter() {
   const pages = useMemo(
     () =>
       selected.flatMap((c) =>
-        worksheetsForWeek(week, logic.learnerOf(c).grade, subjects).filter((w) => days.includes(w.day as LessonDay)),
+        days.flatMap((d) =>
+          lessonsFor(logic.learnerOf(c, store), week, d)
+            .map((l) => (l.worksheet && subjects.includes(l.worksheet.subject) ? getWorksheet(l.worksheet.id) : undefined))
+            .filter((w): w is NonNullable<typeof w> => !!w),
+        ),
       ),
-    [selected, week, subjects, days],
+    [selected, week, subjects, days, store],
   )
   const issues = pages.flatMap((p) => validateWorksheet(p).filter((i) => i.level === 'error'))
   const prekNames = selected.filter((c) => c.gradeBand === 'pre-k').map((c) => c.name)

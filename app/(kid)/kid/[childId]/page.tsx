@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Check, Lock, PartyPopper, Star, Sun, Volume2 } from 'lucide-react'
 import { getBibleWeek, seasonFor } from '@/lib/curriculum/bible'
 import { getLiteracyWeek, graphemesTaughtThrough } from '@/lib/curriculum/literacy'
+import { enrichmentsOf } from '@/lib/plan/schedule'
 import { buildDayPlan, type PlanItem } from '@/lib/plan/day-plan'
 import * as logic from '@/lib/state/logic'
 import { speak } from '@/lib/speech'
@@ -29,7 +30,7 @@ export default function KidPage({ params }: { params: Promise<{ childId: string 
 
   const info = useMemo(() => {
     if (!child) return null
-    const learner = logic.learnerOf(child)
+    const learner = logic.learnerOf(child, store)
     const kind = logic.todayKind(store, store.todayIso)
     const anyway = store.todayChoice?.date === store.todayIso && !!store.todayChoice.anyway
     const { mode, easy } = logic.modeFor(store, store.todayIso)
@@ -39,7 +40,7 @@ export default function KidPage({ params }: { params: Promise<{ childId: string 
       mode,
       easy,
       learners: [learner],
-      enrichment: kind === 'school' ? store.schedule[store.now.getDay()].enrichment : null,
+      enrichment: kind === 'school' ? enrichmentsOf(store.schedule[store.now.getDay()]) : null,
       date: store.now,
       useSeasonal: store.preferSeasonal && !!seasonFor(store.now),
       keyPrefix: welcomeBack ? logic.WELCOME_BACK_PREFIX : '',

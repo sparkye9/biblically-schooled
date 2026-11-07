@@ -2,13 +2,13 @@
 
 Run everything: `npm run typecheck && npm test && npm run test:e2e`
 
-## Results (October 14, 2026 — branch `claude/biblically-schooled-redesign-ehdx8i`)
+## Results (November 7, 2026 — branch `claude/biblically-schooled-redesign-ehdx8i`)
 
 | Suite | Result |
 |---|---|
 | TypeScript (`tsc --noEmit`, whole repo) | ✅ 0 errors (was 50+, previously hidden by `ignoreBuildErrors`) |
 | Production build (`next build`) | ✅ 14 routes |
-| Unit tests (Vitest) | ✅ 56 / 56 |
+| Unit tests (Vitest) | ✅ 83 / 83 |
 | Browser tests (Playwright, Chromium desktop + Pixel 7) | ✅ 12 / 12 |
 
 ## What is covered
@@ -22,7 +22,7 @@ Run everything: `npm run typecheck && npm test && npm run test:e2e`
 - No repetitive lessons: the four days of every week teach different things; every lesson has a complete teaching guide
 - Pre-K gets at most 4 printed literacy/math pages a week
 
-**Worksheets** (`tests/unit/worksheets.test.ts`) — all 756 worksheets of the year
+**Worksheets** (`tests/unit/worksheets.test.ts`) — all 720 worksheets of the year (incl. 144 handwriting pages)
 - Pass validation: computed answers re-checked, unique choices containing the answer, pictures exist, page fit, grade-appropriate numbers, passage length
 - 0 duplicates within a grade; ≥ 15 activity formats per grade; no format > 20% of pages
 - Every picture used is in the bundled icon set; generation is deterministic
@@ -34,7 +34,14 @@ Run everything: `npm run typecheck && npm test && npm run test:e2e`
 - Two missed weeks → "We're starting again": welcome-back review, then resume; "catch up" never marks skipped lessons done
 - Return to normal lessons; weekly summary; mastery only set by the parent
 - Printing for four learners: separate Pre-K copies for Seraiah and Amelia; separate tracking
-- Time estimates: Minimum 20, Standard 40–50, Full 60–90 minutes for all four learners (taught in parallel)
+- Time estimates: Minimum 20, Standard 40–55, Full 60–90 minutes for all four learners (taught in parallel)
+
+**Curriculum engine** (`tests/unit/engine.test.ts`)
+- Weekly rhythm: nothing prints on the hands-on day (Monday); the apply day prints only a story page for readers; every week mixes all five activity types
+- Math: every topic in every grade has What / Why / How plus concrete, pictorial, and abstract stages; the make-ten lesson explains why 8 + 5 = 13; column pages mix carrying and non-carrying problems with correct answers; timed practice only after the concept skills are demonstrated
+- Handwriting: stroke data for every letter and number, arrows point the taught direction, Pre-K letters follow the letter of the week, every page mixes guided / copy / independent rows and fits the line width
+- Language and access supports: all strands covered, directions grow 1 → 2 → 3 steps, never a worksheet; supports keep the identical objective, skills, worksheet, and checks (no watered-down lessons)
+- Calendar and saved data: Mon art · Tue science · Wed co-op · Thu art · Fri science + library; an untouched old default schedule is upgraded, a customized one kept; saved children gain a profile without losing data
 
 **Migration** (`tests/unit/migration.test.ts`) — children, households, completed lessons, custom lessons, skills, notes, books, breaks, PIN, uploads all carried over; v5 data never deleted; corrupt storage handled.
 

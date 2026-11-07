@@ -138,6 +138,12 @@ export function mathSearch(gen: MathGen): { phrase: string; numeric: boolean } {
       return { phrase: `count by ${gen.by}s`, numeric: true }
     case 'one-more':
       return { phrase: gen.less ? 'one less' : 'one more', numeric: true }
+    case 'vertical':
+      return { phrase: gen.regroup ? (gen.op === '+' ? 'addition with regrouping' : 'subtraction with regrouping') : 'adding tens and ones', numeric: false }
+    case 'equal-groups':
+      return { phrase: 'equal groups', numeric: false }
+    case 'share':
+      return { phrase: 'sharing equally', numeric: false }
     case 'compare-groups':
     case 'compare-numbers':
       return { phrase: gen.kind === 'compare-numbers' && gen.symbols ? 'greater than less than' : 'more and less', numeric: true }

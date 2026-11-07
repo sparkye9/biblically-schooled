@@ -589,6 +589,87 @@ export function mathBlocks(gen: MathGen, r: Rng, variant: number, grade: Grade):
         activity: 'First, next, last',
       }
     }
+    case 'vertical': {
+      const items: { a: number; b: number; op: '+' | '-'; answer: number }[] = []
+      const seen = new Set<string>()
+      let guard = 0
+      const n = 8
+      while (items.length < n && guard++ < 500) {
+        // Mix in a few problems without regrouping so the child must decide whether to carry/borrow.
+        const wantRegroup = gen.regroup && items.length % 4 !== 3
+        let a: number, b: number
+        if (gen.op === '+') {
+          a = r.int(11, 79)
+          b = gen.ones ? r.int(1, 9) : 10 * r.int(1, Math.floor((99 - a) / 10))
+          const regroups = (a % 10) + (b % 10) >= 10
+          if (gen.ones && regroups !== wantRegroup) continue
+          if (a + b > 99) continue
+        } else {
+          a = r.int(20, 95)
+          b = gen.ones ? r.int(1, 9) : 10 * r.int(1, Math.floor(a / 10) - 1)
+          const regroups = a % 10 < b % 10
+          if (gen.ones && regroups !== wantRegroup) continue
+          if (b >= a) continue
+        }
+        const key = `${a}${gen.op}${b}`
+        if (seen.has(key)) continue
+        seen.add(key)
+        items.push({ a, b, op: gen.op, answer: gen.op === '+' ? a + b : a - b })
+      }
+      // Pictorial before abstract: draw the first regrouping problem with quick tens and ones.
+      const first = items.find((it) => (gen.op === '+' ? (it.a % 10) + (it.b % 10) >= 10 : it.a % 10 < it.b % 10)) ?? items[0]
+      const drawLabel =
+        gen.op === '+'
+          ? `Draw it first: ${first.a} + ${first.b}. Draw quick tens (lines) and ones (dots).${gen.regroup ? ' Circle 10 ones to make a new ten.' : ''}`
+          : `Draw it first: ${first.a} − ${first.b}. Draw quick tens and ones.${gen.regroup ? ' Not enough ones? Change one ten into 10 dots.' : ''}`
+      return {
+        blocks: [{ type: 'draw', label: drawLabel, height: 'sm' }, { type: 'vertical', carry: gen.regroup, items }],
+        answers: [`Drawing: ${first.a} ${gen.op === '-' ? '−' : '+'} ${first.b} = ${first.answer}`, ...items.map((it, i) => `${i + 1}. ${it.answer}${gen.regroup && (gen.op === '+' ? (it.a % 10) + (it.b % 10) >= 10 : it.a % 10 < it.b % 10) ? (gen.op === '+' ? ' (carry 1 ten)' : ' (borrow 1 ten)') : ''}`)],
+        instructions: gen.regroup
+          ? gen.op === '+'
+            ? 'Add the ones first. If the ones make 10 or more, write the 1 new ten in the box above the tens.'
+            : 'Subtract the ones first. If there are not enough ones, borrow a ten.'
+          : 'Line up tens and ones. Work the ones first, then the tens.',
+        activity: gen.regroup ? 'Column math with carrying' : 'Column math',
+      }
+    }
+    case 'equal-groups': {
+      const items: { icon: string; groups: number; each: number }[] = []
+      const seen = new Set<string>()
+      let guard = 0
+      while (items.length < 4 && guard++ < 200) {
+        const groups = r.int(2, gen.maxGroups)
+        const each = r.int(2, gen.maxEach)
+        if (seen.has(`${groups}x${each}`)) continue
+        seen.add(`${groups}x${each}`)
+        items.push({ icon: r.pick(COUNT_ICONS), groups, each })
+      }
+      return {
+        blocks: [{ type: 'equal-groups', items }],
+        answers: items.map((it, i) => `${i + 1}. ${it.groups} groups of ${it.each} = ${it.groups * it.each} (${Array(it.groups).fill(it.each).join(' + ')})`),
+        instructions: 'Count the groups. Count how many in each group. Skip count to find how many in all.',
+        activity: 'Equal groups',
+      }
+    }
+    case 'share': {
+      const items: { icon: string; total: number; groups: number }[] = []
+      const seen = new Set<string>()
+      let guard = 0
+      while (items.length < 3 && guard++ < 200) {
+        const groups = r.int(2, gen.maxGroups)
+        const each = r.int(2, Math.floor(gen.maxTotal / groups))
+        if (seen.has(`${groups}x${each}`) || seen.has(`total${groups * each}`)) continue
+        seen.add(`${groups}x${each}`)
+        seen.add(`total${groups * each}`)
+        items.push({ icon: r.pick(COUNT_ICONS), total: groups * each, groups })
+      }
+      return {
+        blocks: [{ type: 'share', items }],
+        answers: items.map((it, i) => `${i + 1}. ${it.total} shared into ${it.groups} groups = ${it.total / it.groups} each`),
+        instructions: 'Share the pictures fairly. Draw one dot on each plate at a time until all are shared. How many on each plate?',
+        activity: 'Sharing fairly',
+      }
+    }
     case 'one-more': {
       const less = !!gen.less
       const items = distinctInts(r, less ? 1 : 0, gen.max, 6).map((n) => ({ icon: r.pick(COUNT_ICONS), n }))

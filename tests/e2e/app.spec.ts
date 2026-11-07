@@ -102,7 +102,7 @@ test('restart flow offers a welcome-back review after time away', async ({ page 
 
 test('print packet: every worksheet page renders fully, with pictures, and as a PDF', async ({ page }) => {
   await fresh(page)
-  await page.goto('/print/packet?week=8&children=c-alijah,c-olori,c-seraiah,c-amelia&subjects=bible,literacy,math&days=0,1,2,3&overview=1&checklists=1&key=1')
+  await page.goto('/print/packet?week=8&children=c-alijah,c-olori,c-seraiah,c-amelia&subjects=bible,literacy,math,handwriting&days=0,1,2,3&overview=1&checklists=1&key=1')
   await expect(page.locator('[data-ws-page]').first()).toBeVisible()
   const report = await page.evaluate(() => {
     const pages = [...document.querySelectorAll<HTMLElement>('[data-ws-page]')]
@@ -116,10 +116,10 @@ test('print packet: every worksheet page renders fully, with pictures, and as a 
       missing: document.querySelectorAll('[data-missing-picture]').length,
     }
   })
-  // Pre-K 5 + K 8 + 1st 8 per child; two Pre-K copies
-  expect(report.count).toBe(5 + 5 + 8 + 8)
-  expect(report.names.filter((n) => n.includes('Seraiah')).length).toBe(5)
-  expect(report.names.filter((n) => n.includes('Amelia')).length).toBe(5)
+  // Per child per week — Pre-K 6 (incl. 2 handwriting), K 8 (incl. 2 handwriting), 1st 6; two Pre-K copies
+  expect(report.count).toBe(6 + 6 + 8 + 6)
+  expect(report.names.filter((n) => n.includes('Seraiah')).length).toBe(6)
+  expect(report.names.filter((n) => n.includes('Amelia')).length).toBe(6)
   expect(report.clipped).toEqual([])
   expect(report.missing).toBe(0)
   await expect(page.getByText('Answer Key — Week 8')).toBeVisible()
@@ -173,7 +173,7 @@ test('whole year: no worksheet page is clipped or missing a picture (36 weeks ×
   await fresh(page)
   const problems: string[] = []
   for (let week = 1; week <= 36; week++) {
-    await page.goto(`/print/packet?week=${week}&children=c-alijah,c-olori,c-seraiah,c-amelia&subjects=bible,literacy,math&days=0,1,2,3&overview=0&checklists=0&key=0`)
+    await page.goto(`/print/packet?week=${week}&children=c-alijah,c-olori,c-seraiah,c-amelia&subjects=bible,literacy,math,handwriting&days=0,1,2,3&overview=0&checklists=0&key=0`)
     await expect(page.locator('[data-ws-page]').first()).toBeVisible()
     const r = await page.evaluate(() => ({
       count: document.querySelectorAll('[data-ws-page]').length,

@@ -1,5 +1,5 @@
 import type { DayMode } from '../curriculum/types'
-import type { LearnerAdjustments } from '../plan/day-plan'
+import type { LearnerAdjustments, LearningProfile } from '../plan/day-plan'
 import type { Break, WeeklySchedule } from '../plan/schedule'
 import type { Child, Household, ParentNote, ReadAloudBook, Resource, SupplyItem } from '../types'
 
@@ -43,6 +43,8 @@ export interface StoredChild extends Child {
   adjust?: LearnerAdjustments
   /** Learning supports the parent wants reminders for on Today. */
   supports?: string[]
+  /** What the curriculum engine adds or adapts for this child (separate per child). */
+  profile?: LearningProfile
 }
 
 export const SUPPORT_OPTIONS = [

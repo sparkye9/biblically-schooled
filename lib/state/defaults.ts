@@ -1,4 +1,5 @@
 import { DEFAULT_SCHEDULE, calendarExpectedIndex, isoDate } from '../plan/schedule'
+import type { LearningProfile } from '../plan/day-plan'
 import type { Household } from '../types'
 import type { FamilyState, StoredChild } from './types'
 
@@ -9,11 +10,16 @@ export const DEFAULT_HOUSEHOLDS: Household[] = [
   { id: 'h-lola', name: "Damilola's Homeschool", momName: 'Damilola', lastName: 'Gallion', momInitial: 'D' },
 ]
 
+/** Handwriting is on by default for Pre-K and K; everything else is the parent's choice per child. */
+export function defaultProfile(gradeBand: string): LearningProfile {
+  return { handwriting: gradeBand === 'pre-k' || gradeBand === 'k', languageBuilding: false, accessSupports: false }
+}
+
 export const DEFAULT_CHILDREN: StoredChild[] = [
-  { id: 'c-alijah', name: 'Alijah', grade: '1st Grade', gradeBand: '1st', householdId: 'h-venessa', color: 'child-alijah', childMode: true, lowDistraction: true },
-  { id: 'c-olori', name: 'Olori-Joy', grade: 'Kindergarten', gradeBand: 'k', householdId: 'h-venessa', color: 'child-olori', childMode: false, lowDistraction: false },
-  { id: 'c-seraiah', name: 'Seraiah', grade: 'Pre-K', gradeBand: 'pre-k', householdId: 'h-venessa', color: 'child-seraiah', childMode: false, lowDistraction: false },
-  { id: 'c-amelia', name: 'Amelia', grade: 'Pre-K', gradeBand: 'pre-k', householdId: 'h-lola', color: 'child-amelia', childMode: false, lowDistraction: false },
+  { id: 'c-alijah', name: 'Alijah', grade: '1st Grade', gradeBand: '1st', householdId: 'h-venessa', color: 'child-alijah', childMode: true, lowDistraction: true, profile: { handwriting: false, languageBuilding: true, accessSupports: true } },
+  { id: 'c-olori', name: 'Olori-Joy', grade: 'Kindergarten', gradeBand: 'k', householdId: 'h-venessa', color: 'child-olori', childMode: false, lowDistraction: false, profile: defaultProfile('k') },
+  { id: 'c-seraiah', name: 'Seraiah', grade: 'Pre-K', gradeBand: 'pre-k', householdId: 'h-venessa', color: 'child-seraiah', childMode: false, lowDistraction: false, profile: defaultProfile('pre-k') },
+  { id: 'c-amelia', name: 'Amelia', grade: 'Pre-K', gradeBand: 'pre-k', householdId: 'h-lola', color: 'child-amelia', childMode: false, lowDistraction: false, profile: defaultProfile('pre-k') },
 ]
 
 export function initialState(today: Date = new Date()): FamilyState {

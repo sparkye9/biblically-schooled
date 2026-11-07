@@ -39,6 +39,10 @@ export type Block =
   | { type: 'sort'; cut: boolean; columns: string[]; items: { picture: string; column: number }[] }
   | { type: 'ordinal'; icons: string[]; prompts: { text: string; answer: number }[] }
   | { type: 'one-more'; less: boolean; items: { icon: string; n: number }[] }
+  | { type: 'vertical'; carry: boolean; items: { a: number; b: number; op: '+' | '-'; answer: number }[] }
+  | { type: 'equal-groups'; items: { icon: string; groups: number; each: number }[] }
+  | { type: 'share'; items: { icon: string; total: number; groups: number }[] }
+  | { type: 'handwriting'; rows: HandwritingRow[] }
   | { type: 'word-list'; words: string[] }
   | { type: 'word-sort'; columns: [string, string]; words: { word: string; column: 0 | 1 }[] }
   | { type: 'sentences'; prompt: string; items: { text: string; answer?: string; choices?: string[] }[] }
@@ -47,6 +51,17 @@ export type Block =
   | { type: 'talk'; questions: string[] }
   | { type: 'feelings'; prompts: string[] }
   | { type: 'syllables'; items: { picture: string; syllables: number }[] }
+
+/** One row of handwriting practice. Glyphs are drawn from stroke data (lib/curriculum/handwriting-glyphs.ts). */
+export interface HandwritingRow {
+  label?: string
+  /** guided: dotted with start dots + arrows · trace: dotted only · copy: one model then empty space · write: empty guide lines */
+  mode: 'guided' | 'trace' | 'copy' | 'write'
+  /** Characters to show (spaces allowed). '{{NAME}}' is replaced with the child's name. */
+  text: string
+  /** Line height: lg for Pre-K, md for K. */
+  size: 'lg' | 'md'
+}
 
 export type Cell = { text?: string; picture?: string }
 export type Expr = { a: number; op?: '+' | '-'; b?: number }
@@ -57,7 +72,7 @@ export interface WorksheetSpec {
   week: number
   day: number
   grade: Grade
-  subject: 'bible' | 'literacy' | 'math' | 'family'
+  subject: 'bible' | 'literacy' | 'math' | 'handwriting' | 'family'
   title: string
   skill: string
   objective: string

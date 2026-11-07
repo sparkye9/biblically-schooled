@@ -7,8 +7,8 @@ const all = [...allWorksheets().values()]
 
 describe('Worksheet quality control (whole year)', () => {
   it('generates every planned worksheet', () => {
-    // Pre-K 5/week, K 8/week, 1st 8/week × 36 weeks
-    expect(all.length).toBe(36 * (5 + 8 + 8))
+    // Per week — Pre-K: Bible 1, literacy 1, math 2, handwriting 2 · K: Bible 1, literacy 3, math 2, handwriting 2 · 1st: Bible 1, literacy 3, math 2
+    expect(all.length).toBe(36 * (6 + 8 + 6))
   })
   it('every worksheet passes validation (answers, choices, pictures, page fit, grade range)', () => {
     const problems = all.flatMap((w) => validateWorksheet(w).filter((i) => i.level === 'error').map((i) => `${w.id}: ${i.message}`))

@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import type { DayMode, Grade } from './curriculum/types'
 import type { LearnerAdjustments } from './plan/day-plan'
 import { isoDate, type WeeklySchedule } from './plan/schedule'
-import { initialState } from './state/defaults'
+import { defaultProfile, initialState } from './state/defaults'
 import * as logic from './state/logic'
 import { STORAGE_KEY, loadState, migrateLegacy, normalize } from './state/migrate'
 import type { CustomActivity, FamilyState, RestartEvent, SkillStatus, StoredChild } from './state/types'
@@ -137,7 +137,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       },
       addChild: (input) => {
         const id = uid('c')
-        update((s) => ({ ...s, children: [...s.children, { ...input, id, childMode: false, lowDistraction: false }] }))
+        update((s) => ({ ...s, children: [...s.children, { ...input, id, childMode: false, lowDistraction: false, profile: defaultProfile(input.gradeBand) }] }))
         return id
       },
       removeChild: (id) => update((s) => ({ ...s, children: s.children.filter((c) => c.id !== id) })),
