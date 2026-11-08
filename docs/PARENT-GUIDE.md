@@ -17,4 +17,5 @@
 - **Math** always shows *What · Why · How*: objects first (Monday), then pictures and written problems (Tuesday), real life and movement (Thursday), and an independent check (Friday). Timed practice only appears after you mark the concept "Demonstrated independently."
 - **Students → What the curriculum adds**: handwriting (on for Pre-K and K), language building, and access supports, per child. These change how lessons are delivered, never the grade level.
 - **Video day**: on a day you need a break, tap **I need an easy day → Videos for this week** (or This Week → Video day). Each child gets videos matched to that week's Bible story, letters, math, and science from vetted channels (Saddleback Kids, Suitcase Teachers, Jack Hartmann, Numberblocks, SciShow Kids). Preview a minute of anything new and turn off autoplay.
+- **Deactivate** a child (Students) or a whole household (Settings → Households) to hide them everywhere without deleting anything. Amelia and Damilola's homeschool are deactivated; reactivate them from Students → Deactivated.
 - **Back up** now and then: Settings → Backup.

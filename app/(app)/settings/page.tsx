@@ -174,9 +174,17 @@ function HouseholdSettings() {
     <Section title="Households">
       <Card>
         <ul className="text-sm">
-          {store.households.map((h) => (
-            <li key={h.id} className="py-1">
-              <b>{h.momName}</b> — {store.children.filter((c) => c.householdId === h.id).map((c) => c.name).join(', ') || 'no learners yet'}
+          {store.allHouseholds.map((h) => (
+            <li key={h.id} className="flex flex-wrap items-center gap-2 py-1">
+              <span className={cn('flex-1', h.active === false && 'text-muted-foreground')}>
+                <b>{h.momName}</b> — {store.children.filter((c) => c.householdId === h.id).map((c) => c.name).join(', ') || 'no learners yet'}
+                {h.active === false && ' · deactivated'}
+              </span>
+              {store.allHouseholds.length > 1 && (h.active === false || store.households.length > 1) && (
+                <button type="button" onClick={() => store.setHouseholdActive(h.id, h.active === false)} className="rounded-full border border-border px-3 py-1 text-xs font-bold">
+                  {h.active === false ? 'Reactivate' : 'Deactivate'}
+                </button>
+              )}
             </li>
           ))}
         </ul>

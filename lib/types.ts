@@ -52,6 +52,8 @@ export interface Household {
   momName: string
   lastName?: string
   momInitial: string
+  /** false = deactivated: hidden everywhere, records kept. */
+  active?: boolean
 }
 
 export interface Child {

@@ -246,3 +246,33 @@ describe('Calendar and saved data', () => {
     expect(mine.children[0].profile).toEqual({ handwriting: false })
   })
 })
+
+describe('Deactivating Amelia and Damilola’s homeschool', () => {
+  const today = d(2026, 11, 9)
+  it('a fresh start has them deactivated, with records kept', () => {
+    const s = initialState(today)
+    expect(s.children.find((c) => c.id === 'c-amelia')!.active).toBe(false)
+    expect(s.households.find((h) => h.id === 'h-lola')!.active).toBe(false)
+  })
+  it('saved data is deactivated once without losing anything, and reactivating sticks', () => {
+    const base = initialState(today)
+    const saved = {
+      ...base,
+      applied: [],
+      currentView: 'h-lola',
+      children: base.children.map(({ active: _a, ...c }) => c),
+      households: base.households.map(({ active: _a, ...h }) => h),
+      completions: { '5|c-amelia|math': { at: 'x', date: '2026-08-31' } as never },
+      skillStatus: { 'c-amelia': { 'pre-k-math-w1': { status: 'independent' as const, updatedAt: 'x', by: 'parent' as const } } },
+    }
+    const n = normalize(saved, today)
+    expect(n.children.find((c) => c.id === 'c-amelia')!.active).toBe(false)
+    expect(n.households.find((h) => h.id === 'h-lola')!.active).toBe(false)
+    expect(n.currentView).toBe('shared')
+    expect(n.children).toHaveLength(4)
+    expect(n.completions['5|c-amelia|math']).toBeTruthy()
+    expect(n.skillStatus['c-amelia']['pre-k-math-w1'].status).toBe('independent')
+    const back = { ...n, children: n.children.map((c) => (c.id === 'c-amelia' ? { ...c, active: true } : c)) }
+    expect(normalize(back, today).children.find((c) => c.id === 'c-amelia')!.active).toBe(true)
+  })
+})

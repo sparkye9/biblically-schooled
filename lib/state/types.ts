@@ -45,6 +45,8 @@ export interface StoredChild extends Child {
   supports?: string[]
   /** What the curriculum engine adds or adapts for this child (separate per child). */
   profile?: LearningProfile
+  /** false = deactivated: hidden from Today, planning, printing, and pickers; progress and records kept. */
+  active?: boolean
 }
 
 export const SUPPORT_OPTIONS = [
@@ -123,4 +125,6 @@ export interface FamilyState {
   migratedFrom?: string
   /** Ids the parent dismissed (welcome cards, tips). */
   dismissed: string[]
+  /** One-time data updates already applied to this family's saved data. */
+  applied?: string[]
 }

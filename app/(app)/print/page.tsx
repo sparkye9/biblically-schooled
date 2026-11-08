@@ -95,7 +95,7 @@ function PrintCenter() {
         </Step>
         <Step n={2} title="Choose students">
           <div className="flex flex-wrap gap-2">
-            {store.children.map((c) => (
+            {store.activeChildren.map((c) => (
               <Chip key={c.id} on={chosenKids.includes(c.id)} onClick={() => setKids(toggle(chosenKids, c.id))}>
                 {c.name}
               </Chip>

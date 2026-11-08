@@ -19,12 +19,13 @@ export default function StudentsPage() {
   const store = useStore()
   return (
     <div className="space-y-5">
-      <PageHeader eyebrow="Four learners, four pathways" title="Students" description="Each child follows their own pathway. Adjust the level or pace per subject — nothing assumes children at the same grade are identical." />
+      <PageHeader eyebrow={`${store.childrenInView.length} learner${store.childrenInView.length === 1 ? "" : "s"}, each on their own pathway`} title="Students" description="Each child follows their own pathway. Adjust the level or pace per subject — nothing assumes children at the same grade are identical." />
       <div className="grid gap-4">
         {store.childrenInView.map((c) => (
           <StudentCard key={c.id} child={c} />
         ))}
       </div>
+      <Deactivated />
       <AddStudent />
     </div>
   )
@@ -117,6 +118,9 @@ function StudentCard({ child }: { child: StoredChild }) {
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
+        <button type="button" onClick={() => store.updateChild(child.id, { active: false })} className="rounded-full border border-border px-3 py-1 text-xs font-bold">
+          Deactivate
+        </button>
         <label className="flex items-center gap-2">
           <input type="checkbox" checked={child.lowDistraction} onChange={(e) => store.updateChild(child.id, { lowDistraction: e.target.checked })} className="size-5 accent-[var(--primary)]" />
           Kid view shows one task at a time
@@ -228,5 +232,48 @@ function ProfileToggles({ child }: { child: StoredChild }) {
         ))}
       </div>
     </div>
+  )
+}
+
+/** Deactivated learners and households: hidden everywhere else, records kept, one tap to bring back. */
+function Deactivated() {
+  const store = useStore()
+  const kids = store.children.filter((c) => c.active === false || !store.households.some((h) => h.id === c.householdId))
+  const homes = store.allHouseholds.filter((h) => h.active === false)
+  if (!kids.length && !homes.length) return null
+  return (
+    <Card className="bg-muted/40">
+      <h2 className="font-serif text-lg font-semibold">Deactivated</h2>
+      <p className="text-sm text-muted-foreground">Hidden from Today, This Week, printing, and progress pickers. Their lessons, progress, and notes are kept.</p>
+      <ul className="mt-2 divide-y divide-border text-sm">
+        {homes.map((h) => (
+          <li key={h.id} className="flex items-center gap-3 py-2">
+            <span className="flex-1">
+              <b>{h.momName}’s homeschool</b>
+            </span>
+            <button type="button" onClick={() => store.setHouseholdActive(h.id, true)} className="rounded-full border border-border px-3 py-1 text-xs font-bold">
+              Reactivate
+            </button>
+          </li>
+        ))}
+        {kids.map((c) => {
+          const homeOff = !store.households.some((h) => h.id === c.householdId)
+          return (
+            <li key={c.id} className="flex items-center gap-3 py-2">
+              <ChildAvatar child={c} size="sm" />
+              <span className="flex-1">
+                <b>{c.name}</b> · {c.grade}
+                {homeOff && c.active !== false && <span className="text-muted-foreground"> · hidden with {store.allHouseholds.find((h) => h.id === c.householdId)?.momName}’s homeschool</span>}
+              </span>
+              {c.active === false && (
+                <button type="button" onClick={() => store.updateChild(c.id, { active: true })} className="rounded-full border border-border px-3 py-1 text-xs font-bold">
+                  Reactivate
+                </button>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </Card>
   )
 }

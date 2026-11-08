@@ -19,13 +19,13 @@ function trackErrors(page: Page) {
   return errors
 }
 
-test('Today shows all four children, the shared Bible lesson, and modes', async ({ page }) => {
+test('Today shows the active children (Amelia deactivated), the shared Bible lesson, and modes', async ({ page }) => {
   const errors = trackErrors(page)
   await fresh(page)
   await expect(page.getByRole('heading', { name: /Thursday, October 15, 2026/ })).toBeVisible()
-  for (const name of ['Alijah', 'Olori-Joy', 'Seraiah', 'Amelia']) await expect(page.getByText(name, { exact: false }).first()).toBeVisible()
+  for (const name of ['Alijah', 'Olori-Joy', 'Seraiah']) await expect(page.getByRole('heading', { name, exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Amelia/ })).toHaveCount(0)
   await expect(page.getByText(/Bible · everyone together/)).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Seraiah & Amelia' })).toBeVisible()
   await page.getByRole('button', { name: /Minimum Day/ }).click()
   await expect(page.getByText(/together · 7 min/)).toBeVisible()
   await page.getByRole('button', { name: 'I need an easy day' }).click()
