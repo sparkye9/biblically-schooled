@@ -7,10 +7,11 @@ children at once: open it, see what to do today, teach, and check it off.
 - **36-week curriculum** — 4 Bible units, Pre-K / K / 1st literacy and math pathways, rotating science, art, social studies, life skills
 - **Flexible calendar** — lessons move only when school happens; "We're starting again" after a break
 - **Print My Week** — validated, duplicate-free worksheets with answer keys; separate Pre-K copies
+- **Curriculum engine** — every week alternates hands-on and paper days; math teaches what / why / how (concrete → pictorial → abstract); handwriting with starting dots and arrows for Pre-K/K; per-child language building and access supports
 - **Progress by skill**, **kid view**, and a **Family Learning** module on autism and sibling understanding
 
 Docs: [Parent quick start](docs/PARENT-GUIDE.md) · [Audit](docs/AUDIT.md) · [Architecture](docs/ARCHITECTURE.md) ·
-[Scope & sequence](docs/SCOPE-AND-SEQUENCE.md) · [Testing](docs/TESTING.md) · [Deployment](docs/DEPLOYMENT.md)
+[Curriculum engine](docs/CURRICULUM-ENGINE.md) · [Example week](docs/EXAMPLE-WEEK.md) · [Scope & sequence](docs/SCOPE-AND-SEQUENCE.md) · [Testing](docs/TESTING.md) · [Deployment](docs/DEPLOYMENT.md)
 
 ```bash
 npm ci && npm run dev      # http://localhost:3000

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import type { ShapeName } from '@/lib/curriculum/math'
+import { HandwritingLine } from './handwriting-row'
 import { COIN_VALUE, NAME_PLACEHOLDER, type Block, type Coin, type WorksheetSpec } from '@/lib/worksheets/types'
 import { exprText } from '@/lib/worksheets/math-gen'
 import { ICONS } from './icons'
@@ -13,7 +14,7 @@ import { ICONS } from './icons'
 
 const GRADE_LABEL = { 'pre-k': 'Pre-K', k: 'Kindergarten', '1st': '1st Grade' } as const
 const DAY_LABEL = ['Introduce', 'Practice', 'Apply', 'Review']
-const SUBJECT_LABEL = { bible: 'Bible', literacy: 'Literacy', math: 'Math', family: 'Family Learning' } as const
+const SUBJECT_LABEL = { bible: 'Bible', literacy: 'Literacy', math: 'Math', handwriting: 'Handwriting', family: 'Family Learning' } as const
 
 export function Pic({ name, size = 40, className }: { name: string; size?: number; className?: string }) {
   const Icon = ICONS[name]
@@ -349,6 +350,96 @@ function BlockView({ block: b, name }: { block: Block; name?: string }) {
               </div>
             ))}
           </div>
+        </div>
+      )
+    case 'handwriting':
+      return (
+        <div className="space-y-1.5">
+          {b.rows.map((row, i) => (
+            <HandwritingLine key={i} row={row} name={name} />
+          ))}
+        </div>
+      )
+    case 'vertical':
+      return (
+        <div className="grid grid-cols-4 gap-x-6 gap-y-6">
+          {b.items.map((it, i) => (
+            <div key={i} className="mx-auto font-mono text-[30px] leading-[1.15]">
+              <div className="flex items-end gap-1 text-[11px] font-sans font-bold text-neutral-500">
+                <span className="w-[22px]" />
+                <span className="w-[20px] text-center">T</span>
+                <span className="w-[20px] text-center">O</span>
+              </div>
+              {b.carry && (
+                <div className="flex gap-1">
+                  <span className="w-[22px]" />
+                  <span className="inline-block size-[18px] translate-x-[1px] rounded-sm border border-dashed border-neutral-500" />
+                </div>
+              )}
+              <div className="flex gap-1">
+                <span className="w-[22px]" />
+                <span className="w-[20px] text-center">{Math.floor(it.a / 10) || ''}</span>
+                <span className="w-[20px] text-center">{it.a % 10}</span>
+              </div>
+              <div className="flex gap-1 border-b-[3px] border-black pb-0.5">
+                <span className="w-[22px] text-center">{it.op === '-' ? '−' : '+'}</span>
+                <span className="w-[20px] text-center">{Math.floor(it.b / 10) || ''}</span>
+                <span className="w-[20px] text-center">{it.b % 10}</span>
+              </div>
+              <div className="h-[40px]" />
+            </div>
+          ))}
+        </div>
+      )
+    case 'equal-groups':
+      return (
+        <div className="grid grid-cols-2 gap-4">
+          {b.items.map((it, i) => (
+            <div key={i} className="rounded-lg border border-neutral-400 p-2">
+              <div className="flex flex-wrap gap-2">
+                {Array.from({ length: it.groups }).map((_, g) => (
+                  <div key={g} className="flex max-w-[110px] flex-wrap justify-center gap-0.5 rounded-full border-2 border-neutral-700 px-2 py-1.5">
+                    <IconGroup icon={it.icon} n={it.each} size={18} />
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-[14px]">
+                <AnswerBox w={36} /> groups of <AnswerBox w={36} /> = <AnswerBox w={44} />
+              </p>
+              <p className="mt-1 text-[14px]">
+                {Array.from({ length: it.groups }).map((_, g) => (
+                  <span key={g}>
+                    {g > 0 && ' + '}
+                    <Blank w={28} />
+                  </span>
+                ))}{' '}
+                = <Blank w={34} />
+              </p>
+            </div>
+          ))}
+        </div>
+      )
+    case 'share':
+      return (
+        <div className="space-y-3">
+          {b.items.map((it, i) => (
+            <div key={i} className="rounded-lg border border-neutral-400 p-2">
+              <p className="text-[14px] font-bold">
+                {i + 1}. Share {it.total} fairly onto {it.groups} plates.
+              </p>
+              <div className="mt-1 flex flex-wrap gap-1">
+                <IconGroup icon={it.icon} n={it.total} size={20} />
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                {Array.from({ length: it.groups }).map((_, g) => (
+                  <span key={g} className="inline-block size-[64px] rounded-full border-2 border-neutral-700" />
+                ))}
+                <span className="ml-auto text-[14px]">
+                  Each plate gets <AnswerBox w={44} />
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       )
     case 'count':

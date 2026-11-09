@@ -5,13 +5,14 @@ import { useState } from 'react'
 import { ChevronLeft, ChevronRight, MapPin, Plus, Printer, Trash2 } from 'lucide-react'
 import { getBibleWeek, unitForWeek } from '@/lib/curriculum/bible'
 import { getEnrichment } from '@/lib/curriculum/enrichment'
-import { LESSON_DAY_NAMES, type LessonDay } from '@/lib/curriculum/types'
+import { DAY_RHYTHM, LESSON_DAY_NAMES, type LessonDay } from '@/lib/curriculum/types'
 import { lessonsFor } from '@/lib/plan/day-plan'
 import {
   ENRICHMENT_LABELS,
   TOTAL_LESSON_DAYS,
   WEEKDAY_LABELS,
   calendarExpectedIndex,
+  enrichmentsOf,
   indexOf,
   parseISO,
   positionOf,
@@ -22,6 +23,7 @@ import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 import { Card, ChildAvatar, PageHeader, Pill, Section } from '@/components/primitives'
 import { VideoDay } from '@/components/video-day'
+import { ActivityBadge, SUBJECT_META } from '@/components/teaching-guide'
 
 const DAYS: LessonDay[] = [0, 1, 2, 3]
 
@@ -33,16 +35,18 @@ export default function WeekPage() {
   const unit = unitForWeek(week)
   const enrich = getEnrichment(week)
   const schoolDays = store.schedule.map((d, i) => ({ ...d, i })).filter((d) => d.kind === 'school')
-  const learners = store.childrenInView.map(logic.learnerOf)
+  const learners = store.childrenInView.map((c) => logic.learnerOf(c, store))
   const groups = new Map<string, typeof learners>()
-  learners.forEach((l) => groups.set(l.grade + JSON.stringify(l.adjust ?? {}), [...(groups.get(l.grade + JSON.stringify(l.adjust ?? {})) ?? []), l]))
+  const sigOf = (l: (typeof learners)[number]) => l.grade + JSON.stringify(l.adjust ?? {}) + JSON.stringify(l.profile ?? {})
+  learners.forEach((l) => groups.set(sigOf(l), [...(groups.get(sigOf(l)) ?? []), l]))
 
   const materials = new Set<string>()
   for (const l of learners) for (const d of DAYS) for (const lesson of lessonsFor(l, week, d)) lesson.guide.materials.forEach((m) => m !== 'Worksheet' && materials.add(m))
   schoolDays.forEach((sd) => {
-    const kind = sd.enrichment
-    const a = kind === 'science' ? enrich.science : kind === 'art' ? enrich.art : kind === 'social-studies' ? enrich.socialStudies : kind === 'life-skills' || kind === 'review' ? enrich.lifeSkill : null
-    a?.materials.forEach((m) => materials.add(m))
+    for (const kind of enrichmentsOf(sd)) {
+      const a = kind === 'science' ? enrich.science : kind === 'art' ? enrich.art : kind === 'social-studies' ? enrich.socialStudies : kind === 'life-skills' || kind === 'review' ? enrich.lifeSkill : null
+      a?.materials.forEach((m) => materials.add(m))
+    }
   })
 
   return (
@@ -88,24 +92,32 @@ export default function WeekPage() {
                   </p>
                   {log ? <Pill tone="sage">Taught {parseISO(log.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</Pill> : isNext ? <Pill tone="gold">Up next</Pill> : null}
                 </div>
+                <p className="mt-1 text-sm">
+                  <span className="font-semibold">{DAY_RHYTHM[d].name}</span>
+                  <span className="text-muted-foreground"> — {DAY_RHYTHM[d].paper ? 'worksheets today' : 'no worksheets for practice'}</span>
+                </p>
+                {sd?.note && <p className="text-xs text-muted-foreground">{sd.note}</p>}
                 <p className="mt-2 text-sm">
                   <b>Bible:</b> {bible.days[d]}
                 </p>
                 {[...groups.values()].map((g) => {
-                  const [, lit, math] = lessonsFor(g[0], week, d)
+                  const lessons = lessonsFor(g[0], week, d).filter((l) => l.subject !== 'bible')
                   return (
                     <div key={g.map((x) => x.id).join()} className="mt-2 rounded-xl bg-muted/50 p-2 text-sm">
                       <p className="text-xs font-bold text-muted-foreground">{g.map((x) => x.name).join(' & ')}</p>
-                      <p>
-                        <b>Literacy:</b> {lit.title} <span className="text-muted-foreground">({lit.childTask})</span>
-                      </p>
-                      <p>
-                        <b>Math:</b> {math.title} <span className="text-muted-foreground">({math.childTask})</span>
-                      </p>
+                      {lessons.map((l) => (
+                        <p key={l.id} className="flex flex-wrap items-center gap-x-1.5">
+                          <b>{SUBJECT_META[l.subject].label}:</b> {l.title} <span className="text-muted-foreground">({l.childTask})</span>
+                          <ActivityBadge type={l.activity} />
+                          {l.worksheet && <span className="text-[11px] font-bold text-muted-foreground">· prints</span>}
+                        </p>
+                      ))}
                     </div>
                   )
                 })}
-                {sd?.enrichment && <p className="mt-2 text-sm text-muted-foreground">+ {ENRICHMENT_LABELS[sd.enrichment]} (optional)</p>}
+                {sd && enrichmentsOf(sd).length > 0 && (
+                  <p className="mt-2 text-sm text-muted-foreground">+ {enrichmentsOf(sd).map((k) => ENRICHMENT_LABELS[k]).join(' and ')} (optional)</p>
+                )}
               </Card>
             )
           })}

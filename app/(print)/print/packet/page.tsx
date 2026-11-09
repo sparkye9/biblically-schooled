@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Printer } from 'lucide-react'
 import { getBibleWeek, unitForWeek } from '@/lib/curriculum/bible'
 import { getEnrichment } from '@/lib/curriculum/enrichment'
-import { LESSON_DAY_NAMES, type CoreSubject, type LessonDay } from '@/lib/curriculum/types'
+import { LESSON_DAY_NAMES, type LessonDay, type PrintSubject } from '@/lib/curriculum/types'
 import { lessonsFor } from '@/lib/plan/day-plan'
 import * as logic from '@/lib/state/logic'
 import { gradeLabel, useStore } from '@/lib/store'
@@ -28,7 +28,7 @@ function Packet() {
   const q = useSearchParams()
   const week = Math.min(36, Math.max(1, Number(q.get('week')) || 1))
   const ids = (q.get('children') ?? '').split(',').filter(Boolean)
-  const subjects = ((q.get('subjects') ?? 'bible,literacy,math').split(',').filter(Boolean)) as CoreSubject[]
+  const subjects = ((q.get('subjects') ?? 'bible,literacy,math,handwriting').split(',').filter(Boolean)) as PrintSubject[]
   const days = (q.get('days') ?? '0,1,2,3').split(',').filter(Boolean).map(Number) as LessonDay[]
   const showOverview = q.get('overview') === '1'
   const showChecklists = q.get('checklists') === '1'
@@ -36,7 +36,7 @@ function Packet() {
   const color = q.get('color') === '1'
 
   if (!store.hydrated) return <p className="p-8">Preparing your packet…</p>
-  const kids = (ids.length ? store.children.filter((c) => ids.includes(c.id)) : store.childrenInView).map((c) => ({ child: c, learner: logic.learnerOf(c) }))
+  const kids = (ids.length ? store.children.filter((c) => ids.includes(c.id)) : store.childrenInView).map((c) => ({ child: c, learner: logic.learnerOf(c, store) }))
   const bible = getBibleWeek(week)
 
   // Pages per day, per child, per subject. The two Pre-K girls each get their own named copy.
@@ -44,7 +44,7 @@ function Packet() {
   for (const d of days) {
     for (const { child, learner } of kids) {
       for (const lesson of lessonsFor(learner, week, d)) {
-        if (!subjects.includes(lesson.subject) || !lesson.worksheet) continue
+        if (!lesson.worksheet || !subjects.includes(lesson.worksheet.subject)) continue
         const spec = getWorksheet(lesson.worksheet.id)
         if (!spec) continue
         if (validateWorksheet(spec).some((i) => i.level === 'error')) continue

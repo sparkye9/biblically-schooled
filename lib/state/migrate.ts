@@ -1,6 +1,6 @@
-import { DEFAULT_SCHEDULE, TOTAL_LESSON_DAYS, calendarExpectedIndex, indexOf, isoDate } from '../plan/schedule'
+import { DEFAULT_SCHEDULE, PREVIOUS_DEFAULT_SCHEDULE, TOTAL_LESSON_DAYS, type WeeklySchedule, calendarExpectedIndex, indexOf, isoDate } from '../plan/schedule'
 import type { LessonDay } from '../curriculum/types'
-import { DEFAULT_CHILDREN, DEFAULT_HOUSEHOLDS, initialState } from './defaults'
+import { DEACTIVATE_LOLA, DEFAULT_CHILDREN, DEFAULT_HOUSEHOLDS, defaultProfile, initialState } from './defaults'
 import { keyOf } from './logic'
 import type { Completion, CustomActivity, FamilyState, LegacySkill, SkillStatus, StoredChild } from './types'
 
@@ -73,7 +73,7 @@ const isSeedLesson = (id: string) => id.startsWith('l-seed-')
 export function migrateLegacy(saved: LegacyState, today: Date = new Date()): FamilyState {
   const base = initialState(today)
   const todayIso = isoDate(today)
-  const children = (saved.children?.length ? saved.children : DEFAULT_CHILDREN).map((c) => ({ ...c }))
+  const children = (saved.children?.length ? saved.children : DEFAULT_CHILDREN).map((c) => withProfile({ ...c }))
   const households = saved.households?.length ? saved.households : DEFAULT_HOUSEHOLDS
   const breaks = (saved.pausedWeeks ?? []).map((p) => ({ id: p.id, startDate: p.startDate, endDate: p.endDate, label: p.label }))
   const start = saved.schoolYearStartDate ?? base.schoolYearStartDate
@@ -123,8 +123,10 @@ export function migrateLegacy(saved: LegacyState, today: Date = new Date()): Fam
   const calendarIndex = calendarExpectedIndex(start, todayIso, DEFAULT_SCHEDULE, breaks)
   const pointer = Math.min(Math.max(calendarIndex, maxDoneIndex + 1), TOTAL_LESSON_DAYS - 1)
 
-  return {
+  // Legacy data predates the Nov 2026 deactivation, so it runs through the same one-time update.
+  return normalize({
     ...base,
+    applied: [],
     households,
     children,
     // Show every learner on Today by default; the household switcher still works.
@@ -142,13 +144,37 @@ export function migrateLegacy(saved: LegacyState, today: Date = new Date()): Fam
     customActivities: [...customByLesson.values()],
     viewPin: saved.viewPin,
     migratedFrom: LEGACY_KEY,
-  }
+  }, today)
 }
 
 /** Fill in fields added after a state was saved (forward-compatible loads). */
+const sameSchedule = (a: WeeklySchedule, b: WeeklySchedule) =>
+  a.length === b.length && a.every((d, i) => d.kind === b[i].kind && (d.enrichment ?? null) === (b[i].enrichment ?? null) && (d.extra ?? null) === (b[i].extra ?? null))
+
+/** Fill in learning profiles for children saved before profiles existed (never overwrites a saved profile). */
+export function withProfile(c: StoredChild): StoredChild {
+  if (c.profile) return c
+  const shipped = DEFAULT_CHILDREN.find((d) => d.id === c.id)
+  return { ...c, profile: shipped?.profile ?? defaultProfile(c.gradeBand) }
+}
+
 export function normalize(saved: Partial<FamilyState>, today: Date = new Date()): FamilyState {
   const base = initialState(today)
-  return { ...base, ...saved, version: 6 } as FamilyState
+  const merged = { ...base, ...saved, version: 6 } as FamilyState
+  // The family's schedule changed (Mon art, Tue science, Thu art, Fri science + library).
+  // Only an untouched copy of the old default is upgraded; a customized schedule is kept.
+  if (merged.schedule && sameSchedule(merged.schedule, PREVIOUS_DEFAULT_SCHEDULE)) merged.schedule = DEFAULT_SCHEDULE
+  merged.children = (merged.children ?? []).map(withProfile)
+  // One time only, so reactivating later sticks: deactivate Damilola's homeschool and Amelia (nothing is deleted).
+  const applied = merged.applied ?? []
+  if (!applied.includes(DEACTIVATE_LOLA)) {
+    merged.households = merged.households.map((h) => (h.id === 'h-lola' ? { ...h, active: false } : h))
+    merged.children = merged.children.map((c) => (c.id === 'c-amelia' ? { ...c, active: false } : c))
+    if (merged.currentView === 'h-lola') merged.currentView = 'shared'
+    if (merged.activeMomHouseholdId === 'h-lola') merged.activeMomHouseholdId = 'h-venessa'
+    merged.applied = [...applied, DEACTIVATE_LOLA]
+  }
+  return merged
 }
 
 export function loadState(storage: Pick<Storage, 'getItem'>, today: Date = new Date()): FamilyState {

@@ -19,14 +19,14 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { getBibleWeek, unitForWeek } from '@/lib/curriculum/bible'
-import { LESSON_DAY_NAMES, type DayMode } from '@/lib/curriculum/types'
+import { DAY_RHYTHM, LESSON_DAY_NAMES, type DayMode } from '@/lib/curriculum/types'
 import { MODE_INFO, type ChildPlan, type PlanItem } from '@/lib/plan/day-plan'
 import { useStore } from '@/lib/store'
 import { useTodayPlan } from '@/lib/use-today'
 import * as logic from '@/lib/state/logic'
 import { cn } from '@/lib/utils'
 import { Card, ChildAvatar, DoneBox, Pill, ProgressBar, Section } from '@/components/primitives'
-import { SUBJECT_META, SubjectIcon, TeachingGuideView } from '@/components/teaching-guide'
+import { ActivityBadge, SUBJECT_META, SubjectIcon, TeachingGuideView } from '@/components/teaching-guide'
 
 export default function TodayPage() {
   const store = useStore()
@@ -54,6 +54,14 @@ export default function TodayPage() {
         <p className="mt-1 text-sm text-muted-foreground">
           {today.welcomeBack ? 'Welcome-back review day' : `Week ${plan.position.week} · Day ${plan.position.day + 1} of 4 (${LESSON_DAY_NAMES[plan.position.day]})`} · Unit {unit.number}: {unit.title}
         </p>
+        {today.teaching && !today.welcomeBack && (
+          <p className="mt-2 text-sm">
+            <span className="font-semibold">{DAY_RHYTHM[plan.position.day].name}:</span> {DAY_RHYTHM[plan.position.day].summary}
+          </p>
+        )}
+        {store.schedule[store.now.getDay()]?.note && (
+          <p className="mt-1 text-sm text-muted-foreground">{store.schedule[store.now.getDay()].note}</p>
+        )}
         {today.teaching && (
           <div className="mt-4 space-y-1.5">
             <div className="flex items-center justify-between text-sm">
@@ -136,7 +144,7 @@ export default function TodayPage() {
             </Section>
           )}
 
-          {plan.enrichment?.activity && <EnrichmentCard />}
+          {plan.enrichments.map((e, i) => e.activity && <EnrichmentCard key={e.kind} index={i} />)}
 
           <div className="grid gap-4 md:grid-cols-2">
             <MaterialsCard />
@@ -355,9 +363,10 @@ function TogetherCard({ subject, minutes }: { subject: 'literacy' | 'math'; minu
 function groupChildren(children: ChildPlan[]): ChildPlan[][] {
   const groups = new Map<string, ChildPlan[]>()
   for (const c of children) {
+    // Children share a card only when every lesson (and its supports) is the same.
     const sig = c.items
-      .filter((i) => i.subject === 'literacy' || i.subject === 'math')
-      .map((i) => i.lesson?.id)
+      .filter((i) => i.lesson && i.subject !== 'bible')
+      .map((i) => `${i.lesson!.id}${i.lesson!.guide.supports ? '+supports' : ''}`)
       .join('|')
     groups.set(sig, [...(groups.get(sig) ?? []), c])
   }
@@ -367,7 +376,7 @@ function groupChildren(children: ChildPlan[]): ChildPlan[][] {
 function ChildGroupCard({ group }: { group: ChildPlan[] }) {
   const store = useStore()
   const first = group[0]
-  const items = first.items.filter((i) => i.subject === 'literacy' || i.subject === 'math')
+  const items = first.items.filter((i) => i.lesson && i.subject !== 'bible')
   const custom = store.customActivities.filter(
     (a) => a.week === first.items[0].lesson?.week && a.day === first.items[0].lesson?.day && a.childIds.some((id) => group.some((g) => g.learner.id === id)),
   )
@@ -445,6 +454,7 @@ function LessonRow({ item, group }: { item: PlanItem; group: ChildPlan[] }) {
           <p className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
             <SubjectIcon subject={item.subject} className="size-3.5" />
             {SUBJECT_META[item.subject].label} · {lesson.phase} · {item.minutes} min
+            <ActivityBadge type={item.activity} className="normal-case tracking-normal" />
           </p>
           <p className="font-semibold">{item.title}</p>
           <p className="text-sm text-muted-foreground">{lesson.guide.objective}</p>
@@ -475,12 +485,13 @@ function LessonRow({ item, group }: { item: PlanItem; group: ChildPlan[] }) {
 
 // ───────────────────────── Enrichment, materials, rotation ─────────────────────────
 
-function EnrichmentCard() {
+function EnrichmentCard({ index }: { index: number }) {
   const store = useStore()
   const { plan } = useTodayPlan()
-  const e = plan.enrichment!
+  const e = plan.enrichments[index]
   const a = e.activity!
-  const keys = plan.children.map((c) => ({ child: c.learner, key: c.items.find((i) => i.subject === 'enrichment')?.key })).filter((x) => x.key)
+  const suffix = index === 0 ? 'enrichment' : `enrichment-${e.kind}`
+  const keys = plan.children.map((c) => ({ child: c.learner, key: c.items.find((i) => i.subject === 'enrichment' && i.key.endsWith(suffix))?.key })).filter((x) => x.key)
   return (
     <Card className="bg-gold/10">
       <p className="text-xs font-bold uppercase tracking-wide text-primary">{e.label} · together · optional</p>

@@ -4,11 +4,11 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import type { DayMode, Grade } from './curriculum/types'
 import type { LearnerAdjustments } from './plan/day-plan'
 import { isoDate, type WeeklySchedule } from './plan/schedule'
-import { initialState } from './state/defaults'
+import { defaultProfile, initialState } from './state/defaults'
 import * as logic from './state/logic'
 import { STORAGE_KEY, loadState, migrateLegacy, normalize } from './state/migrate'
 import type { CustomActivity, FamilyState, RestartEvent, SkillStatus, StoredChild } from './state/types'
-import type { ChildColor, GradeBand, ParentNote, ReadAloudBook, Resource } from './types'
+import type { ChildColor, GradeBand, Household, ParentNote, ReadAloudBook, Resource } from './types'
 
 /**
  * App store: React glue around the pure functions in lib/state. State lives in
@@ -66,6 +66,11 @@ export interface StoreValue extends FamilyState, Actions {
   todayIso: string
   now: Date
   childrenInView: StoredChild[]
+  /** Active children in every household (the full list, including deactivated, is `children`). */
+  activeChildren: StoredChild[]
+  /** Every household, including deactivated ones (`households` is active only). */
+  allHouseholds: Household[]
+  setHouseholdActive: (id: string, active: boolean) => void
 }
 
 const Ctx = createContext<StoreValue | null>(null)
@@ -102,14 +107,27 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const update = useCallback((fn: (s: FamilyState) => FamilyState) => setState(fn), [])
 
   const value = useMemo<StoreValue>(() => {
-    const childrenInView =
-      state.currentView === 'shared' ? state.children : state.children.filter((c) => c.householdId === state.currentView)
+    // Deactivated children and households are hidden everywhere; their records stay in storage.
+    const households = state.households.filter((h) => h.active !== false)
+    const activeChildren = state.children.filter((c) => c.active !== false && households.some((h) => h.id === c.householdId))
+    const view = state.currentView === 'shared' || households.some((h) => h.id === state.currentView) ? state.currentView : 'shared'
+    const childrenInView = view === 'shared' ? activeChildren : activeChildren.filter((c) => c.householdId === view)
     return {
       ...state,
       hydrated,
       todayIso,
       now,
+      households,
+      allHouseholds: state.households,
+      currentView: view,
+      activeChildren,
       childrenInView,
+      setHouseholdActive: (id, active) =>
+        update((s) => ({
+          ...s,
+          households: s.households.map((h) => (h.id === id ? { ...h, active } : h)),
+          currentView: !active && s.currentView === id ? 'shared' : s.currentView,
+        })),
       setView: (view) => update((s) => ({ ...s, currentView: view })),
       setActiveMom: (id) => update((s) => ({ ...s, activeMomHouseholdId: id, currentView: id })),
       toggle: (key) => update((s) => logic.toggleCompletion(s, key, todayIso)),
@@ -137,7 +155,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       },
       addChild: (input) => {
         const id = uid('c')
-        update((s) => ({ ...s, children: [...s.children, { ...input, id, childMode: false, lowDistraction: false }] }))
+        update((s) => ({ ...s, children: [...s.children, { ...input, id, childMode: false, lowDistraction: false, profile: defaultProfile(input.gradeBand) }] }))
         return id
       },
       removeChild: (id) => update((s) => ({ ...s, children: s.children.filter((c) => c.id !== id) })),

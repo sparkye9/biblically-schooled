@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:e2e": "next build && playwright test",
     "docs:curriculum": "vite-node scripts/generate-scope.ts",
+    "docs:example-week": "vite-node scripts/generate-example-week.ts",
     "check:links": "node scripts/check-links.mjs"
   },
   "dependencies": {

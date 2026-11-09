@@ -1,15 +1,20 @@
 import { getBibleWeek } from './bible'
 import { getLiteracyWeek, type LiteracyWeek } from './literacy'
+import { formationTalk, getHandwritingWeek } from './handwriting'
+import { STRAND_LABEL, languageDay, languageSkillId } from './language'
 import { getMathWeek, type MathTopic } from './math'
+import { mathMethod, mentalMathWarmUp } from './math-method'
 import { grapheme } from './phonics'
 import { picturesStartingWith } from './pictures'
-import { hfwSkillId, literacySkillId, mathSkillId } from './skills'
+import { handwritingSkillId, hfwSkillId, literacySkillId, mathSkillId } from './skills'
 import {
   LESSON_DAY_NAMES,
-  type CoreSubject,
+  type ActivityType,
   type DayMode,
   type Grade,
   type LessonDay,
+  type LessonSubject,
+  type PrintSubject,
   type TeachingGuide,
 } from './types'
 
@@ -18,6 +23,11 @@ import {
  * four lesson days in a week has a different job (Introduce → Practice →
  * Apply → Review) and a different activity, so the same lesson is never
  * repeated four times — the root cause of the old "repetitive lessons" issue.
+ *
+ * Weekly rhythm (see DAY_RHYTHM): day 0 is hands-on with nothing to print,
+ * day 1 is the paper day, day 2 is hands-on and movement (readers get a story
+ * page), day 3 is review with a mastery check. Every lesson carries an
+ * `activity` type so the parent can see the mix at a glance.
  */
 
 export interface WorksheetSlot {
@@ -26,7 +36,7 @@ export interface WorksheetSlot {
   week: number
   day: LessonDay
   grade: Grade
-  subject: CoreSubject
+  subject: PrintSubject
 }
 
 export interface DailyLesson {
@@ -34,7 +44,7 @@ export interface DailyLesson {
   week: number
   day: LessonDay
   grade: Grade
-  subject: CoreSubject
+  subject: LessonSubject
   title: string
   phase: string
   guide: TeachingGuide
@@ -47,9 +57,11 @@ export interface DailyLesson {
   worksheet: WorksheetSlot | null
   /** Short label for the child's to-do list. */
   childTask: string
+  /** What kind of learning this is today. */
+  activity: ActivityType
 }
 
-const MINUTES: Record<CoreSubject, Record<Grade, Record<DayMode, number>>> = {
+const MINUTES: Record<LessonSubject, Record<Grade, Record<DayMode, number>>> = {
   bible: {
     'pre-k': { minimum: 5, standard: 10, full: 15 },
     k: { minimum: 5, standard: 10, full: 15 },
@@ -65,16 +77,43 @@ const MINUTES: Record<CoreSubject, Record<Grade, Record<DayMode, number>>> = {
     k: { minimum: 8, standard: 15, full: 20 },
     '1st': { minimum: 8, standard: 15, full: 20 },
   },
+  // Extras switched on by a child's profile. On Minimum days handwriting is
+  // skipped and language practice happens inside Bible time (picture talk).
+  handwriting: {
+    'pre-k': { minimum: 0, standard: 5, full: 8 },
+    k: { minimum: 0, standard: 5, full: 10 },
+    '1st': { minimum: 0, standard: 5, full: 8 },
+  },
+  // Full days also add the family read-aloud, where prediction and retell questions continue.
+  language: {
+    'pre-k': { minimum: 0, standard: 5, full: 5 },
+    k: { minimum: 0, standard: 5, full: 5 },
+    '1st': { minimum: 0, standard: 5, full: 5 },
+  },
 }
 
-/** Pre-K gets printed work only twice a week; the other days are hands-on. */
-const PREK_PRINT_DAYS: LessonDay[] = [1, 3]
+/**
+ * Which lesson days have a printable page. Day 0 never prints (hands-on, and a
+ * church morning in the default calendar). Day 2 prints only a story page for
+ * K/1st readers. Pre-K literacy prints once a week — the Tuesday handwriting
+ * page covers letter formation.
+ */
+const PRINT_DAYS: Record<PrintSubject, Record<Grade, LessonDay[]>> = {
+  bible: { 'pre-k': [1], k: [1], '1st': [1] },
+  literacy: { 'pre-k': [3], k: [1, 2, 3], '1st': [1, 2, 3] },
+  math: { 'pre-k': [1, 3], k: [1, 3], '1st': [1, 3] },
+  handwriting: { 'pre-k': [1, 3], k: [1, 3], '1st': [] },
+}
 
-function slot(week: number, day: LessonDay, grade: Grade, subject: CoreSubject): WorksheetSlot {
+export function printsOn(subject: PrintSubject, grade: Grade, day: LessonDay): boolean {
+  return PRINT_DAYS[subject][grade].includes(day)
+}
+
+function slot(week: number, day: LessonDay, grade: Grade, subject: PrintSubject): WorksheetSlot {
   return { id: `w${week}-d${day}-${grade}-${subject}`, week, day, grade, subject }
 }
 
-export function lessonId(week: number, day: LessonDay, grade: Grade, subject: CoreSubject) {
+export function lessonId(week: number, day: LessonDay, grade: Grade, subject: LessonSubject) {
   return `w${week}-d${day}-${grade}-${subject}`
 }
 
@@ -103,7 +142,7 @@ export function bibleLesson(week: number, day: LessonDay, grade: Grade): DailyLe
     optional: [`Prayer: ${b.prayer}`, ...(b.culturalNote ? [`Did you know? ${b.culturalNote}`] : [])],
     minimum: `Read ${b.shortReading}. Ask one question: "${b.questions[0]}" Say the verse once. Done.`,
   }
-  const printsBible = day === 1
+  const printsBible = printsOn('bible', grade, day)
   return {
     id: lessonId(week, day, grade, 'bible'),
     week,
@@ -118,6 +157,7 @@ export function bibleLesson(week: number, day: LessonDay, grade: Grade): DailyLe
     introduces: [],
     worksheet: printsBible ? slot(week, day, grade, 'bible') : null,
     childTask: day === 2 ? 'Bible activity' : 'Family Bible time',
+    activity: (['discussion', 'academic', 'hands-on', 'review'] as const)[day],
   }
 }
 
@@ -208,9 +248,9 @@ function literacyGuide(lw: LiteracyWeek, day: LessonDay, grade: Grade): Teaching
           minimum: 'Show the name card; child finds their name and names the first letter.',
         },
         1: {
-          teach: ['Model tracing your own name slowly: "Start at the top."'],
-          practice: ['Trace your name on the worksheet.', 'Draw a picture of yourself.'],
-          minimum: 'Trace the first letter of your name in the air three times.',
+          teach: ['Lay out magnetic letters or letter cards. Say: "Let’s build your name to match your name card."'],
+          practice: ['Build your name with letters, matching the card one letter at a time.', 'Say each letter name as you place it.'],
+          minimum: 'Find the first letter of your name among three letter cards.',
         },
         2: {
           teach: ['Cut a copy of the name card into letters. Say: "Let’s build your name like a puzzle."'],
@@ -218,14 +258,14 @@ function literacyGuide(lw: LiteracyWeek, day: LessonDay, grade: Grade): Teaching
           minimum: 'Mix up 3 letters of the name; child puts them in order.',
         },
         3: {
-          teach: ['Say: "Let’s hunt for the letters in your name."'],
-          practice: ['Find letters from your name in a book or cereal box.', 'Clap the syllables in each family name.'],
+          teach: ['Say: "Let’s hunt for the letters in your name." Then model the worksheet: "Start at the top."'],
+          practice: ['Trace your name on the worksheet and draw yourself.', 'Find letters from your name in a book or cereal box.'],
           minimum: 'Find the first letter of your name on a book cover.',
         },
       }
       return {
         objective: 'Recognize my own name and the letters in it.',
-        materials: ['Name card (write each child’s name on an index card)', 'Play dough or crayons', ...(day === 1 ? ['Worksheet'] : [])],
+        materials: ['Name card (write each child’s name on an index card)', ...(day === 1 ? ['Magnetic letters or letter cards'] : ['Play dough or crayons']), ...(day === 3 ? ['Worksheet'] : [])],
         ...nameDays[day],
         check: 'Can they find their own name card among three cards?',
         ifStruggling: 'Focus only on the first letter of the name.',
@@ -246,24 +286,24 @@ function literacyGuide(lw: LiteracyWeek, day: LessonDay, grade: Grade): Teaching
           minimum: `Show the ${L.toUpperCase()} card. Say its name and sound. Find one thing that starts with ${grapheme(L).sound}.`,
         },
         1: {
-          objective: `Trace ${L.toUpperCase()} and ${L} with correct starting points.`,
-          materials: ['Worksheet', 'Crayons'],
-          teach: [`Model: "Start at the top." Trace a big ${L.toUpperCase()} in the air together, then on the table with a finger.`, `Say the sound ${grapheme(L).sound} while tracing.`],
-          practice: ['Trace the letters on the worksheet (finger first, then crayon).', prekPhonoActivity(lw)],
-          check: `Starts ${L.toUpperCase()} from the top.`,
-          ifStruggling: 'Trace with a finger in a tray of salt or rice instead of the worksheet.',
-          ifMastered: `Write ${L.toUpperCase()} without tracing.`,
-          minimum: `Trace ${L.toUpperCase()} in the air three times while saying ${grapheme(L).sound}.`,
-        },
-        2: {
-          objective: `Hear ${grapheme(L).sound} at the beginning of words. ${lw.phono}.`,
-          materials: ['Salt/rice tray or shaving cream', `Objects: ${objects.join(', ')}`],
-          teach: [`Say: "Listen: ${kw.slice(0, 2).join(', ')}. They all start with ${grapheme(L).sound}."`],
-          practice: [`Write ${L} in the sensory tray.`, prekPhonoActivity(lw)],
+          objective: `Hear ${grapheme(L).sound} at the beginning of words and sort objects by their first sound.`,
+          materials: [`Objects: ${objects.join(', ')} and 3 that start with other sounds`, 'Two bowls'],
+          teach: [`Say: "Listen: ${kw.slice(0, 2).join(', ')}. They all start with ${grapheme(L).sound}."`, `Hold up an object, say its name slowly, and ask: "Does it start with ${grapheme(L).sound}?"`],
+          practice: [`Sound sort: put objects that start with ${grapheme(L).sound} in one bowl and the others in the second bowl.`, prekPhonoActivity(lw)],
           check: `Says yes/no correctly to "Does ___ start with ${grapheme(L).sound}?" for 3 words.`,
-          ifStruggling: 'Exaggerate the first sound and use real objects.',
+          ifStruggling: 'Exaggerate the first sound and use only 2 objects.',
           ifMastered: 'Name two more words that start with the sound.',
           minimum: `Play I Spy with ${grapheme(L).sound} for two minutes.`,
+        },
+        2: {
+          objective: `Find ${L.toUpperCase()} and ${L} quickly and connect the letter to its sound. ${lw.phono}.`,
+          materials: ['Letter cards taped to the floor (this week’s letter and 3 earlier ones)'],
+          teach: [`Say a word that starts with ${grapheme(L).sound}. "Hop to the letter that makes that sound!"`],
+          practice: ['Letter hop: hop to the letter for each sound you hear (5 turns).', prekPhonoActivity(lw)],
+          check: `Hops to ${L.toUpperCase()} when hearing ${grapheme(L).sound}.`,
+          ifStruggling: 'Use only 2 letter cards on the floor.',
+          ifMastered: 'Child calls the sound and you hop.',
+          minimum: `Tape the ${L.toUpperCase()} card on the floor; jump to it each time you say a ${grapheme(L).sound} word.`,
         },
         3: {
           objective: `Review ${L.toUpperCase()}${L} and earlier letters.`,
@@ -287,9 +327,9 @@ function literacyGuide(lw: LiteracyWeek, day: LessonDay, grade: Grade): Teaching
         minimum: 'Flip 5 letter cards: name and sound.',
       },
       1: {
-        teach: ['Model the worksheet with the first item, thinking out loud.'],
-        practice: ['Complete the worksheet.', prekPhonoActivity(lw)],
-        minimum: 'Do the first two items of the worksheet together, out loud.',
+        teach: ['Letter match: lay out uppercase cards; child finds the matching lowercase card for each.'],
+        practice: ['Match uppercase and lowercase cards.', prekPhonoActivity(lw)],
+        minimum: 'Match 3 uppercase and lowercase letter cards.',
       },
       2: {
         teach: [`Game time: ${prekPhonoActivity(lw)}`],
@@ -304,7 +344,7 @@ function literacyGuide(lw: LiteracyWeek, day: LessonDay, grade: Grade): Teaching
     }
     return {
       objective: `${lw.title}: ${lw.phono}.`,
-      materials: ['Letter cards for letters learned so far', ...(day % 2 === 1 ? ['Worksheet'] : ['Small objects or pictures'])],
+      materials: ['Letter cards for letters learned so far', ...(day === 3 ? ['Worksheet'] : ['Small objects or pictures'])],
       ...reviewDays[day],
       check: 'Which letters are still tricky? Mark them "Needs review."',
       ifStruggling: 'Review just 3 letters.',
@@ -325,14 +365,17 @@ function literacyGuide(lw: LiteracyWeek, day: LessonDay, grade: Grade): Teaching
         objective: isLetters
           ? `Say the sound for ${gs.join(', ')} and blend words with ${gs.length > 1 ? 'them' : 'it'}.`
           : `Read words with the pattern: ${lw.pattern}.`,
-        materials: ['Letter cards or whiteboard', 'Worksheet'],
+        materials: ['Letter cards or whiteboard', 'Letter tiles (or letters written on paper squares)', 'Sound boxes: three boxes drawn on paper and 3 tokens'],
         teach: [
           warmup,
           ...(isLetters ? gs.flatMap((g) => letterIntro(g).slice(0, 2)) : [`Say: "${concept}"`]),
           `Blend together: write ${blendWords.join(', ')}. Touch under each sound, then slide your finger and read the word.`,
           ...(hfw.length ? [`New sight words: ${hfw.join(', ')}. Say: "We just have to know these by heart." Spell each aloud, then read it.`] : []),
         ],
-        practice: ['Child reads the words on the board.', 'Complete the worksheet.'],
+        practice: [
+          `Build it: say a word (${blendWords.slice(0, 3).join(', ')}). Child pushes one token into a sound box for each sound, then builds the word with letter tiles and reads it back.`,
+          'Change one tile to make a new word (cat → cap → map) and read it.',
+        ],
         check: `Reads ${Math.min(4, lw.words.length)} of the week's words by sounding out.`,
         ifStruggling: 'Read only 3-sound words; tap each sound on your arm before blending.',
         ifMastered: `Read the challenge words: ${lw.words.slice(4).join(', ') || lw.words.join(', ')}.`,
@@ -360,13 +403,18 @@ function literacyGuide(lw: LiteracyWeek, day: LessonDay, grade: Grade): Teaching
     case 2:
       return {
         objective: `Read connected text with ${lw.pattern}; ${grade === '1st' ? lw.comprehension.toLowerCase() : 'answer questions about it'}.`,
-        materials: ['Worksheet (reading passage)'],
+        materials: ['Story page (printed)', 'Letter cards taped to the floor for spelling hop'],
         teach: [
           `Comprehension focus: ${lw.comprehension}.`,
           lw.passage ? `Preview: "This story is called '${lw.passage.title}'." Point out one tricky word.` : 'Read the sentences together first.',
           'Child reads aloud; you reread it smoothly; child rereads.',
+          'Talk about it: ask the questions out loud, one at a time. Answers are spoken, not written, today.',
         ],
-        practice: ['Answer the questions on the worksheet.', `Writing: ${lw.writing}`],
+        practice: [
+          `Spelling hop (movement): tape letters on the floor; child hops the letters to spell ${lw.words.slice(0, 3).join(', ')}, saying each sound.`,
+          'Act out or draw the story; tell what happened first, next, and last.',
+        ],
+        optional: [`Writing: ${lw.writing}`],
         check: lw.passage ? `Answers: "${lw.passage.questions[0].q}" (${lw.passage.questions[0].a}).` : 'Reads both sentences with help on no more than one word.',
         ifStruggling: 'You read a sentence, child echoes it. Then answer orally.',
         ifMastered: 'Child reads to a younger sibling with expression.',
@@ -394,7 +442,7 @@ function literacyGuide(lw: LiteracyWeek, day: LessonDay, grade: Grade): Teaching
 export function literacyLesson(week: number, day: LessonDay, grade: Grade): DailyLesson {
   const lw = getLiteracyWeek(grade, week)
   const guide = literacyGuide(lw, day, grade)
-  const prints = grade === 'pre-k' ? PREK_PRINT_DAYS.includes(day) : true
+  const prints = printsOn('literacy', grade, day)
   const skillIds = lw.review ? [] : [literacySkillId(grade, week)]
   const hfwIds = lw.hfw.filter((w) => w !== 'review').map((w) => hfwSkillId(grade, w))
   return {
@@ -412,49 +460,80 @@ export function literacyLesson(week: number, day: LessonDay, grade: Grade): Dail
     worksheet: prints ? slot(week, day, grade, 'literacy') : null,
     childTask:
       grade === 'pre-k'
-        ? ['Letter fun', 'Letter tracing', 'Sound hunt', 'Letter review'][day]
-        : ['New sounds', 'Word practice', 'Reading', 'Review'][day],
+        ? ['Letter fun', 'Sound sort', 'Letter hop', 'Letter review'][day]
+        : ['Build words', 'Word practice', 'Read & talk', 'Review'][day],
+    activity: (grade === 'pre-k' ? ['hands-on', 'hands-on', 'movement', 'review'] : ['hands-on', 'academic', 'discussion', 'review'] as const)[day] as ActivityType,
   }
 }
 
 // ───────────────────────────── MATH ─────────────────────────────
 
 function mathGuide(t: MathTopic, prev: MathTopic | null, day: LessonDay): TeachingGuide {
+  const m = mathMethod(t)
   const base = {
     objective: t.objective,
     ifStruggling: t.ifStruggling,
     ifMastered: t.ifMastered,
+    what: m.what,
+    why: m.why,
+    how: m.how,
+    example: m.example,
+    warmUp: mentalMathWarmUp(t.grade, t.week, day),
+    whenReady: t.whenReady,
   }
   switch (day) {
     case 0:
-      return { ...base, materials: t.materials, teach: t.teach, practice: t.practice, check: t.check, minimum: t.easy }
+      // Concrete: real objects only. Nothing to print.
+      return {
+        ...base,
+        materials: t.materials,
+        stages: [{ label: 'Concrete', text: m.concrete }],
+        teach: [`Say what we are doing: "${m.what}"`, ...t.teach, `Say why it works: "${m.why}"`],
+        practice: [...t.practice, `Child explains one answer: "I know because…" while showing it with the objects.`],
+        check: t.check,
+        minimum: t.easy,
+      }
     case 1:
+      // Pictorial → Abstract on paper.
       return {
         ...base,
         materials: [...t.materials, 'Worksheet'],
-        teach: [`Re-model once: ${t.teach[0]}`, 'Say: "Today we use pictures instead of objects."'],
-        practice: ['Complete the worksheet. Keep counters on the table to check answers.', ...t.practice.slice(1)],
+        stages: [
+          { label: 'Concrete (quick re-model)', text: t.teach[0] },
+          { label: 'Pictorial', text: m.pictorial },
+          { label: 'Abstract', text: m.abstract },
+        ],
+        teach: [`Re-model once with objects: ${t.teach[0]}`, `Draw it: ${m.pictorial}`, `Write it: ${m.abstract}`, 'Do the first problem on the worksheet together, out loud.'],
+        practice: ['Complete the worksheet. Keep the objects on the table — any answer can be proved with them.'],
         check: t.check,
         minimum: t.easy,
       }
     case 2:
+      // Apply: everyday life + movement. Nothing to print.
       return {
         ...base,
-        materials: [...t.materials, 'Worksheet'],
-        teach: [`Game: ${t.game}`],
-        practice: ['Play the game for 5 minutes.', 'Complete the worksheet.'],
+        materials: t.materials,
+        stages: [{ label: 'Apply', text: 'Real-life problems and a movement game — math away from the table.' }],
+        teach: ['Real-life problems (say them aloud; act them out with real things):', ...m.realLife.map((q) => `• ${q}`)],
+        practice: [`Movement game: ${m.movement}`, `Game: ${t.game}`],
         check: t.check,
-        optional: ['Make up your own math story about today’s skill.'],
-        minimum: `Play the game for 5 minutes: ${t.game}`,
+        optional: ['Child makes up a story problem about today’s skill for you to solve.'],
+        minimum: `${m.realLife[0]} Then play: ${m.movement}`,
       }
     case 3:
     default:
+      // Review: independent practice, spiral review, mastery check.
       return {
         ...base,
         materials: ['Worksheet', ...t.materials.slice(0, 1)],
-        teach: [`Spiral review: this week (${t.title})${prev ? ` and last week (${prev.title})` : ''}.`],
-        practice: ['Complete the review worksheet.', `Quick check: ${t.check}`],
-        check: 'Mark the skill in Progress: Practicing, Demonstrated independently, or Needs review.',
+        stages: [{ label: 'Abstract — independent', text: `Independent practice${prev ? `, with review of last week (${prev.title})` : ''}.` }],
+        teach: [`Spiral review: this week (${t.title})${prev ? ` and last week (${prev.title})` : ''}.`, 'Child works independently first; help only after they try.'],
+        practice: [
+          'Complete the review worksheet.',
+          `Mastery check (out loud, no help): ${t.check}`,
+          'Ask: "How did you solve that one?" Listen for the WHY, not just the answer.',
+        ],
+        check: 'Mark the skill in Progress: Practicing, Demonstrated independently, or Needs review. Only "Demonstrated independently" means mastered.',
         minimum: t.easy,
       }
   }
@@ -463,8 +542,7 @@ function mathGuide(t: MathTopic, prev: MathTopic | null, day: LessonDay): Teachi
 export function mathLesson(week: number, day: LessonDay, grade: Grade): DailyLesson {
   const t = getMathWeek(grade, week)
   const prev = week > 1 ? getMathWeek(grade, week - 1) : null
-  // Introduce day is always hands-on with real objects (concrete before pictures).
-  const prints = grade === 'pre-k' ? PREK_PRINT_DAYS.includes(day) : day !== 0
+  const prints = printsOn('math', grade, day)
   const ids = t.review ? [] : [mathSkillId(grade, week)]
   return {
     id: lessonId(week, day, grade, 'math'),
@@ -479,7 +557,134 @@ export function mathLesson(week: number, day: LessonDay, grade: Grade): DailyLes
     skillIds: ids,
     introduces: day === 0 ? ids : [],
     worksheet: prints ? slot(week, day, grade, 'math') : null,
-    childTask: ['Math with objects', 'Math practice', 'Math game', 'Math review'][day],
+    childTask: ['Math with objects', 'Math on paper', 'Math in real life', 'Math check'][day],
+    activity: (['hands-on', 'academic', 'movement', 'review'] as const)[day],
+  }
+}
+
+/**
+ * Fluency gate: timed practice is offered only once the concept skills behind
+ * a fluency topic are demonstrated independently. Until then practice stays
+ * untimed, with objects available.
+ */
+export function applyFluencyGate(lesson: DailyLesson, demonstrated: (skillId: string) => boolean): DailyLesson {
+  if (lesson.subject !== 'math' || lesson.day !== 3) return lesson
+  const t = getMathWeek(lesson.grade, lesson.week)
+  const isFacts = t.gen.kind === 'facts'
+  if (!t.fluency && !isFacts) return lesson
+  const prereqs = t.fluency?.prereqWeeks ?? [lesson.week]
+  const ready = prereqs.every((w) => demonstrated(mathSkillId(lesson.grade, w)))
+  const line = ready
+    ? 'Fluency: the concept is demonstrated, so a 1-minute timed round is OK. Race your own last score, not a sibling.'
+    : 'Fluency: keep practice untimed for now — the concept skill is not yet marked "Demonstrated independently." Accuracy and explaining first; speed later.'
+  return { ...lesson, guide: { ...lesson.guide, practice: [...lesson.guide.practice, line] } }
+}
+
+// ───────────────────────────── HANDWRITING (Pre-K, K) ─────────────────────────────
+
+export function handwritingLesson(week: number, day: LessonDay, grade: Grade): DailyLesson | null {
+  if (grade === '1st') return null
+  const hw = getHandwritingWeek(grade, week)
+  const focus = hw.nameFocus ? 'your name' : hw.letters.join(' ')
+  const nums = hw.numbers.join(', ')
+  const talk = formationTalk([...hw.letters, ...hw.numbers].join(''))
+  const what = hw.nameFocus ? 'Writing my name with each letter starting in the right place.' : `Forming ${hw.letters.join(', ')} and the number${hw.numbers.length > 1 ? 's' : ''} ${nums}.`
+  const why = 'Starting each letter and number in the same place, moving the same way every time, makes writing faster and neater — and it keeps b/d and 2/5 from flipping.'
+  const how = ['Find the starting place (top line or middle line).', 'Say the formation words while you move.', 'Check: does it sit on the baseline?']
+  const byDay: Record<LessonDay, Omit<TeachingGuide, 'ifStruggling' | 'ifMastered'>> = {
+    0: {
+      objective: `See and feel how ${focus} and ${nums} are formed.`,
+      materials: ['Salt, sugar, or shaving-cream tray (a baking sheet works)', 'Whiteboard or chalkboard'],
+      stages: [{ label: 'Big movements', text: 'Sky-write with a straight arm, then finger-write in the tray. No pencil today.' }],
+      teach: ['Model slowly, saying the words as you go:', ...talk.map((t) => `• ${t}`)],
+      practice: ['Sky-write each one 3 times with a straight arm.', 'Finger-write each one in the tray, then shake to erase.'],
+      check: 'Starts at the correct place without reminders.',
+      minimum: 'Sky-write this week’s letter and number together, 3 times each.',
+    },
+    1: {
+      objective: `Trace and copy ${focus} and ${nums} from the starting dot.`,
+      materials: ['Handwriting page', 'Pencil (a short or golf pencil helps a pinch grip)'],
+      stages: [{ label: 'Guided → copy', text: 'Green dot = start. Red arrow = which way to go. Then write one on your own.' }],
+      teach: [`Tip: ${hw.tip}`, 'Do the first letter together: finger on the green dot, follow the arrow, say the formation words.'],
+      practice: ['Complete the handwriting page — one row at a time; cover the rows below if it helps.', 'Circle your best one in each row.'],
+      check: 'Most letters start at the dot and sit on the baseline.',
+      minimum: 'Trace the first row together.',
+    },
+    2: {
+      objective: 'Build finger strength and pencil control.',
+      materials: ['See the fine-motor activity'],
+      stages: [{ label: 'Fine motor', text: hw.fineMotor }],
+      teach: [hw.fineMotor, `Then write ${hw.nameFocus ? 'your name' : hw.letters.slice(0, 2).join(' and ')} big on a whiteboard, sidewalk chalk, or a steamy window.`],
+      practice: ['Fine-motor activity (5 minutes).', 'Whiteboard or chalk: write each letter and number of the week twice.'],
+      check: 'Uses a pinch (tripod) grip for the whiteboard writing.',
+      minimum: hw.fineMotor,
+    },
+    3: {
+      objective: `Write ${focus} and ${nums} with less help; practice my name.`,
+      materials: ['Handwriting page', 'Pencil'],
+      stages: [{ label: 'Independent', text: 'Trace once, copy once, then write from memory.' }],
+      teach: ['Dictation: say a letter (or word) from this week; child writes it without looking.', 'Count the pictures together before writing the number.'],
+      practice: ['Complete the handwriting page.', 'Name: write it on the page, then on a drawing.'],
+      check: 'Writes this week’s letters and numbers from memory with the correct start. Mark the handwriting skill in Progress.',
+      minimum: 'Write your name once and one letter from this week.',
+    },
+  }
+  const g = byDay[day]
+  const ids = [handwritingSkillId(grade, week)]
+  return {
+    id: lessonId(week, day, grade, 'handwriting'),
+    week,
+    day,
+    grade,
+    subject: 'handwriting',
+    title: hw.nameFocus ? 'My name' : `${hw.letters.join(' ') || `Review ${hw.review.join(' ')}`}${hw.numbers.length ? ` · ${nums}` : ''}`,
+    phase: LESSON_DAY_NAMES[day],
+    guide: {
+      ...g,
+      what,
+      why,
+      how,
+      ifStruggling: 'Go back to big movements (sky, tray, play dough). Trace with a finger before a pencil. Fewer letters per row.',
+      ifMastered: grade === 'k' ? 'Copy a short sentence from a book with finger spaces.' : 'Write the letter without the starting dot.',
+    },
+    minutes: MINUTES.handwriting[grade],
+    skillIds: ids,
+    introduces: day === 0 ? ids : [],
+    worksheet: printsOn('handwriting', grade, day) ? slot(week, day, grade, 'handwriting') : null,
+    childTask: ['Sky-writing', 'Handwriting page', 'Finger strength', 'Handwriting check'][day],
+    activity: (['hands-on', 'academic', 'hands-on', 'review'] as const)[day],
+  }
+}
+
+// ───────────────────────────── LANGUAGE BUILDING ─────────────────────────────
+
+export function languageLesson(week: number, day: LessonDay, grade: Grade, name?: string, literacyGrade: Grade = grade): DailyLesson {
+  const d = languageDay(week, day, name, literacyGrade)
+  return {
+    id: lessonId(week, day, grade, 'language'),
+    week,
+    day,
+    grade,
+    subject: 'language',
+    title: d.title,
+    phase: LESSON_DAY_NAMES[day],
+    guide: {
+      objective: `Language focus: ${STRAND_LABEL[d.focus]} (review: ${STRAND_LABEL[d.review].toLowerCase()}). Listen, understand, and answer in full sentences.`,
+      materials: day === 0 ? ['A picture of this week’s Bible story (children’s Bible)'] : day === 3 ? ['Paper for quick sequence pictures'] : ['Household objects'],
+      teach: d.steps,
+      practice: [`Vocabulary this week: ${d.vocab.join(', ')}.`, `Visual support: ${d.visual}`],
+      check: d.check,
+      ifStruggling: 'Offer two choices (with pictures if possible), model the full sentence, and have the child say it back. Same skill, more support.',
+      ifMastered: 'Ask a follow-up "why" or "how do you know?" and have the child ask you a question.',
+      minimum: d.minimum,
+      starters: d.starters,
+    },
+    minutes: MINUTES.language[grade],
+    skillIds: [languageSkillId(d.focus)],
+    introduces: [],
+    worksheet: null,
+    childTask: ['Picture talk', 'Listen & do', 'Talk game', 'Retell'][day],
+    activity: d.activity,
   }
 }
 

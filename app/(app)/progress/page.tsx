@@ -26,8 +26,15 @@ export default function ProgressPage() {
   const [track, setTrack] = useState<SkillTrack>('literacy')
   if (!child) return <PageHeader title="Progress" description="Add a learner on the Students page." />
   const learner = logic.learnerOf(child)
-  const gradeFor = track === 'literacy' ? (child.adjust?.literacyGrade ?? learner.grade) : (child.adjust?.mathGrade ?? learner.grade)
-  const skills = skillsForGrade(gradeFor).filter((s) => s.track === track && s.week <= Math.max(week, positionOf(store.pointer).week) + 1)
+  const tracks: SkillTrack[] = [
+    'literacy',
+    'math',
+    ...((learner.profile?.handwriting ?? (learner.grade === 'pre-k' || learner.grade === 'k')) && learner.grade !== '1st' ? (['handwriting'] as const) : []),
+    ...(learner.profile?.languageBuilding ? (['language'] as const) : []),
+  ]
+  const gradeFor = track === 'math' ? (child.adjust?.mathGrade ?? learner.grade) : track === 'language' ? '1st' : (child.adjust?.literacyGrade ?? learner.grade)
+  const reach = Math.max(week, positionOf(store.pointer).week) + 1
+  const skills = skillsForGrade(gradeFor).filter((s) => s.track === track && (track === 'language' || s.week <= reach))
   const summary = logic.weeklySummary(store, child.id, week)
   const counts = SKILL_STATUSES.map((st) => ({ ...st, n: skills.filter((s) => logic.skillStatusOf(store, child.id, s.id) === st.id).length }))
   const legacy = store.legacySkills.filter((s) => s.childId === child.id)
@@ -80,7 +87,7 @@ export default function ProgressPage() {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-serif text-lg font-semibold">Skills</h2>
           <div className="flex gap-1">
-            {(['literacy', 'math'] as SkillTrack[]).map((t) => (
+            {tracks.map((t) => (
               <button key={t} type="button" aria-pressed={track === t} onClick={() => setTrack(t)} className={cn('rounded-full border px-3 py-1 text-xs font-bold capitalize', track === t ? 'border-primary bg-sage-soft text-primary' : 'border-border')}>
                 {t}
               </button>

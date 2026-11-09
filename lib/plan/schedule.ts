@@ -21,13 +21,37 @@ export interface DaySchedule {
   kind: DayKind
   /** Enrichment that rides along with core learning on this weekday. */
   enrichment: EnrichmentKind | null
+  /** A second enrichment on the same day (e.g. Friday science + library). */
+  extra?: EnrichmentKind | null
+  /** A standing commitment shown on Today, e.g. church in the morning. */
+  note?: string
+}
+
+/** All enrichments for a weekday, in order. */
+export function enrichmentsOf(d: DaySchedule): EnrichmentKind[] {
+  return [d.enrichment, d.extra].filter((k): k is EnrichmentKind => !!k)
 }
 
 /** Index 0 = Sunday … 6 = Saturday (Date#getDay). */
 export type WeeklySchedule = [DaySchedule, DaySchedule, DaySchedule, DaySchedule, DaySchedule, DaySchedule, DaySchedule]
 
-/** Monday science · Tuesday library · Wednesday co-op · Thursday art · Friday review. */
+/**
+ * Monday math, literacy, Bible, art · Tuesday + science · Wednesday co-op ·
+ * Thursday + art · Friday + science and library. Church Monday and Wednesday
+ * 9 AM–12 PM, so Monday's lesson day is the light, hands-on one.
+ */
 export const DEFAULT_SCHEDULE: WeeklySchedule = [
+  { kind: 'off', enrichment: null },
+  { kind: 'school', enrichment: 'art', note: 'Church 9 AM–12 PM — school after lunch, hands-on day.' },
+  { kind: 'school', enrichment: 'science' },
+  { kind: 'coop', enrichment: null, note: 'Church 9 AM–12 PM, then co-op. No lesson packet.' },
+  { kind: 'school', enrichment: 'art' },
+  { kind: 'school', enrichment: 'science', extra: 'library' },
+  { kind: 'off', enrichment: null },
+]
+
+/** The schedule shipped before Nov 2026; stored copies of it are upgraded to DEFAULT_SCHEDULE. */
+export const PREVIOUS_DEFAULT_SCHEDULE: WeeklySchedule = [
   { kind: 'off', enrichment: null },
   { kind: 'school', enrichment: 'science' },
   { kind: 'school', enrichment: 'library' },

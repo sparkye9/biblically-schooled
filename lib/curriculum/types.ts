@@ -7,6 +7,30 @@
 
 export type Grade = 'pre-k' | 'k' | '1st'
 export type CoreSubject = 'bible' | 'literacy' | 'math'
+/** Subjects a daily lesson can be. Handwriting (Pre-K/K) and language building are switched on per child profile. */
+export type LessonSubject = CoreSubject | 'handwriting' | 'language'
+/** Subjects that can have a printable page. */
+export type PrintSubject = CoreSubject | 'handwriting'
+
+/**
+ * What kind of learning an activity is. The weekly rhythm alternates these on
+ * purpose so school is never a whole day of worksheets.
+ */
+export type ActivityType = 'academic' | 'hands-on' | 'movement' | 'discussion' | 'review'
+export const ACTIVITY_LABELS: Record<ActivityType, string> = {
+  academic: 'Traditional academic work',
+  'hands-on': 'Hands-on learning',
+  movement: 'Movement-based learning',
+  discussion: 'Discussion & exploration',
+  review: 'Review & assessment',
+}
+export const ACTIVITY_SHORT: Record<ActivityType, string> = {
+  academic: 'Academic',
+  'hands-on': 'Hands-on',
+  movement: 'Movement',
+  discussion: 'Discussion',
+  review: 'Review',
+}
 export type EnrichmentKind =
   | 'science'
   | 'art'
@@ -23,6 +47,17 @@ export const LESSON_DAY_NAMES: Record<LessonDay, string> = {
   1: 'Practice',
   2: 'Apply',
   3: 'Review',
+}
+
+/**
+ * The weekly rhythm every generated week follows (lesson days, not weekdays —
+ * with the default calendar they fall on Mon, Tue, Thu, Fri).
+ */
+export const DAY_RHYTHM: Record<LessonDay, { name: string; paper: boolean; summary: string }> = {
+  0: { name: 'Hands-on day', paper: false, summary: 'New ideas with real objects, talk, and building. Nothing to print — a light day.' },
+  1: { name: 'Paper day', paper: true, summary: 'Pictures, then written practice: worksheets for math, phonics, handwriting, and Bible.' },
+  2: { name: 'Hands-on & movement day', paper: false, summary: 'Use it in real life: games, movement, experiments, and reading together. Only a story page for readers.' },
+  3: { name: 'Review & check day', paper: true, summary: 'Independent practice, spiral review, and a short mastery check for each skill.' },
 }
 
 /** Full 60–90 min · Standard 40–50 min · Minimum ~20 min */
@@ -47,6 +82,26 @@ export interface TeachingGuide {
   optional?: string[]
   /** The 5–8 minute version used on Minimum / Easy days. */
   minimum: string
+  /** WHAT we are doing (math and handwriting). */
+  what?: string
+  /** WHY it works. */
+  why?: string
+  /** HOW to solve it, step by step. */
+  how?: string[]
+  /** A worked example said aloud. */
+  example?: string
+  /** The learning stage(s) for today, e.g. Concrete → Pictorial → Abstract. */
+  stages?: { label: string; text: string }[]
+  /** 1–2 minute out-loud warm-up that reviews earlier learning. */
+  warmUp?: string
+  /** For children who are ready: the next step. */
+  whenReady?: string[]
+  /** Predictable beginning / middle / end (added by learner access supports). */
+  structure?: { begin: string; middle: string; end: string }
+  /** How this child accesses the lesson (added by the learner's profile). Same objective, different access. */
+  supports?: string[]
+  /** Sentence starters for talking and writing. */
+  starters?: string[]
 }
 
 export interface MemoryVerse {
@@ -86,7 +141,7 @@ export interface Unit {
   bigIdea: string
 }
 
-export type SkillTrack = 'literacy' | 'math'
+export type SkillTrack = 'literacy' | 'math' | 'handwriting' | 'language'
 
 export interface SkillDef {
   id: string

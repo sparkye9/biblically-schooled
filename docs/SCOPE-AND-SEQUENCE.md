@@ -133,11 +133,11 @@ Seasonal swaps (offered automatically in season):
 | 28 | Adding -s to Make More | play, put | Solid Shapes | K.G.3 |
 | 29 | Beginning Blends | one, two | Position Words | K.G.1 |
 | 30 | Ending Blends | three, from | Composing Shapes | K.G.6 |
-| 31 | Magic e: a_e | there, where | Counting On to Add | K.OA.2 |
-| 32 | Magic e: i_e | who, want | Word Problems Within 10 | K.OA.2 |
-| 33 | Magic e: o_e and u_e | does, good | Meet the Coins | — |
+| 31 | Silent e: a_e | there, where | Counting On to Add | K.OA.2 |
+| 32 | Silent e: i_e | who, want | Word Problems Within 10 | K.OA.2 |
+| 33 | Silent e: o_e and u_e | does, good | Meet the Coins | — |
 | 34 | Reading Short Stories | could, would | Calendar and Days of the Week | — |
-| 35 | Review: Blends and Magic e | were, your | Review: Numbers to 20 | — |
+| 35 | Review: Blends and Silent e | were, your | Review: Numbers to 20 | — |
 | 36 | Celebration: I Am a Reader! | all, very | Year Review Celebration | — |
 
 ## 1st Grade (Alijah)
@@ -154,16 +154,16 @@ Seasonal swaps (offered automatically in season):
 | 8 | Ending Blends (nd, nt, st, mp, sk) | your, put, want | Doubles and Near Doubles | 1.OA.6 |
 | 9 | Review: Digraphs and Blends | — | Review: Facts and Story Problems | — |
 | 10 | Glued Sounds: -ng and -nk | could, would, should | Make 10 to Add | 1.OA.6 |
-| 11 | Magic e: a_e | saw, look, does | Subtracting Within 20 | 1.OA.6 |
-| 12 | Magic e: i_e | who, know, again | The Equal Sign: True or False | 1.OA.7 |
-| 13 | Magic e: o_e, u_e, e_e | many, any, other | Missing Numbers in Equations | 1.OA.8 |
+| 11 | Silent e: a_e | saw, look, does | Subtracting Within 20 | 1.OA.6 |
+| 12 | Silent e: i_e | who, know, again | The Equal Sign: True or False | 1.OA.7 |
+| 13 | Silent e: o_e, u_e, e_e | many, any, other | Missing Numbers in Equations | 1.OA.8 |
 | 14 | Open Syllables and Y as Long i | give, live, very | Tens and Ones | 1.NBT.2 |
 | 15 | Endings: -ed (three sounds) | their, says, been | Reading and Writing Numbers to 120 | 1.NBT.1 |
 | 16 | Endings: -ing | walk, talk, because | Comparing Two-Digit Numbers | 1.NBT.3 |
-| 17 | Review: Magic e and Endings | — | 10 More and 10 Less | 1.NBT.5 |
+| 17 | Review: Silent e and Endings | — | 10 More and 10 Less | 1.NBT.5 |
 | 18 | R-Controlled: ar | friend, school, once | Review: Place Value | — |
 | 19 | R-Controlled: or, ore | people, water, also | Adding Tens | 1.NBT.4 |
-| 20 | R-Controlled: er, ir, ur | around, every, only | Adding a Two-Digit and One-Digit Number | 1.NBT.4 |
+| 20 | R-Controlled: er, ir, ur | around, every, only | Adding 2-Digit + 1-Digit: Carrying a New Ten | 1.NBT.4 |
 | 21 | Vowel Teams: ai and ay | great, together, always | Adding Tens to Two-Digit Numbers | 1.NBT.4 |
 | 22 | Vowel Teams: ee and ea | answer, learn, eye | Subtracting Tens | 1.NBT.6 |
 | 23 | Vowel Teams: oa and ow (snow) | buy, laugh, sure | Ordering by Length | 1.MD.1 |
@@ -173,11 +173,11 @@ Seasonal swaps (offered automatically in season):
 | 27 | Diphthongs: ou and ow (cow) | four, door, floor | Tally Charts and Picture Graphs | 1.MD.4 |
 | 28 | Diphthongs: oi and oy | move, early, enough | Pennies, Nickels, and Dimes | — |
 | 29 | aw and au | whole, piece, half | Counting Coins (Add a Quarter) | — |
-| 30 | Compound Words | different, picture, country | Flat Shapes and Attributes | 1.G.1 |
-| 31 | Two-Syllable Words | above, below, children | Solid Shapes and Building | 1.G.2 |
+| 30 | Compound Words | different, picture, country | Flat and Solid Shapes | 1.G.1, 1.G.2 |
+| 31 | Two-Syllable Words | above, below, children | Equal Groups: Beginning Multiplication | — |
 | 32 | Contractions | wear, question, thought | Halves and Fourths | 1.G.3 |
-| 33 | Prefixes: un- and re- | work, word, world | Comparing Story Problems | 1.OA.1 |
-| 34 | Suffixes: -er, -est, -ful | earth, heard, idea | Mixed Word Problems | 1.OA.1 |
+| 33 | Prefixes: un- and re- | work, word, world | Comparing and Mixed Story Problems | 1.OA.1 |
+| 34 | Suffixes: -er, -est, -ful | earth, heard, idea | Sharing Fairly: Beginning Division | — |
 | 35 | Review: Words and Word Parts | — | Review: Place Value and Facts | — |
 | 36 | Fluency Celebration | — | Year Review Celebration | — |
 

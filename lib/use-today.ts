@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { seasonFor } from './curriculum/bible'
 import { buildDayPlan, type DayPlan } from './plan/day-plan'
-import { WEEKDAY_LABELS, breakOn, type DayKind } from './plan/schedule'
+import { WEEKDAY_LABELS, breakOn, enrichmentsOf, type DayKind } from './plan/schedule'
 import * as logic from './state/logic'
 import { useStore } from './store'
 
@@ -34,8 +34,8 @@ export function useTodayPlan(): TodayInfo {
       index,
       mode,
       easy,
-      learners: store.childrenInView.map(logic.learnerOf),
-      enrichment: kind === 'school' ? scheduled.enrichment : null,
+      learners: store.childrenInView.map((c) => logic.learnerOf(c, store)),
+      enrichment: kind === 'school' ? enrichmentsOf(scheduled) : null,
       date: now,
       useSeasonal: store.preferSeasonal && !!seasonFor(now),
       keyPrefix: welcomeBack ? logic.WELCOME_BACK_PREFIX : '',

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { BIBLE_WEEKS, SEASONAL_LESSONS, UNITS, getBibleWeek } from '@/lib/curriculum/bible'
 import { getEnrichment } from '@/lib/curriculum/enrichment'
-import { coreLessons } from '@/lib/curriculum/lessons'
+import { coreLessons, handwritingLesson } from '@/lib/curriculum/lessons'
 import { LITERACY, getLiteracyWeek } from '@/lib/curriculum/literacy'
 import { MATH, getMathWeek } from '@/lib/curriculum/math'
 import { LESSON_DAY_NAMES, type Grade, type LessonDay } from '@/lib/curriculum/types'
@@ -11,7 +11,7 @@ import { positionOf } from '@/lib/plan/schedule'
 import { gradeLabel, useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 import { Card, PageHeader, Pill } from '@/components/primitives'
-import { TeachingGuideView } from '@/components/teaching-guide'
+import { ActivityBadge, TeachingGuideView } from '@/components/teaching-guide'
 
 type Tab = 'map' | 'sequence' | 'week'
 const GRADES: Grade[] = ['pre-k', 'k', '1st']
@@ -142,7 +142,8 @@ function WeekDetail({ week, setWeek, grade, setGrade }: { week: number; setWeek:
   const mt = getMathWeek(grade, week)
   const e = getEnrichment(week)
   const [day, setDay] = useState<LessonDay>(0)
-  const lessons = coreLessons(week, day, grade)
+  const hw = handwritingLesson(week, day, grade)
+  const lessons = [...coreLessons(week, day, grade), ...(hw ? [hw] : [])]
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -222,7 +223,8 @@ function WeekDetail({ week, setWeek, grade, setGrade }: { week: number; setWeek:
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <h3 className="font-semibold capitalize">{l.subject}</h3>
             <Pill>{l.minutes.minimum}/{l.minutes.standard}/{l.minutes.full} min (min/std/full)</Pill>
-            {l.worksheet ? <Pill tone="sage">Worksheet</Pill> : <Pill tone="gold">Hands-on</Pill>}
+            {l.worksheet ? <Pill tone="sage">Prints a page</Pill> : <Pill tone="gold">No printing</Pill>}
+            <ActivityBadge type={l.activity} long />
           </div>
           <TeachingGuideView guide={l.guide} />
           <div className="mt-3">
