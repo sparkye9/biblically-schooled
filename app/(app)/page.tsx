@@ -23,6 +23,7 @@ import { DAY_RHYTHM, LESSON_DAY_NAMES, type DayMode } from '@/lib/curriculum/typ
 import { MODE_INFO, type ChildPlan, type PlanItem } from '@/lib/plan/day-plan'
 import { useStore } from '@/lib/store'
 import { useTodayPlan } from '@/lib/use-today'
+import { sheetForIndex } from '@/lib/worksheets/daily-review'
 import * as logic from '@/lib/state/logic'
 import { cn } from '@/lib/utils'
 import { Card, ChildAvatar, DoneBox, Pill, ProgressBar, Section } from '@/components/primitives'
@@ -171,6 +172,12 @@ export default function TodayPage() {
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-bold"
               >
                 <Printer className="size-4" /> Print today’s pages
+              </Link>
+              <Link
+                href={`/print/review?children=${store.childrenInView.map((c) => c.id).join(',')}&from=${sheetForIndex(store.pointer)}&to=${sheetForIndex(store.pointer)}&level=regular,challenge`}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-bold"
+              >
+                <Printer className="size-4" /> Daily review sheet #{sheetForIndex(store.pointer)}
               </Link>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">Tomorrow will open on the next lesson automatically once anything today is checked.</p>

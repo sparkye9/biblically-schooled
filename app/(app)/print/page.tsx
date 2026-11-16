@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Suspense, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Archive, CheckCircle2, FileText, Printer, ShieldCheck } from 'lucide-react'
+import { Archive, CheckCircle2, ClipboardList, FileText, Printer, ShieldCheck } from 'lucide-react'
 import { getBibleWeek } from '@/lib/curriculum/bible'
 import type { LessonDay, PrintSubject } from '@/lib/curriculum/types'
 import { lessonsFor } from '@/lib/plan/day-plan'
@@ -12,6 +12,7 @@ import * as logic from '@/lib/state/logic'
 import { useStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
 import { getWorksheet } from '@/lib/worksheets'
+import { REVIEW_SHEETS, sheetForIndex, type ReviewLevel } from '@/lib/worksheets/daily-review'
 import { validateWorksheet } from '@/lib/worksheets/validate'
 import { MAX_PACKET_WEEK, PACKET_CHILD_FOLDER, packetUrlFor, parentChecklistUrlFor } from '@/lib/worksheet-packets'
 import { Card, PageHeader, Pill } from '@/components/primitives'
@@ -75,13 +76,15 @@ function PrintCenter() {
             <p className="text-sm text-muted-foreground">Pre-K pages print once for each Pre-K child, with their own name.</p>
           </div>
           <Link
-            href={`/print/packet?week=${week}&children=${store.childrenInView.map((c) => c.id).join(',')}&subjects=bible,literacy,math&days=0,1,2,3&overview=1&checklists=1&key=1&color=${store.printColor ? 1 : 0}`}
+            href={`/print/packet?week=${week}&children=${store.childrenInView.map((c) => c.id).join(',')}&subjects=bible,literacy,math,handwriting&days=0,1,2,3&overview=1&checklists=1&key=1&color=${store.printColor ? 1 : 0}`}
             className="rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground"
           >
             Print my week
           </Link>
         </div>
       </Card>
+
+      <DailyReviewCard />
 
       <Card className="space-y-5">
         <Step n={1} title="Choose the week">
@@ -228,6 +231,69 @@ function LegacyArchive({ week }: { week: number }) {
           )}
         </div>
       )}
+    </Card>
+  )
+}
+
+/** One-page mixed review sheets: 50 per child, regular and challenge. */
+function DailyReviewCard() {
+  const store = useStore()
+  const suggested = sheetForIndex(store.pointer)
+  const [kids, setKids] = useState<string[] | null>(null)
+  const chosen = kids ?? store.childrenInView.map((c) => c.id)
+  const [from, setFrom] = useState(suggested)
+  const [to, setTo] = useState(suggested)
+  const [levels, setLevels] = useState<ReviewLevel[]>(['regular', 'challenge'])
+  const [key, setKey] = useState(true)
+  const toggle = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v])
+  const href = (a: number, b: number) =>
+    `/print/review?children=${chosen.join(',')}&from=${a}&to=${b}&level=${levels.join(',')}&key=${key ? 1 : 0}&color=${store.printColor ? 1 : 0}`
+  const num = (v: string) => Math.min(REVIEW_SHEETS, Math.max(1, Number(v) || 1))
+  const count = chosen.length * (Math.max(from, to) - from + 1) * levels.length
+  return (
+    <Card className="space-y-4">
+      <div className="flex flex-wrap items-start gap-3">
+        <ClipboardList className="mt-0.5 size-6 text-primary" />
+        <div className="min-w-0 flex-1">
+          <h2 className="font-serif text-lg font-semibold">Daily review sheets</h2>
+          <p className="text-sm text-muted-foreground">
+            One page of mixed skills — reading, writing, math, money, time — for each child. {REVIEW_SHEETS} per child, each with a regular and a challenge version. They follow the
+            curriculum: sheet #{suggested} matches where you are now.
+          </p>
+        </div>
+        <Link href={href(suggested, suggested)} className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
+          Print today’s (#{suggested})
+        </Link>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {store.activeChildren.map((c) => (
+          <Chip key={c.id} on={chosen.includes(c.id)} onClick={() => setKids(toggle(chosen, c.id))}>
+            {c.name}
+          </Chip>
+        ))}
+      </div>
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        <span className="font-semibold">Sheets</span>
+        <input type="number" min={1} max={REVIEW_SHEETS} value={from} onChange={(e) => setFrom(num(e.target.value))} aria-label="First sheet" className="w-20 rounded-lg border border-border bg-card px-2 py-1.5" />
+        <span>to</span>
+        <input type="number" min={1} max={REVIEW_SHEETS} value={Math.max(from, to)} onChange={(e) => setTo(num(e.target.value))} aria-label="Last sheet" className="w-20 rounded-lg border border-border bg-card px-2 py-1.5" />
+        <Chip on={levels.includes('regular')} onClick={() => setLevels(toggle(levels, 'regular'))}>
+          Regular
+        </Chip>
+        <Chip on={levels.includes('challenge')} onClick={() => setLevels(toggle(levels, 'challenge'))}>
+          Challenge
+        </Chip>
+        <label className="flex items-center gap-1.5">
+          <input type="checkbox" checked={key} onChange={(e) => setKey(e.target.checked)} className="size-4 accent-[var(--primary)]" /> Answer key
+        </label>
+      </div>
+      <Link
+        href={href(from, Math.max(from, to))}
+        aria-disabled={!count}
+        className={cn('inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-bold', !count && 'pointer-events-none opacity-50')}
+      >
+        <Printer className="size-4" /> Print {count} sheet{count === 1 ? '' : 's'}
+      </Link>
     </Card>
   )
 }

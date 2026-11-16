@@ -43,6 +43,7 @@ export type Block =
   | { type: 'equal-groups'; items: { icon: string; groups: number; each: number }[] }
   | { type: 'share'; items: { icon: string; total: number; groups: number }[] }
   | { type: 'handwriting'; rows: HandwritingRow[] }
+  | { type: 'mixed'; sections: MixSection[] }
   | { type: 'word-list'; words: string[] }
   | { type: 'word-sort'; columns: [string, string]; words: { word: string; column: 0 | 1 }[] }
   | { type: 'sentences'; prompt: string; items: { text: string; answer?: string; choices?: string[] }[] }
@@ -51,6 +52,34 @@ export type Block =
   | { type: 'talk'; questions: string[] }
   | { type: 'feelings'; prompts: string[] }
   | { type: 'syllables'; items: { picture: string; syllables: number }[] }
+
+/** One numbered, boxed section of a mixed daily review page. */
+export interface MixSection {
+  title: string
+  directions: string
+  /** 2 = full width, 1 = half width. */
+  span: 1 | 2
+  body: MixBody
+}
+
+export type MixBody =
+  | { kind: 'trace'; text: string; mode: 'guided' | 'trace' | 'copy'; size: 'lg' | 'md' }
+  | { kind: 'letter-find'; target: string; letters: string[] }
+  | { kind: 'first-sound'; items: { picture: string; choices: string[]; answer: string }[] }
+  | { kind: 'count'; items: { icon: string; count: number }[] }
+  | { kind: 'next'; rows: { seq: number[]; answer: number }[] }
+  | { kind: 'equations'; items: { a: number; b: number; op: '+' | '-'; answer: number; blank: 'answer' | 'b' }[] }
+  | { kind: 'picture-add'; items: { icon: string; a: number; b: number }[] }
+  | { kind: 'coins'; items: { coins: Coin[] }[] }
+  | { kind: 'clocks'; items: { h: number; m: 0 | 30 }[] }
+  | { kind: 'match'; words: string[]; pictures: string[]; pairs: [number, number][] }
+  | { kind: 'sight-words'; words: string[] }
+  | { kind: 'spell'; items: { picture: string; word: string }[] }
+  | { kind: 'fill-blank'; items: { before: string; after: string; choices: string[]; answer: string }[] }
+  | { kind: 'compare'; items: { left: number; right: number }[] }
+  | { kind: 'shapes'; target: ShapeName; shapes: ShapeName[] }
+  | { kind: 'tens-ones'; items: { tens: number; ones: number }[] }
+  | { kind: 'more-fewer'; items: { icon: string; left: number; right: number }[] }
 
 /** One row of handwriting practice. Glyphs are drawn from stroke data (lib/curriculum/handwriting-glyphs.ts). */
 export interface HandwritingRow {
@@ -72,7 +101,7 @@ export interface WorksheetSpec {
   week: number
   day: number
   grade: Grade
-  subject: 'bible' | 'literacy' | 'math' | 'handwriting' | 'family'
+  subject: 'bible' | 'literacy' | 'math' | 'handwriting' | 'family' | 'review'
   title: string
   skill: string
   objective: string

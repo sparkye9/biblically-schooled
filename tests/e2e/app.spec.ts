@@ -14,8 +14,10 @@ async function fresh(page: Page, date = THURSDAY) {
 function trackErrors(page: Page) {
   const errors: string[] = []
   page.on('pageerror', (e) => errors.push(e.message))
-  // Vercel Analytics' script only exists on Vercel itself; its local 404 is expected.
-  page.on('console', (m) => m.type() === 'error' && !m.location().url.includes('/_vercel/') && errors.push(m.text()))
+  // Vercel Analytics' script only exists on Vercel itself; its local 404 is expected. Failed loads are
+  // checked by URL (newer Chromium reports them in the console without one).
+  page.on('console', (m) => m.type() === 'error' && !m.text().startsWith('Failed to load resource') && errors.push(m.text()))
+  page.on('response', (r) => r.status() >= 400 && !r.url().includes('/_vercel/') && errors.push(`${r.status()} ${r.url()}`))
   return errors
 }
 
@@ -200,4 +202,25 @@ test('Video day lists this week’s videos from the vetted channels', async ({ p
   const hrefs = await page.locator('#videos').locator('..').locator('a[href^="https://www.youtube.com"]').evaluateAll((as) => as.map((a) => (a as HTMLAnchorElement).href))
   expect(hrefs.some((h) => h.includes('@saddlebackkids/search?query=Noah'))).toBe(true)
   expect(hrefs.every((h) => /youtube\.com\/(@(saddlebackkids|jackhartmann|numberblocks)\/search|results\?search_query=(Suitcase|SciShow))/.test(h))).toBe(true)
+})
+
+test('daily review: all 50 regular + 50 challenge sheets per child fit one page with every picture', async ({ page }) => {
+  test.setTimeout(300_000)
+  await fresh(page)
+  await page.goto('/print/review?children=c-alijah,c-olori,c-seraiah&from=1&to=50&level=regular,challenge&key=1')
+  await expect(page.locator('[data-ws-page]').first()).toBeVisible()
+  const r = await page.evaluate(() => ({
+    count: document.querySelectorAll('[data-ws-page]').length,
+    clipped: [...document.querySelectorAll<HTMLElement>('[data-ws-page]')]
+      .filter((p) => {
+        const c = p.querySelector<HTMLElement>('[data-ws-content]')!
+        return c.scrollHeight > c.clientHeight + 2 || c.scrollWidth > c.clientWidth + 2
+      })
+      .map((p) => p.dataset.wsPage),
+    missing: [...document.querySelectorAll<HTMLElement>('[data-missing-picture]')].map((e) => e.dataset.missingPicture),
+  }))
+  expect(r.count).toBe(300)
+  expect(r.clipped).toEqual([])
+  expect(r.missing).toEqual([])
+  await expect(page.getByText(/Answer Key — Daily review #1–50/)).toBeVisible()
 })

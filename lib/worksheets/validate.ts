@@ -71,6 +71,8 @@ const ROWS: Partial<Record<Block['type'], (b: any) => number>> = {
   feelings: (b) => b.prompts.length * 4,
   syllables: (b) => b.items.length * 2.8,
   vertical: (b) => Math.ceil(b.items.length / 4) * 5.5,
+  // mixed review pages are checked for real overflow in the browser tests
+  mixed: () => 20,
   'equal-groups': (b) => Math.ceil(b.items.length / 2) * 6,
   share: (b) => b.items.length * 5.5,
   // a long copy model (word or sentence) gets a second, empty line underneath

@@ -14,7 +14,7 @@ const SCALE = { lg: 0.78, md: 0.52 } as const
 /** Room on the left so the first letter's arrow is not clipped. */
 const PAD_X = 26
 
-export function HandwritingLine({ row, name }: { row: HandwritingRow; name?: string }) {
+export function HandwritingLine({ row, name, width = 720 }: { row: HandwritingRow; name?: string; /** viewBox width: 720 for a full line, 360 for a half-width box. */ width?: number }) {
   const k = SCALE[row.size]
   const top = 12
   const h = Math.round(top + 145 * k + 6)
@@ -29,15 +29,15 @@ export function HandwritingLine({ row, name }: { row: HandwritingRow; name?: str
   const showText = row.mode === 'write' ? [] : glyphs
   const endX = x - GLYPH_GAP
   // A long model (a word or sentence) gets its own empty line underneath to copy onto.
-  const copyBelow = row.mode === 'copy' && endX * k > 360
+  const copyBelow = row.mode === 'copy' && endX * k > width / 2
 
   return (
     <div className="break-inside-avoid">
       {row.label && <p className="mb-0.5 text-[12px] font-bold">{row.label}</p>}
-      <svg viewBox={`0 0 720 ${h}`} width="100%" height={h} role="img" aria-label={`${row.mode}: ${text}`}>
-        <line x1="0" x2="720" y1={y(0)} y2={y(0)} stroke="#555" strokeWidth="1.2" />
-        <line x1="0" x2="720" y1={y(50)} y2={y(50)} stroke="#999" strokeWidth="1" strokeDasharray="7 6" />
-        <line x1="0" x2="720" y1={y(100)} y2={y(100)} stroke="#000" strokeWidth="1.6" />
+      <svg viewBox={`0 0 ${width} ${h}`} width="100%" height={h} role="img" aria-label={`${row.mode}: ${text}`}>
+        <line x1="0" x2={width} y1={y(0)} y2={y(0)} stroke="#555" strokeWidth="1.2" />
+        <line x1="0" x2={width} y1={y(50)} y2={y(50)} stroke="#999" strokeWidth="1" strokeDasharray="7 6" />
+        <line x1="0" x2={width} y1={y(100)} y2={y(100)} stroke="#000" strokeWidth="1.6" />
         {row.mode === 'copy' && !copyBelow && <line x1={endX * k + 16} x2={endX * k + 16} y1={y(-4)} y2={y(108)} stroke="#bbb" strokeWidth="1" />}
         {showText.map((g, i) =>
           g.ch === ' ' || !GLYPHS[g.ch] ? null : (
@@ -55,10 +55,10 @@ export function HandwritingLine({ row, name }: { row: HandwritingRow; name?: str
         )}
       </svg>
       {copyBelow && (
-        <svg viewBox={`0 0 720 ${h}`} width="100%" height={h} aria-hidden>
-          <line x1="0" x2="720" y1={y(0)} y2={y(0)} stroke="#555" strokeWidth="1.2" />
-          <line x1="0" x2="720" y1={y(50)} y2={y(50)} stroke="#999" strokeWidth="1" strokeDasharray="7 6" />
-          <line x1="0" x2="720" y1={y(100)} y2={y(100)} stroke="#000" strokeWidth="1.6" />
+        <svg viewBox={`0 0 ${width} ${h}`} width="100%" height={h} aria-hidden>
+          <line x1="0" x2={width} y1={y(0)} y2={y(0)} stroke="#555" strokeWidth="1.2" />
+          <line x1="0" x2={width} y1={y(50)} y2={y(50)} stroke="#999" strokeWidth="1" strokeDasharray="7 6" />
+          <line x1="0" x2={width} y1={y(100)} y2={y(100)} stroke="#000" strokeWidth="1.6" />
         </svg>
       )}
     </div>

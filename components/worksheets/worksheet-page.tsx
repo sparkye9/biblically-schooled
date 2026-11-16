@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import type { ShapeName } from '@/lib/curriculum/math'
 import { HandwritingLine } from './handwriting-row'
-import { COIN_VALUE, NAME_PLACEHOLDER, type Block, type Coin, type WorksheetSpec } from '@/lib/worksheets/types'
+import { COIN_VALUE, NAME_PLACEHOLDER, type Block, type Coin, type MixSection, type WorksheetSpec } from '@/lib/worksheets/types'
+import { cn } from '@/lib/utils'
 import { exprText } from '@/lib/worksheets/math-gen'
 import { ICONS } from './icons'
 
@@ -14,7 +15,7 @@ import { ICONS } from './icons'
 
 const GRADE_LABEL = { 'pre-k': 'Pre-K', k: 'Kindergarten', '1st': '1st Grade' } as const
 const DAY_LABEL = ['Introduce', 'Practice', 'Apply', 'Review']
-const SUBJECT_LABEL = { bible: 'Bible', literacy: 'Literacy', math: 'Math', handwriting: 'Handwriting', family: 'Family Learning' } as const
+const SUBJECT_LABEL = { bible: 'Bible', literacy: 'Literacy', math: 'Math', handwriting: 'Handwriting', family: 'Family Learning', review: 'Mixed Review' } as const
 
 export function Pic({ name, size = 40, className }: { name: string; size?: number; className?: string }) {
   const Icon = ICONS[name]
@@ -350,6 +351,14 @@ function BlockView({ block: b, name }: { block: Block; name?: string }) {
               </div>
             ))}
           </div>
+        </div>
+      )
+    case 'mixed':
+      return (
+        <div className="grid grid-cols-2 gap-2">
+          {b.sections.map((sec, i) => (
+            <MixedSectionView key={i} n={i + 1} section={sec} name={name} />
+          ))}
         </div>
       )
     case 'handwriting':
@@ -1117,7 +1126,7 @@ export function AnswerKeyPage({ title, specs }: { title: string; specs: Workshee
         {specs.map((s) => (
           <div key={s.id} className="mb-3 break-inside-avoid">
             <p className="font-bold">
-              {s.title} <span className="font-normal">({GRADE_LABEL[s.grade]} · {DAY_LABEL[s.day]} · {s.id})</span>
+              {s.title} <span className="font-normal">({GRADE_LABEL[s.grade]}{s.subject === 'review' ? '' : ` · ${DAY_LABEL[s.day]}`} · {s.id})</span>
             </p>
             {s.answerKey.map((a, i) => (
               <p key={i}>{a}</p>
@@ -1127,4 +1136,250 @@ export function AnswerKeyPage({ title, specs }: { title: string; specs: Workshee
       </div>
     </section>
   )
+}
+
+// ───────────────────────── Mixed daily review sections ─────────────────────────
+
+function MixedSectionView({ n, section, name }: { n: number; section: MixSection; name?: string }) {
+  const b = section.body
+  return (
+    <div className={cn('break-inside-avoid rounded-lg border-[1.5px] border-black px-2.5 pb-1.5 pt-1', section.span === 2 && 'col-span-2')}>
+      <p className="flex items-baseline gap-1.5 text-[14px] font-extrabold">
+        <span className="inline-flex size-[20px] shrink-0 items-center justify-center rounded-full bg-black text-[12px] text-white">{n}</span>
+        {section.title}
+      </p>
+      <p className="mb-0.5 text-[11px] text-neutral-700">{section.directions}</p>
+      <MixedBody body={b} span={section.span} name={name} />
+    </div>
+  )
+}
+
+function MixedBody({ body: b, span, name }: { body: MixSection['body']; span: 1 | 2; name?: string }) {
+  switch (b.kind) {
+    case 'trace':
+      return <HandwritingLine row={{ mode: b.mode, text: b.text, size: b.size }} name={name} width={span === 2 ? 720 : 360} />
+    case 'letter-find':
+      return (
+        <div className="flex flex-wrap gap-x-3 gap-y-1 text-[24px] font-bold leading-tight">
+          {b.letters.map((l, i) => (
+            <span key={i} className="w-[24px] text-center">
+              {l}
+            </span>
+          ))}
+        </div>
+      )
+    case 'first-sound':
+      return (
+        <div className="flex flex-wrap gap-x-5 gap-y-2">
+          {b.items.map((it, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <Pic name={it.picture} size={38} />
+              <span className="flex gap-1.5 text-[18px] font-bold">
+                {it.choices.map((c) => (
+                  <span key={c} className="inline-flex size-[30px] items-center justify-center rounded-full border border-neutral-500">
+                    {c}
+                  </span>
+                ))}
+              </span>
+            </div>
+          ))}
+        </div>
+      )
+    case 'count':
+      return (
+        <div className="flex gap-2">
+          {b.items.map((it, i) => (
+            <div key={i} className="flex flex-1 flex-col justify-between rounded-md border border-neutral-400 p-1.5">
+              <div className="flex flex-wrap gap-0.5">
+                <IconGroup icon={it.icon} n={it.count} size={it.count > 10 ? 15 : 19} />
+              </div>
+              <div className="mt-1 flex justify-end">
+                <AnswerBox w={40} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )
+    case 'next':
+      return (
+        <ol className="space-y-1.5 text-[18px] font-semibold">
+          {b.rows.map((row, i) => (
+            <li key={i}>
+              {row.seq.join(',  ')}, <Blank w={56} />
+            </li>
+          ))}
+        </ol>
+      )
+    case 'equations':
+      return (
+        <div className={cn('grid gap-x-6 gap-y-2 text-[20px] font-semibold', span === 2 ? 'grid-cols-3' : 'grid-cols-2')}>
+          {b.items.map((it, i) => (
+            <p key={i} className="flex items-center gap-1.5 whitespace-nowrap">
+              {it.a} {it.op === '-' ? '−' : '+'} {it.blank === 'b' ? <AnswerBox w={36} /> : it.b} = {it.blank === 'answer' ? <AnswerBox w={40} /> : it.answer}
+            </p>
+          ))}
+        </div>
+      )
+    case 'picture-add':
+      return (
+        <div className="space-y-2">
+          {b.items.map((it, i) => (
+            <div key={i} className="flex flex-wrap items-center gap-1.5 text-[18px] font-bold">
+              <span className="flex flex-wrap gap-0.5">
+                <IconGroup icon={it.icon} n={it.a} size={18} />
+              </span>
+              +
+              <span className="flex flex-wrap gap-0.5">
+                <IconGroup icon={it.icon} n={it.b} size={18} />
+              </span>
+              = <AnswerBox w={36} />
+            </div>
+          ))}
+        </div>
+      )
+    case 'more-fewer':
+      return (
+        <div className="space-y-2">
+          {b.items.map((it, i) => (
+            <div key={i} className="flex gap-2">
+              {[it.left, it.right].map((n, j) => (
+                <div key={j} className="flex min-h-[44px] flex-1 flex-wrap content-center gap-0.5 rounded-md border border-neutral-400 p-1">
+                  <IconGroup icon={it.icon} n={n} size={16} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )
+    case 'coins':
+      return (
+        <div className={cn('flex gap-3', span === 2 ? 'flex-wrap justify-between' : 'flex-col')}>
+          {b.items.map((it, i) => (
+            <div key={i} className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1">
+                {it.coins.map((c, j) => (
+                  <CoinView key={j} coin={c} />
+                ))}
+              </span>
+              <AnswerBox w={40} />
+              <span className="text-[16px] font-bold">¢</span>
+            </div>
+          ))}
+        </div>
+      )
+    case 'clocks':
+      return (
+        <div className="flex justify-between gap-2">
+          {b.items.map((it, i) => (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <Clock h={it.h} m={it.m} size={span === 2 ? 86 : 74} />
+              <span className="text-[16px] font-bold">
+                <Blank w={28} /> : <Blank w={28} />
+              </span>
+            </div>
+          ))}
+        </div>
+      )
+    case 'match':
+      return (
+        <div className="space-y-1.5">
+          {b.words.map((w, i) => (
+            <div key={i} className="flex items-center justify-between">
+              <span className="text-[17px] font-bold">{w}</span>
+              <span className="flex items-center gap-10">
+                <span className="size-[7px] rounded-full bg-black" />
+                <span className="size-[7px] rounded-full bg-black" />
+              </span>
+              <Pic name={b.pictures[i]} size={32} />
+            </div>
+          ))}
+        </div>
+      )
+    case 'sight-words':
+      return (
+        <div className="space-y-1.5">
+          {b.words.map((w, i) => (
+            <p key={i} className="flex items-end gap-2 text-[18px] font-bold">
+              <span className="w-[70px]">{w}</span>
+              <span className="mb-1 flex-1 border-b-[1.5px] border-black" />
+            </p>
+          ))}
+        </div>
+      )
+    case 'spell':
+      return (
+        <div className="space-y-2">
+          {b.items.map((it, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <Pic name={it.picture} size={36} />
+              <span className="flex gap-1">
+                {[...it.word].map((_, j) => (
+                  <span key={j} className="inline-block h-[34px] w-[28px] border-b-2 border-black" />
+                ))}
+              </span>
+            </div>
+          ))}
+        </div>
+      )
+    case 'fill-blank':
+      return (
+        <div className="space-y-2">
+          {b.items.map((it, i) => (
+            <div key={i} className="flex flex-wrap items-end justify-between gap-2 text-[17px]">
+              <p>
+                {it.before} <Blank w={90} />
+                {it.after}
+              </p>
+              <span className="flex gap-2 text-[15px] font-bold">
+                {it.choices.map((c) => (
+                  <span key={c} className="rounded-full border border-neutral-500 px-2">
+                    {c}
+                  </span>
+                ))}
+              </span>
+            </div>
+          ))}
+        </div>
+      )
+    case 'compare':
+      return (
+        <div className="space-y-1.5 text-[20px] font-semibold">
+          {b.items.map((it, i) => (
+            <p key={i} className="flex items-center gap-3">
+              <span className="w-[34px] text-right">{it.left}</span>
+              <span className="inline-block size-[30px] rounded-full border-2 border-black" />
+              <span>{it.right}</span>
+            </p>
+          ))}
+        </div>
+      )
+    case 'shapes':
+      return (
+        <div className="flex flex-wrap items-center justify-between gap-1">
+          {b.shapes.map((sh, i) => (
+            <Shape key={i} shape={sh} size={38} />
+          ))}
+        </div>
+      )
+    case 'tens-ones':
+      return (
+        <div className="space-y-2">
+          {b.items.map((it, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <svg width={it.tens * 9 + it.ones * 9 + 10} height={44} aria-label={`${it.tens} tens ${it.ones} ones`}>
+                {Array.from({ length: it.tens }).map((_, j) => (
+                  <rect key={j} x={j * 9} y={2} width={6} height={40} fill="none" stroke="#000" strokeWidth={1.4} />
+                ))}
+                {Array.from({ length: it.ones }).map((_, j) => (
+                  <rect key={j} x={it.tens * 9 + 8 + (j % 5) * 9} y={j < 5 ? 14 : 26} width={6} height={6} fill="#000" />
+                ))}
+              </svg>
+              <span className="text-[16px] font-bold">
+                = <AnswerBox w={44} />
+              </span>
+            </div>
+          ))}
+        </div>
+      )
+  }
 }

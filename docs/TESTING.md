@@ -8,8 +8,8 @@ Run everything: `npm run typecheck && npm test && npm run test:e2e`
 |---|---|
 | TypeScript (`tsc --noEmit`, whole repo) | ✅ 0 errors (was 50+, previously hidden by `ignoreBuildErrors`) |
 | Production build (`next build`) | ✅ 14 routes |
-| Unit tests (Vitest) | ✅ 83 / 83 |
-| Browser tests (Playwright, Chromium desktop + Pixel 7) | ✅ 12 / 12 |
+| Unit tests (Vitest) | ✅ 93 / 93 |
+| Browser tests (Playwright, Chromium desktop + Pixel 7) | ✅ 13 / 13 |
 
 ## What is covered
 
@@ -35,6 +35,8 @@ Run everything: `npm run typecheck && npm test && npm run test:e2e`
 - Return to normal lessons; weekly summary; mastery only set by the parent
 - Printing for four learners: separate Pre-K copies for Seraiah and Amelia; separate tracking
 - Time estimates: Minimum 20, Standard 40–55, Full 60–90 minutes for all four learners (taught in parallel)
+
+**Daily review sheets** (`tests/unit/daily-review.test.ts`, plus a browser check of all 300 pages) — 50 regular + 50 challenge per grade, no two alike, every answer re-checked, only letters already taught on regular Pre-K/K sheets, every picture and traced character available, challenge harder than regular, and every page fits one Letter sheet.
 
 **Curriculum engine** (`tests/unit/engine.test.ts`)
 - Weekly rhythm: nothing prints on the hands-on day (Monday); the apply day prints only a story page for readers; every week mixes all five activity types
